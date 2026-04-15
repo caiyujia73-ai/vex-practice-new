@@ -3,21 +3,20 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VEX LAB | Premium Studio</title>
+  <title>VEX LAB | Studio Pro</title>
   <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Cormorant+Garamond:ital,wght@1,600;1,700&family=JetBrains+Mono:wght@400;600&family=Syne:wght@400;600&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg-base: #FFF5EE; /* 第三点：最底层淡淡的橙色 */
-      --glass: rgba(255, 255, 255, 0.5);
+      --bg-base: #FFF5EE; 
+      --glass: rgba(255, 255, 255, 0.4);
       --card-white: #FFFFFF;
+      --accent-orange: #F9A87D; /* 第三点：橙色 Submit */
       --text-main: #2D2D2D;
       --text-sub: #888888;
       
-      /* 莫兰迪难度色 */
       --easy: #A3B18A;
       --medium: #E9C46A;
       --hard: #E07A5F;
-      
       --active-color: var(--easy);
     }
 
@@ -25,155 +24,151 @@
     
     body {
       font-family: 'Syne', sans-serif;
-      background: var(--bg-base); /* 网页底色 */
+      background: var(--bg-base);
       height: 100vh;
-      display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
       overflow: hidden;
+      position: relative;
     }
 
-    /* 第二点：复古打字机字体 Title，放到最顶上 */
+    /* 第二点：中英文切换移至网页右上角 */
+    .top-right-lang {
+      position: absolute;
+      top: 25px;
+      right: 40px;
+      display: flex;
+      gap: 15px;
+      z-index: 200;
+    }
+    .lang-link { 
+      cursor: pointer; font-size: 12px; font-weight: 700; color: var(--text-sub); 
+      text-transform: uppercase; transition: 0.3s;
+    }
+    .lang-link.active { color: var(--text-main); text-decoration: underline; }
+
+    /* 第二点：VEX LAB 标题 */
     .top-logo {
       font-family: 'Special Elite', cursive;
       font-size: 32px;
       color: var(--text-main);
-      padding: 25px 0 10px 0;
+      margin-bottom: 20px;
       letter-spacing: 2px;
     }
 
-    /* 主容器 */
     .alchemy-container {
-      width: 95vw; height: 82vh; max-width: 1200px;
+      width: 95vw; height: 80vh; max-width: 1200px;
       background: var(--glass);
       backdrop-filter: blur(25px);
       border-radius: 40px;
       display: flex;
       box-shadow: 0 40px 100px rgba(0,0,0,0.03);
       border: 1px solid rgba(255,255,255,0.7);
-      position: relative;
     }
 
     /* 侧边栏 */
     aside {
-      width: 80px; height: 100%;
+      width: 300px; height: 100%;
       background: rgba(255, 255, 255, 0.2);
       border-right: 1px solid rgba(0,0,0,0.05);
-      transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-      overflow: hidden; display: flex; flex-direction: column;
+      padding: 30px 0;
+      overflow-y: auto;
     }
-    aside:hover { width: 300px; }
+
+    /* 第四点：难度大分类标题 */
+    .category-header {
+      font-family: 'Special Elite', cursive;
+      font-size: 14px;
+      color: var(--text-main);
+      padding: 20px 25px 10px;
+      letter-spacing: 1px;
+      opacity: 0.8;
+    }
 
     .nav-item {
       display: flex; align-items: center;
-      padding: 12px 20px; margin: 5px 10px;
-      border-radius: 15px; cursor: pointer; transition: 0.3s;
+      padding: 10px 25px; cursor: pointer; transition: 0.3s;
     }
-    .nav-icon-circle {
-      width: 40px; height: 40px; border-radius: 12px;
-      background: var(--card-white); display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0; font-size: 12px; color: var(--text-sub);
+    .nav-item:hover { background: rgba(255,255,255,0.3); }
+    .nav-item.active { background: rgba(255,255,255,0.5); }
+
+    .q-num-box {
+      width: 30px; font-family: 'JetBrains Mono'; font-size: 12px; color: var(--text-sub);
     }
-    .nav-text-box { margin-left: 15px; opacity: 0; transition: 0.2s; white-space: nowrap; flex: 1; }
-    aside:hover .nav-text-box { opacity: 1; }
+    .q-title-box { flex: 1; font-size: 14px; color: var(--text-main); margin-left: 5px; }
+    .attempt-tag { font-family: 'JetBrains Mono'; font-size: 10px; color: var(--text-sub); background: rgba(0,0,0,0.05); padding: 2px 6px; border-radius: 4px; }
 
-    /* 第四点：次数显示 3/3 */
-    .attempt-counter {
-      font-family: 'JetBrains Mono'; font-size: 10px; color: var(--text-sub);
-      margin-left: 10px; background: rgba(0,0,0,0.05); padding: 2px 6px; border-radius: 4px;
-    }
-
-    .nav-item.active .nav-icon-circle { background: var(--active-color); color: white; }
-
-    /* 主内容 */
-    main { flex: 1; display: flex; flex-direction: column; padding: 0 40px; }
-
-    header {
-      height: 60px; display: flex; align-items: center; justify-content: flex-end;
-    }
-    .lang-switcher { display: flex; gap: 15px; }
-    .lang-link { cursor: pointer; font-size: 11px; font-weight: 700; color: var(--text-sub); text-transform: uppercase; }
-    .lang-link.active { color: var(--active-color); }
-
-    .content-grid {
-      flex: 1; display: grid; grid-template-columns: 350px 1fr; gap: 30px; align-items: center; padding-bottom: 40px;
-    }
+    /* 内容区 */
+    main { flex: 1; display: grid; grid-template-columns: 380px 1fr; gap: 30px; padding: 40px; align-items: center; }
 
     .desc-card {
-      background: var(--card-white); padding: 40px; border-radius: 32px;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.04); height: 500px;
+      background: var(--card-white); padding: 45px; border-radius: 35px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.04); height: 100%;
       display: flex; flex-direction: column; justify-content: center;
     }
-    .desc-card h2 { font-family: 'Cormorant Garamond', serif; font-size: 38px; color: var(--active-color); margin-bottom: 20px; font-style: italic; }
-    .desc-card p { font-size: 14px; color: var(--text-sub); line-height: 1.8; }
+    .desc-card h2 { font-family: 'Cormorant Garamond', serif; font-size: 42px; color: var(--active-color); font-style: italic; margin-bottom: 20px; }
+    .desc-card p { font-size: 15px; color: var(--text-sub); line-height: 1.8; }
 
-    /* 第一点：输入框嵌入按钮设计 */
     .editor-card {
-      background: var(--card-white); border-radius: 32px;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.04); height: 540px;
-      position: relative; display: flex; flex-direction: column; overflow: hidden;
+      background: var(--card-white); border-radius: 35px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.04); height: 100%;
+      position: relative; display: flex; flex-direction: column;
     }
     #vex-editor {
-      flex: 1; border: none; outline: none; padding: 30px;
+      flex: 1; border: none; outline: none; padding: 35px;
       font-family: 'JetBrains Mono', monospace; font-size: 14px; line-height: 1.8; resize: none;
     }
 
+    /* 第三点：内嵌按钮 */
     .embedded-controls {
-      position: absolute; bottom: 20px; right: 20px;
-      display: flex; gap: 10px; background: rgba(255, 255, 255, 0.8);
-      backdrop-filter: blur(5px); padding: 6px; border-radius: 20px;
-      border: 1px solid rgba(0,0,0,0.05);
+      position: absolute; bottom: 25px; right: 25px;
+      display: flex; gap: 12px;
     }
+    .btn { padding: 10px 25px; border-radius: 15px; cursor: pointer; font-family: 'Syne'; font-weight: 700; font-size: 11px; transition: 0.3s; }
+    .btn-hint { background: #F5F5F5; border: none; color: var(--text-sub); }
+    
+    /* 第三点：橙色按钮 */
+    .btn-submit { background: var(--accent-orange); color: white; border: none; box-shadow: 0 4px 15px rgba(249, 168, 125, 0.3); }
+    .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(249, 168, 125, 0.4); }
 
-    .btn { padding: 8px 20px; border-radius: 15px; cursor: pointer; font-family: 'Syne'; font-weight: 700; font-size: 11px; transition: 0.3s; }
-    .btn-hint { background: transparent; border: 1px solid #EEE; color: var(--text-sub); }
-    .btn-submit { background: var(--text-main); color: white; border: none; }
-    .btn-submit:hover { background: var(--active-color); transform: translateY(-2px); }
-
-    /* 弹窗样式 */
+    /* 第一点：反馈弹窗 */
     #modal-overlay {
-      position: fixed; inset: 0; background: rgba(255,255,255,0.2);
+      position: fixed; inset: 0; background: rgba(255,255,255,0.3);
       backdrop-filter: blur(15px); display: none; align-items: center; justify-content: center; z-index: 1000;
     }
-    .modal { width: 500px; padding: 45px; border-radius: 35px; text-align: center; box-shadow: 0 40px 80px rgba(0,0,0,0.1); }
+    .modal { width: 500px; padding: 45px; border-radius: 35px; text-align: center; box-shadow: 0 40px 80px rgba(0,0,0,0.05); }
     .modal.success { background: #F2F9F5; border: 1px solid #D4EDDA; }
-    .modal.failure { background: #FFF5F5; border: 1px solid #FEB2B2; }
+    .modal.failure { background: #FFF5F5; border: 1px solid #FEB2B2; } /* 第一点：淡红色 */
     #modal-body { font-size: 14px; line-height: 1.8; color: #666; margin: 25px 0; }
-    .correct-code { background: #FFFFFF; padding: 15px; border-radius: 12px; font-family: 'JetBrains Mono'; font-size: 12px; color: #C53030; text-align: left; margin-top: 10px; }
+    .correct-code { background: #FFFFFF; padding: 15px; border-radius: 12px; font-family: 'JetBrains Mono'; font-size: 12px; color: #C53030; text-align: left; }
   </style>
 </head>
 <body>
 
+  <div class="top-right-lang">
+    <span class="lang-link active" onclick="setLang('zh')" id="ln-zh">ZH</span>
+    <span class="lang-link" onclick="setLang('en')" id="ln-en">EN</span>
+  </div>
+
   <div class="top-logo">VEX LAB.</div>
 
   <div class="alchemy-container">
-    <aside id="sidebar">
-      <div id="q-list-container"></div>
-    </aside>
+    <aside id="sidebar-nav"></aside>
 
     <main>
-      <header>
-        <div class="lang-switcher">
-          <span class="lang-link active" onclick="setLang('zh')" id="ln-zh">ZH</span>
-          <span class="lang-link" onclick="setLang('en')" id="ln-en">EN</span>
+      <div class="desc-card">
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:15px;">
+           <div style="width:10px; height:10px; border-radius:50%; background:var(--active-color)"></div>
+           <span id="q-diff-text" style="font-size:10px; font-weight:700; color:var(--text-sub)">EASY</span>
         </div>
-      </header>
+        <h2 id="q-title">...</h2>
+        <p id="q-desc"></p>
+      </div>
 
-      <div class="content-grid">
-        <div class="desc-card">
-          <div style="display:flex; align-items:center; gap:8px; margin-bottom:15px;">
-             <div style="width:10px; height:10px; border-radius:50%; background:var(--active-color)"></div>
-             <span id="q-diff-text" style="font-size:10px; font-weight:700; color:var(--text-sub)">EASY</span>
-          </div>
-          <h2 id="q-title">...</h2>
-          <p id="q-desc"></p>
-        </div>
-
-        <div class="editor-card">
-          <textarea id="vex-editor" spellcheck="false" placeholder="// Initializing VEX Kernel..."></textarea>
-          
-          <div class="embedded-controls">
-            <button class="btn btn-hint" onclick="showHint()" id="btn-hint-txt">HINT</button>
-            <button class="btn btn-submit" id="submit-btn" onclick="handleSubmit()">SUBMIT</button>
-          </div>
+      <div class="editor-card">
+        <textarea id="vex-editor" spellcheck="false" placeholder="// Initializing VEX Kernel..."></textarea>
+        <div class="embedded-controls">
+          <button class="btn btn-hint" onclick="showHint()" id="btn-hint-txt">HINT</button>
+          <button class="btn btn-submit" id="submit-btn" onclick="handleSubmit()">SUBMIT</button>
         </div>
       </div>
     </main>
@@ -191,36 +186,34 @@
   </div>
 
   <script>
+    // 第四点：按难度分组的题库，序号独立
     const questions = [
-      { id: "01", difficulty: "easy", color: "var(--easy)", 
-        title: { zh: "点染红色", en: "Crimson Hue" },
-        desc: { zh: "将几何体中所有点的颜色属性 (@Cd) 设置为纯红色 {1,0,0}。", en: "Set the color attribute (@Cd) of all points to pure red {1,0,0}." },
-        hint: { zh: "@Cd = {1,0,0};", en: "@Cd = {1,0,0};" },
-        solution: "@Cd = {1,0,0};",
-        attemptsLeft: 3 // 第四点：每个题目独立的尝试次数
-      },
-      { id: "02", difficulty: "medium", color: "var(--medium)", 
-        title: { zh: "随机缩放", en: "Random Scale" },
-        desc: { zh: "基于 @ptnum 为每个点生成随机的 @pscale。", en: "Generate a random @pscale for each point based on @ptnum." },
-        hint: { zh: "使用 rand() 函数。", en: "Use rand() function." },
-        solution: "@pscale = rand(@ptnum);",
-        attemptsLeft: 3
-      },
-      { id: "03", difficulty: "hard", color: "var(--hard)", 
-        title: { zh: "噪波位移", en: "Flowing Noise" },
-        desc: { zh: "使用 curlnoise 偏移位置 @P。", en: "Offset position @P using curlnoise." },
-        hint: { zh: "@P += curlnoise(@P);", en: "@P += curlnoise(@P);" },
-        solution: "@P += curlnoise(@P);",
-        attemptsLeft: 3
-      }
+      { category: "BEGINNER", items: [
+        { id: "01", difficulty: "easy", color: "var(--easy)", 
+          title: { zh: "点染红色", en: "Crimson Hue" },
+          desc: { zh: "将几何体中所有点的颜色属性 (@Cd) 设置为纯红色 {1,0,0}。", en: "Set the color attribute (@Cd) of all points to pure red {1,0,0}." },
+          hint: { zh: "@Cd = {1,0,0};", en: "@Cd = {1,0,0};" },
+          solution: "@Cd = {1,0,0};", attempts: 3 },
+        { id: "02", difficulty: "easy", color: "var(--easy)", 
+          title: { zh: "属性复制", en: "Attr Copy" },
+          desc: { zh: "将点的 X 坐标赋值给红色通道 (@Cd.r)。", en: "Assign X-coordinate to red channel (@Cd.r)." },
+          hint: { zh: "@Cd.r = @P.x;", en: "@Cd.r = @P.x;" },
+          solution: "@Cd.r = @P.x;", attempts: 3 }
+      ]},
+      { category: "INTERMEDIATE", items: [
+        { id: "01", difficulty: "medium", color: "var(--medium)", 
+          title: { zh: "随机缩放", en: "Random Scale" },
+          desc: { zh: "基于 @ptnum 生成 0~1 的随机 @pscale。", en: "Generate random @pscale (0-1) based on @ptnum." },
+          hint: { zh: "rand()", en: "Use rand()" },
+          solution: "@pscale = rand(@ptnum);", attempts: 3 }
+      ]}
     ];
 
-    let currentIdx = 0;
-    let lang = 'zh';
+    let currentCat = 0, currentIdx = 0, lang = 'zh';
 
     const uiTexts = {
-      zh: { hint: "线索", submit: "执行分析", success: "逻辑正确", fail: "分析失败", retry: "逻辑有误, 尚存机会: ", solution: "官方方案:" },
-      en: { hint: "HINT", submit: "SUBMIT", success: "LOGIC PASSED", fail: "FAILED", retry: "Logic Error, Tries left: ", solution: "SOLUTION:" }
+      zh: { hint: "提示", submit: "提交判断", success: "正确", fail: "分析失败", left: "剩余机会: ", solution: "参考方案:" },
+      en: { hint: "HINT", submit: "SUBMIT", success: "PASSED", fail: "FAILURE", left: "Tries left: ", solution: "SOLUTION:" }
     };
 
     function setLang(l) {
@@ -231,26 +224,28 @@
     }
 
     function render() {
-      const qContainer = document.getElementById('q-list-container');
-      qContainer.innerHTML = '';
-      questions.forEach((q, i) => {
-        const item = document.createElement('div');
-        item.className = `nav-item ${i === currentIdx ? 'active' : ''}`;
-        item.onclick = () => { if(currentIdx!==i) { currentIdx=i; document.getElementById('vex-editor').value=""; render(); } };
-        item.innerHTML = `
-          <div class="nav-icon-circle">${q.id}</div>
-          <div class="nav-text-box">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-              <b style="font-size:13px">${q.title[lang]}</b>
-              <span class="attempt-counter">${q.attemptsLeft}/3</span>
-            </div>
-            <span style="font-size:9px; color:#AAA;">${q.difficulty.toUpperCase()}</span>
-          </div>
-        `;
-        qContainer.appendChild(item);
+      const nav = document.getElementById('sidebar-nav');
+      nav.innerHTML = '';
+      questions.forEach((cat, cIdx) => {
+        const h = document.createElement('div');
+        h.className = 'category-header';
+        h.innerText = cat.category;
+        nav.appendChild(h);
+        
+        cat.items.forEach((item, iIdx) => {
+          const el = document.createElement('div');
+          el.className = `nav-item ${cIdx===currentCat && iIdx===currentIdx ? 'active' : ''}`;
+          el.onclick = () => { currentCat=cIdx; currentIdx=iIdx; document.getElementById('vex-editor').value=""; render(); };
+          el.innerHTML = `
+            <span class="q-num-box">${item.id}</span>
+            <div class="q-title-box"><b>${item.title[lang]}</b></div>
+            <span class="attempt-tag">${item.attempts}/3</span>
+          `;
+          nav.appendChild(el);
+        });
       });
 
-      const q = questions[currentIdx];
+      const q = questions[currentCat].items[currentIdx];
       document.documentElement.style.setProperty('--active-color', q.color);
       document.getElementById('q-title').innerText = q.title[lang];
       document.getElementById('q-desc').innerText = q.desc[lang];
@@ -260,11 +255,9 @@
     }
 
     async function handleSubmit() {
+      const q = questions[currentCat].items[currentIdx];
       const code = document.getElementById('vex-editor').value;
-      if (!code.trim()) return;
-
-      const q = questions[currentIdx];
-      if (q.attemptsLeft <= 0) return alert("No more tries left for this question.");
+      if (!code.trim() || q.attempts <= 0) return;
 
       const btn = document.getElementById('submit-btn');
       btn.innerText = "...";
@@ -276,10 +269,9 @@
           body: JSON.stringify({ code: code, questionContext: `Task: ${q.title.en}` })
         });
         const data = await res.json();
-        
         const modal = document.getElementById('result-modal');
         const solArea = document.getElementById('solution-area');
-        
+
         if (data.result === 'correct') {
           modal.className = "modal success";
           document.getElementById('modal-title').innerText = uiTexts[lang].success;
@@ -287,36 +279,38 @@
           solArea.style.display = 'none';
           showModal();
         } else {
-          q.attemptsLeft--; // 减少机会
-          render(); // 实时更新侧边栏 3/3 状态
-
-          if (q.attemptsLeft > 0) {
-            alert(uiTexts[lang].retry + q.attemptsLeft);
-          } else {
-            modal.className = "modal failure";
-            document.getElementById('modal-title').innerText = uiTexts[lang].fail;
-            document.getElementById('modal-body').innerText = data.explanation;
+          q.attempts--;
+          render();
+          // 第一点：失败直接弹出淡红色卡片
+          modal.className = "modal failure";
+          document.getElementById('modal-title').innerText = uiTexts[lang].fail;
+          let bodyTxt = data.explanation + "\n\n" + uiTexts[lang].left + q.attempts;
+          
+          if (q.attempts <= 0) {
             document.getElementById('correct-code-text').innerText = uiTexts[lang].solution + "\n" + q.solution;
             solArea.style.display = 'block';
-            showModal();
+          } else {
+            solArea.style.display = 'none';
           }
+          document.getElementById('modal-body').innerText = bodyTxt;
+          showModal();
         }
-      } catch (e) { alert("Error connecting to server"); }
+      } catch (e) { alert("Error"); }
       finally { btn.innerText = uiTexts[lang].submit; }
     }
 
     function showHint() {
+      const q = questions[currentCat].items[currentIdx];
       const modal = document.getElementById('result-modal');
       modal.className = "modal";
       document.getElementById('modal-title').innerText = uiTexts[lang].hint;
-      document.getElementById('modal-body').innerText = questions[currentIdx].hint[lang];
+      document.getElementById('modal-body').innerText = q.hint[lang];
       document.getElementById('solution-area').style.display = 'none';
       showModal();
     }
 
     function showModal() { document.getElementById('modal-overlay').style.display = 'flex'; }
     function closeModal() { document.getElementById('modal-overlay').style.display = 'none'; }
-
     render();
   </script>
 </body>
