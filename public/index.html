@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VEX LAB | Professional Studio</title>
+  <title>VEX LAB | Immersive Studio</title>
   <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Cormorant+Garamond:ital,wght@1,600;1,700&family=JetBrains+Mono:wght@400;600&family=Syne:wght@400;600&display=swap" rel="stylesheet" />
   <style>
     :root {
@@ -58,7 +58,7 @@
     /* 伸缩侧边栏 */
     aside {
       width: 80px; height: 100%;
-      background: rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.1);
       border-right: 1px solid rgba(0,0,0,0.05);
       transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
       overflow: hidden; display: flex; flex-direction: column;
@@ -90,35 +90,66 @@
 
     .attempt-tag { font-family: 'JetBrains Mono'; font-size: 10px; color: var(--text-sub); background: rgba(255,255,255,0.5); padding: 2px 6px; border-radius: 4px; }
 
-    /* 主内容区布局 */
-    main { flex: 1; display: grid; grid-template-columns: 380px 1fr; gap: 30px; padding: 40px; align-items: center; }
+    /* --- 核心改动：合二为一的卡片布局 --- */
+    main { flex: 1; padding: 40px; overflow: hidden; }
 
-    .desc-card {
-      background: var(--card-white); padding: 45px; border-radius: 35px;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.04); height: 100%;
-      display: flex; flex-direction: column; justify-content: center;
+    .unified-card {
+      background: var(--card-white);
+      width: 100%;
+      height: 100%;
+      border-radius: 35px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.04);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
     }
-    .desc-card h2 { font-family: 'Cormorant Garamond', serif; font-size: 42px; color: var(--active-color); font-style: italic; margin-bottom: 20px; }
-    .desc-card p { font-size: 15px; color: var(--text-sub); line-height: 1.8; }
 
-    .editor-card {
-      background: var(--card-white); border-radius: 35px;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.04); height: 100%;
-      position: relative; display: flex; flex-direction: column; overflow: hidden;
+    /* 浮动在左侧的题目信息 */
+    .question-overlay {
+      padding: 40px 50px 0 50px;
+      z-index: 5;
+    }
+    .diff-indicator {
+      display: flex; align-items: center; gap: 8px; margin-bottom: 10px;
+    }
+    .diff-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .question-overlay h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 42px; font-style: italic; color: var(--active-color);
+      margin-bottom: 10px;
+    }
+    .question-overlay p {
+      font-size: 15px; color: var(--text-sub); max-width: 600px; line-height: 1.6;
+    }
+
+    /* 编辑器区域 */
+    .editor-area {
+      flex: 1;
+      padding: 20px 50px 100px 50px; /* 留出底部按钮空间 */
     }
     #vex-editor {
-      flex: 1; border: none; outline: none; padding: 35px;
-      font-family: 'JetBrains Mono', monospace; font-size: 14px; line-height: 1.8; resize: none;
+      width: 100%;
+      height: 100%;
+      border: none;
+      outline: none;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      line-height: 1.8;
+      resize: none;
+      background: transparent;
+      color: #444;
     }
 
+    /* 内嵌按钮 */
     .embedded-controls {
-      position: absolute; bottom: 25px; right: 25px;
-      display: flex; gap: 12px;
+      position: absolute; bottom: 30px; right: 40px;
+      display: flex; gap: 15px; z-index: 10;
     }
-    .btn { padding: 10px 25px; border-radius: 15px; cursor: pointer; font-family: 'Syne'; font-weight: 700; font-size: 11px; transition: 0.3s; border: none; }
+    .btn { padding: 12px 30px; border-radius: 20px; cursor: pointer; font-family: 'Syne'; font-weight: 700; font-size: 12px; transition: 0.3s; border: none; }
     .btn-hint { background: #F5F5F5; color: var(--text-sub); }
     .btn-submit { background: var(--accent-orange); color: white; box-shadow: 0 4px 15px rgba(249, 168, 125, 0.3); }
-    .btn-submit:hover { transform: translateY(-2px); }
+    .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(249, 168, 125, 0.4); }
 
     /* 弹窗样式 */
     #modal-overlay {
@@ -145,17 +176,20 @@
     <aside id="sidebar-nav"></aside>
 
     <main>
-      <div class="desc-card">
-        <div style="display:flex; align-items:center; gap:8px; margin-bottom:15px;">
-           <div style="width:10px; height:10px; border-radius:50%; background:var(--active-color)"></div>
-           <span id="q-diff-text" style="font-size:10px; font-weight:700; color:var(--text-sub)">EASY</span>
+      <div class="unified-card">
+        <div class="question-overlay">
+          <div class="diff-indicator">
+            <div class="diff-dot" style="background: var(--active-color)"></div>
+            <span id="q-diff-text" style="font-size: 10px; font-weight: 700; color: var(--text-sub)">EASY</span>
+          </div>
+          <h2 id="q-title">...</h2>
+          <p id="q-desc"></p>
         </div>
-        <h2 id="q-title">...</h2>
-        <p id="q-desc"></p>
-      </div>
 
-      <div class="editor-card">
-        <textarea id="vex-editor" spellcheck="false" placeholder="// Initializing VEX Kernel..."></textarea>
+        <div class="editor-area">
+          <textarea id="vex-editor" spellcheck="false" placeholder="// 开始你的逻辑调制..."></textarea>
+        </div>
+
         <div class="embedded-controls">
           <button class="btn btn-hint" onclick="showHint()" id="btn-hint-txt">HINT</button>
           <button class="btn btn-submit" id="submit-btn" onclick="handleSubmit()">SUBMIT</button>
@@ -180,7 +214,7 @@
       { category: "BEGINNER", items: [
         { id: "01", difficulty: "easy", color: "var(--easy)", 
           title: { zh: "点染红色", en: "Crimson Hue" },
-          desc: { zh: "将几何体中所有点的颜色属性 (@Cd) 设置为纯红色 {1,0,0}。", en: "Set the color attribute (@Cd) of all points to pure red {1,0,0}." },
+          desc: { zh: "将几何体中所有点的颜色属性 (@Cd) 设置为红色 {1,0,0}。", en: "Set the color attribute (@Cd) of all points to red {1,0,0}." },
           hint: { zh: "@Cd = {1,0,0};", en: "@Cd = {1,0,0};" },
           solution: "@Cd = {1,0,0};", attempts: 3 },
         { id: "02", difficulty: "easy", color: "var(--easy)", 
@@ -278,7 +312,6 @@
         const solArea = document.getElementById('solution-area');
 
         if (data.result === 'correct') {
-          // 成功总是显示解释
           modal.className = "modal success";
           document.getElementById('modal-title').innerText = uiTexts[lang].success;
           document.getElementById('modal-body').innerText = data.explanation;
@@ -290,12 +323,10 @@
           modal.className = "modal failure";
           
           if (q.attempts > 0) {
-            // 前两次失败：只显示 Try Again 和 剩余次数，不给分析
             document.getElementById('modal-title').innerText = uiTexts[lang].retry;
             document.getElementById('modal-body').innerText = uiTexts[lang].left + q.attempts;
             solArea.style.display = 'none';
           } else {
-            // 最后一次失败：显示分析、正确答案、失败标题
             document.getElementById('modal-title').innerText = uiTexts[lang].fail;
             document.getElementById('modal-body').innerText = data.explanation;
             document.getElementById('correct-code-text').innerText = uiTexts[lang].solution + "\n" + q.solution;
