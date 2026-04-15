@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VEX LAB | Pro Studio</title>
+  <title>VEX LAB | Premium Studio</title>
   <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=JetBrains+Mono:wght@400;600&family=Syne:wght@400;600&display=swap" rel="stylesheet" />
   <style>
     :root {
@@ -18,6 +18,9 @@
       --medium: #E9C46A;
       --hard: #E07A5F;
       --active-color: var(--easy);
+      
+      --success-green: #28a745;
+      --fail-red: #e74c3c;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -26,21 +29,29 @@
       font-family: 'Syne', sans-serif;
       background: var(--bg-base);
       height: 100vh;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      display: flex; align-items: center; justify-content: center;
       overflow: hidden;
       position: relative;
     }
 
-    /* 右上角中英文切换 */
+    /* 右上角语言切换 */
     .top-right-lang {
       position: absolute; top: 25px; right: 40px;
       display: flex; gap: 15px; z-index: 200;
     }
-    .lang-link { cursor: pointer; font-size: 12px; font-weight: 700; color: var(--text-sub); text-transform: uppercase; }
+    .lang-link { cursor: pointer; font-size: 12px; font-weight: 700; color: var(--text-sub); text-transform: uppercase; transition: 0.3s; }
     .lang-link.active { color: var(--text-main); text-decoration: underline; }
 
+    /* 全局最左上角 Logo */
+    .page-logo {
+      position: absolute; top: 25px; left: 40px;
+      font-family: 'Special Elite', cursive;
+      font-size: 28px; color: var(--text-main);
+      letter-spacing: 2px; z-index: 200;
+    }
+
     .alchemy-container {
-      width: 95vw; height: 85vh; max-width: 1200px;
+      width: 95vw; height: 80vh; max-width: 1200px;
       background: var(--glass);
       backdrop-filter: blur(25px);
       border-radius: 40px;
@@ -50,30 +61,20 @@
       overflow: hidden;
     }
 
-    /* 侧边栏 */
     aside {
       width: 80px; height: 100%;
       background: rgba(255, 255, 255, 0.1);
       border-right: 1px solid rgba(0,0,0,0.05);
       transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
       overflow: hidden; display: flex; flex-direction: column;
+      padding-top: 30px;
     }
     aside:hover { width: 300px; }
 
-    /* 标题移动到左上角 */
-    .sidebar-logo {
-      font-family: 'Special Elite', cursive;
-      font-size: 18px; color: var(--text-main);
-      padding: 35px 25px 15px; 
-      white-space: nowrap;
-      letter-spacing: 1px;
-    }
-
     .category-header {
       font-family: 'Special Elite', cursive;
-      font-size: 12px; font-weight: 700; color: var(--text-main);
-      padding: 20px 25px 10px; opacity: 0; transition: 0.3s;
-      letter-spacing: 1px;
+      font-size: 13px; font-weight: 700; color: var(--text-main);
+      padding: 25px 25px 10px; opacity: 0; transition: 0.3s;
     }
     aside:hover .category-header { opacity: 0.9; }
 
@@ -93,9 +94,12 @@
     .nav-text-box { margin-left: 15px; opacity: 0; transition: 0.2s; white-space: nowrap; flex: 1; }
     aside:hover .nav-text-box { opacity: 1; }
 
-    .attempt-tag { font-family: 'JetBrains Mono'; font-size: 10px; color: var(--text-sub); background: rgba(255,255,255,0.5); padding: 2px 6px; border-radius: 4px; }
+    /* 战绩小圆点 */
+    .record-dots { display: flex; gap: 4px; margin-top: 4px; }
+    .mini-dot { width: 6px; height: 6px; border-radius: 50%; }
+    .mini-dot.red { background: var(--fail-red); }
+    .mini-dot.green { background: var(--success-green); }
 
-    /* 主内容区 */
     main { flex: 1; padding: 40px; overflow: hidden; }
 
     .unified-card {
@@ -107,12 +111,8 @@
       position: relative; overflow: hidden;
     }
 
-    .question-overlay {
-      padding: 40px 50px 0 50px; z-index: 5;
-    }
-    .diff-indicator {
-      display: flex; align-items: center; gap: 8px; margin-bottom: 10px;
-    }
+    .question-overlay { padding: 40px 50px 0 50px; z-index: 5; }
+    .diff-indicator { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
     .diff-dot { width: 10px; height: 10px; border-radius: 50%; }
     
     .question-overlay h2 {
@@ -120,21 +120,14 @@
       font-size: 32px; color: var(--active-color);
       margin-bottom: 10px; letter-spacing: 1px;
     }
-    .question-overlay p {
-      font-size: 15px; color: var(--text-sub); max-width: 650px; line-height: 1.6;
-    }
+    .question-overlay p { font-size: 15px; color: var(--text-sub); max-width: 650px; line-height: 1.6; }
 
-    .editor-area {
-      flex: 1; padding: 20px 50px 100px 50px;
-    }
+    .editor-area { flex: 1; padding: 20px 50px 100px 50px; }
     #vex-editor {
-      width: 100%; height: 100%;
-      border: none; outline: none;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 14px; line-height: 1.8;
+      width: 100%; height: 100%; border: none; outline: none;
+      font-family: 'JetBrains Mono', monospace; font-size: 14px; line-height: 1.8;
       resize: none; background: transparent; color: #444;
     }
-
     #vex-editor::placeholder { color: #000; opacity: 0.15; }
 
     .embedded-controls {
@@ -144,9 +137,7 @@
     .btn { padding: 12px 30px; border-radius: 20px; cursor: pointer; font-family: 'Syne'; font-weight: 700; font-size: 12px; transition: 0.3s; border: none; }
     .btn-hint { background: #F5F5F5; color: var(--text-sub); }
     .btn-submit { background: var(--accent-orange); color: white; box-shadow: 0 4px 15px rgba(249, 168, 125, 0.3); }
-    .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(249, 168, 125, 0.4); }
 
-    /* 弹窗样式 */
     #modal-overlay {
       position: fixed; inset: 0; background: rgba(255,255,255,0.3);
       backdrop-filter: blur(15px); display: none; align-items: center; justify-content: center; z-index: 1000;
@@ -160,16 +151,15 @@
 </head>
 <body>
 
+  <div class="page-logo">VEX LAB.</div>
+
   <div class="top-right-lang">
-    <span class="lang-link active" onclick="setLang('zh')" id="ln-zh">ZH</span>
+    <span class="lang-link" onclick="setLang('zh')" id="ln-zh">ZH</span>
     <span class="lang-link" onclick="setLang('en')" id="ln-en">EN</span>
   </div>
 
   <div class="alchemy-container">
-    <aside id="sidebar">
-      <div class="sidebar-logo">VEX LAB.</div>
-      <div id="sidebar-nav"></div>
-    </aside>
+    <aside id="sidebar-nav"></aside>
 
     <main>
       <div class="unified-card">
@@ -194,14 +184,14 @@
     </main>
   </div>
 
-  <div id="modal-overlay" onclick="closeModal()">
+  <div id="modal-overlay">
     <div class="modal" id="result-modal" onclick="event.stopPropagation()">
       <h3 id="modal-title" style="font-family:'Special Elite', cursive; font-size:24px;">Result</h3>
       <div id="modal-body"></div>
       <div id="solution-area" style="display:none">
          <div class="correct-code" id="correct-code-text"></div>
       </div>
-      <button class="btn btn-submit" style="width: 100%; margin-top:20px;" onclick="closeModal()" id="btn-modal-close">CONTINUE</button>
+      <button class="btn btn-submit" style="width: 100%; margin-top:20px;" onclick="closeFeedback()" id="btn-modal-close">CONTINUE</button>
     </div>
   </div>
 
@@ -212,30 +202,30 @@
           title: { zh: "点染红色", en: "Crimson Hue" },
           desc: { zh: "将几何体中所有点的颜色属性 (@Cd) 设置为红色 {1,0,0}。", en: "Set the color attribute (@Cd) of all points to red {1,0,0}." },
           hint: { zh: "@Cd = {1,0,0};", en: "@Cd = {1,0,0};" },
-          solution: "@Cd = {1,0,0};", attempts: 3 },
+          solution: "@Cd = {1,0,0};", attempts: 3, records: [] },
         { id: "02", difficulty: "easy", color: "var(--easy)", 
           title: { zh: "坐标映射", en: "Position Map" },
           desc: { zh: "将 X 坐标映射给红色通道。", en: "Map X-coordinate to Red channel." },
           hint: { zh: "@Cd.r = @P.x;", en: "@Cd.r = @P.x;" },
-          solution: "@Cd.r = @P.x;", attempts: 3 }
+          solution: "@Cd.r = @P.x;", attempts: 3, records: [] }
       ]},
       { category: "INTERMEDIATE", items: [
         { id: "01", difficulty: "medium", color: "var(--medium)", 
           title: { zh: "随机缩放", en: "Random Scale" },
           desc: { zh: "基于 @ptnum 生成随机 @pscale。", en: "Generate random @pscale based on @ptnum." },
           hint: { zh: "rand()", en: "Use rand()" },
-          solution: "@pscale = rand(@ptnum);", attempts: 3 }
+          solution: "@pscale = rand(@ptnum);", attempts: 3, records: [] }
       ]},
       { category: "ADVANCED", items: [
         { id: "01", difficulty: "hard", color: "var(--hard)", 
           title: { zh: "噪波位移", en: "Flowing Noise" },
           desc: { zh: "使用 curlnoise 偏移位置 @P。", en: "Offset position @P using curlnoise." },
           hint: { zh: "@P += curlnoise(@P);", en: "@P += curlnoise(@P);" },
-          solution: "@P += curlnoise(@P);", attempts: 3 }
+          solution: "@P += curlnoise(@P);", attempts: 3, records: [] }
       ]}
     ];
 
-    let currentCat = 0, currentIdx = 0, lang = 'zh';
+    let currentCat = 0, currentIdx = 0, lang = 'en', lastCorrect = false;
 
     const uiTexts = {
       zh: { hint: "提示", submit: "提交分析", success: "正确", fail: "分析失败", retry: "请再试一次 (Try Again)", left: "剩余机会: ", solution: "参考方案:" },
@@ -245,7 +235,8 @@
     function setLang(l) {
       lang = l;
       document.querySelectorAll('.lang-link').forEach(el => el.classList.remove('active'));
-      document.getElementById('ln-' + l).classList.add('active');
+      const activeBtn = document.getElementById('ln-' + l);
+      if(activeBtn) activeBtn.classList.add('active');
       render();
     }
 
@@ -266,14 +257,19 @@
           
           const iconBg = isActive ? item.color : (item.color + '88');
           
+          let dotsHtml = '<div class="record-dots">';
+          item.records.forEach(type => {
+            dotsHtml += `<div class="mini-dot ${type}"></div>`;
+          });
+          dotsHtml += '</div>';
+
           el.innerHTML = `
             <div class="nav-icon-circle" style="background: ${iconBg}">${item.id}</div>
             <div class="nav-text-box">
               <div style="display:flex; justify-content:space-between; align-items:center;">
                 <b style="font-size:13px; color: ${isActive ? 'var(--text-main)' : 'var(--text-sub)'}">${item.title[lang]}</b>
-                <span class="attempt-tag">${item.attempts}/3</span>
               </div>
-              <span style="font-size:9px; color:#AAA;">${item.difficulty.toUpperCase()}</span>
+              ${dotsHtml}
             </div>
           `;
           nav.appendChild(el);
@@ -308,13 +304,17 @@
         const solArea = document.getElementById('solution-area');
 
         if (data.result === 'correct') {
+          lastCorrect = true;
+          q.records.push('green');
           modal.className = "modal success";
           document.getElementById('modal-title').innerText = uiTexts[lang].success;
           document.getElementById('modal-body').innerText = data.explanation;
           solArea.style.display = 'none';
           showModal();
         } else {
+          lastCorrect = false;
           q.attempts--;
+          q.records.push('red');
           render();
           modal.className = "modal failure";
           
@@ -331,7 +331,14 @@
           showModal();
         }
       } catch (e) { alert("Error"); }
-      finally { btn.innerText = uiTexts[lang].submit; }
+      finally { btn.innerText = uiTexts[lang].submit; render(); }
+    }
+
+    function closeFeedback() {
+      if (!lastCorrect) {
+        document.getElementById('vex-editor').value = "";
+      }
+      closeModal();
     }
 
     function showHint() {
@@ -346,7 +353,9 @@
 
     function showModal() { document.getElementById('modal-overlay').style.display = 'flex'; }
     function closeModal() { document.getElementById('modal-overlay').style.display = 'none'; }
-    render();
+    
+    // Default to EN
+    setLang('en');
   </script>
 </body>
 </html>
