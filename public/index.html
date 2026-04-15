@@ -1,339 +1,410 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh-CN">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VEX Practice</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Syne:wght@400;600;700&display=swap" rel="stylesheet" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --bg: #0d0f14; --surface: #14171e; --surface2: #1a1d26;
-      --border: #222630; --accent: #c8f060; --text: #e8e4d9;
-      --muted: #666; --dimmer: #444;
-    }
-    body {
-      font-family: 'Syne', sans-serif; background: var(--bg); color: var(--text);
-      min-height: 100vh; display: grid;
-      grid-template-columns: 260px 1fr; grid-template-rows: 52px 1fr;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VEX 代码练习答题卡</title>
+    <style>
+        /* --- 核心 CSS 变量 --- */
+        :root {
+            --bg-color: #FDF8F5; /* 米白色背景 */
+            --card-bg: #FFFFFF; /* 答题卡白色 */
+            --primary-orange: #F9A87D; /* 浅橘色主色 */
+            --border-color: #E6E0DB; /* 淡淡的边框色 */
+            --text-main: #4A4A4A; /* 深灰文字 */
+            --text-sub: #8C8C8C; /* 浅灰文字 */
+            
+            /* 难度颜色 (保留原意，更柔和) */
+            --diff-easy: #A8E6CF; /* 浅绿 */
+            --diff-mid: #FFD3B6; /* 浅黄 */
+            --diff-hard: #FFAAA5; /* 浅红 */
+            --diff-vhard: #D4A5FF; /* 浅紫 */
+        }
 
-    header {
-      grid-column: 1 / -1; display: flex; align-items: center; gap: 12px;
-      padding: 0 1.5rem; border-bottom: 1px solid var(--border); background: var(--surface);
-    }
-    .logo { width: 28px; height: 28px; background: var(--accent); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; color: var(--bg); }
-    header h1 { font-size: 15px; font-weight: 700; letter-spacing: 0.03em; }
-    header .tagline { font-size: 11px; color: var(--muted); font-family: 'JetBrains Mono', monospace; margin-left: auto; }
+        /* --- 基础样式 --- */
+        body {
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
 
-    aside { border-right: 1px solid var(--border); background: var(--surface); overflow-y: auto; padding: 1rem 0; }
-    .sidebar-section { padding: 0 1rem 0.4rem; font-size: 10px; letter-spacing: 0.1em; color: var(--dimmer); font-family: 'JetBrains Mono', monospace; text-transform: uppercase; margin-top: 1rem; }
-    .q-item { display: flex; align-items: center; gap: 8px; padding: 8px 1rem; cursor: pointer; transition: background 0.15s; border-left: 2px solid transparent; font-size: 13px; }
-    .q-item:hover { background: var(--surface2); }
-    .q-item.active { background: var(--surface2); border-left-color: var(--accent); color: var(--accent); }
-    .q-num { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--dimmer); min-width: 28px; }
-    .q-title { flex: 1; }
-    .q-badge { font-size: 10px; font-family: 'JetBrains Mono', monospace; padding: 2px 6px; border-radius: 3px; }
-    .q-badge.easy { background: #0e2018; color: #4ade80; }
-    .q-badge.medium { background: #1e1a08; color: #facc15; }
-    .q-badge.hard { background: #1e1010; color: #f87171; }
-    .q-badge.solved { background: #0e2018; color: #4ade80; }
+        /* --- 答题卡主容器 --- */
+        .answer-sheet {
+            background-color: var(--card-bg);
+            width: 100%;
+            max-width: 800px;
+            border: 2px solid var(--primary-orange);
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(249, 168, 125, 0.15); /* 带有橘色调的阴影 */
+            padding: 40px;
+            box-sizing: border-box;
+            position: relative;
+        }
 
-    main { display: grid; grid-template-rows: 1fr auto; overflow: hidden; }
-    .content { display: grid; grid-template-columns: 1fr 1fr; overflow: hidden; }
+        /* 模拟答题卡顶部的装饰孔 */
+        .answer-sheet::before {
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            height: 10px;
+            background-image: radial-gradient(circle, var(--border-color) 40%, transparent 50%);
+            background-size: 30px 10px;
+        }
 
-    .question-panel { padding: 1.5rem; border-right: 1px solid var(--border); overflow-y: auto; }
-    .q-header { display: flex; align-items: center; gap: 8px; margin-bottom: 1rem; }
-    .diff-badge { font-size: 11px; font-family: 'JetBrains Mono', monospace; padding: 3px 8px; border-radius: 4px; }
-    .diff-badge.easy { background: #0e2018; color: #4ade80; }
-    .diff-badge.medium { background: #1e1a08; color: #facc15; }
-    .diff-badge.hard { background: #1e1010; color: #f87171; }
-    .category-tag { font-size: 11px; font-family: 'JetBrains Mono', monospace; color: var(--muted); background: var(--surface2); padding: 3px 8px; border-radius: 4px; }
-    .q-main-title { font-size: 19px; font-weight: 700; margin-bottom: 0.7rem; color: #f0ece0; }
-    .q-desc { font-size: 14px; color: #999; line-height: 1.8; }
-    .q-desc code { font-family: 'JetBrains Mono', monospace; background: var(--surface2); color: var(--accent); padding: 1px 6px; border-radius: 4px; font-size: 12px; }
+        /* --- 头部区域 --- */
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 1px dashed var(--border-color);
+            padding-bottom: 20px;
+        }
 
-    /* Expected result — hidden by default, revealed after submit */
-    .expected-box {
-      margin-top: 1.2rem; background: var(--surface2);
-      border-left: 3px solid #c8f06050; border-radius: 0 8px 8px 0; padding: 12px 16px;
-      transition: opacity 0.4s, filter 0.4s;
-    }
-    .expected-box.hidden { opacity: 0; filter: blur(6px); pointer-events: none; user-select: none; }
-    .expected-box.revealed { opacity: 1; filter: none; }
-    .expected-label {
-      display: flex; align-items: center; justify-content: space-between;
-      font-size: 10px; letter-spacing: 0.1em; color: var(--accent);
-      font-family: 'JetBrains Mono', monospace; text-transform: uppercase; margin-bottom: 6px;
-    }
-    .reveal-hint { font-size: 10px; color: var(--dimmer); font-style: italic; text-transform: none; letter-spacing: 0; }
-    .expected-box pre { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #aaa; line-height: 1.6; white-space: pre-wrap; }
+        header h1 {
+            color: var(--primary-orange);
+            margin: 0 0 10px 0;
+            font-size: 24px;
+        }
 
-    .editor-panel { display: flex; flex-direction: column; overflow: hidden; }
-    .editor-toolbar { display: flex; align-items: center; gap: 8px; padding: 0.5rem 1rem; border-bottom: 1px solid var(--border); background: var(--surface); }
-    .editor-toolbar span { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--dimmer); }
-    .dot { width: 8px; height: 8px; border-radius: 50%; }
-    .dot-r { background: #f87171; } .dot-y { background: #facc15; } .dot-g { background: #4ade80; }
+        header p {
+            color: var(--text-sub);
+            margin: 0;
+            font-size: 14px;
+        }
 
-    #vex-editor { flex: 1; background: var(--bg); border: none; outline: none; resize: none; padding: 1.2rem; font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--text); line-height: 1.7; min-height: 0; }
-    #vex-editor::placeholder { color: #2a2d35; }
+        /* --- 题目区域 --- */
+        .question-section {
+            background-color: #FFFBF9;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
 
-    .bottom-bar { display: flex; align-items: center; gap: 10px; padding: 0.7rem 1.2rem; border-top: 1px solid var(--border); background: var(--surface); }
-    .submit-btn { display: flex; align-items: center; gap: 8px; background: var(--accent); color: var(--bg); border: none; border-radius: 7px; padding: 8px 18px; font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; transition: opacity 0.2s, transform 0.1s; }
-    .submit-btn:hover { opacity: 0.88; }
-    .submit-btn:active { transform: scale(0.98); }
-    .submit-btn:disabled { opacity: 0.35; cursor: not-allowed; }
-    .hint-btn { background: transparent; border: 1px solid var(--border); color: var(--muted); border-radius: 7px; padding: 8px 14px; font-family: 'Syne', sans-serif; font-size: 13px; cursor: pointer; transition: border-color 0.2s, color 0.2s; }
-    .hint-btn:hover { border-color: var(--dimmer); color: var(--text); }
-    .spinner { width: 13px; height: 13px; border: 2px solid #0d0f1440; border-top-color: var(--bg); border-radius: 50%; animation: spin 0.7s linear infinite; display: none; }
-    @keyframes spin { to { transform: rotate(360deg); } }
+        .question-section h2 {
+            font-size: 18px;
+            margin-top: 0;
+            color: var(--primary-orange);
+        }
 
-    .feedback-area { flex: 1; display: flex; align-items: center; overflow: hidden; }
-    .feedback-pill { display: none; align-items: center; gap: 8px; padding: 7px 12px; border-radius: 7px; font-size: 13px; line-height: 1.4; max-width: 100%; overflow: hidden; }
-    .feedback-pill.correct { display: flex; background: #0e2018; color: #7de0b5; border: 1px solid #1D9E7530; }
-    .feedback-pill.wrong   { display: flex; background: #1e1010; color: #e8a0a0; border: 1px solid #c0403030; }
-    .feedback-pill.partial { display: flex; background: #1e1a08; color: #e8d080; border: 1px solid #c8a03030; }
-    .fb-icon { font-size: 15px; flex-shrink: 0; }
-    .fb-short { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .detail-link { font-size: 12px; color: var(--accent); cursor: pointer; text-decoration: underline; white-space: nowrap; flex-shrink: 0; }
+        /* --- 代码输入区域 (核心修改) --- */
+        .code-section {
+            margin-bottom: 25px;
+        }
 
-    .modal-overlay { display: none; position: fixed; inset: 0; background: #000a; z-index: 100; align-items: center; justify-content: center; }
-    .modal-overlay.open { display: flex; }
-    .modal { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 1.8rem; max-width: 540px; width: 90%; position: relative; }
-    .modal h2 { font-size: 16px; font-weight: 700; margin-bottom: 1rem; }
-    .modal-body { font-size: 13px; color: #bbb; line-height: 1.8; white-space: pre-wrap; font-family: 'JetBrains Mono', monospace; }
-    .modal-close { position: absolute; top: 1rem; right: 1rem; background: var(--surface2); border: none; color: var(--muted); width: 26px; height: 26px; border-radius: 6px; cursor: pointer; font-size: 13px; }
-    .modal-close:hover { color: var(--text); }
-  </style>
+        .code-section label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: var(--text-main);
+        }
+
+        /* 把 textarea 做成带有浅橘色边框的格子 */
+        #vex-code {
+            width: 100%;
+            height: 300px;
+            background-color: #FAFAFA;
+            border: 2px solid var(--primary-orange);
+            border-radius: 8px;
+            padding: 15px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 14px;
+            color: #2C3E50;
+            box-sizing: border-box;
+            resize: vertical;
+            line-height: 1.5;
+        }
+
+        #vex-code:focus {
+            outline: none;
+            box-shadow: 0 0 10px rgba(249, 168, 125, 0.3);
+        }
+
+        /* --- 难度等级答题卡选项 --- */
+        .difficulty-section {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .difficulty-section h3 {
+            font-size: 16px;
+            margin-bottom: 15px;
+            color: var(--text-sub);
+        }
+
+        .difficulty-options {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        /* 隐藏原始 radio */
+        .difficulty-options input[type="radio"] {
+            display: none;
+        }
+
+        /* 设计“填涂冒泡”样式 */
+        .difficulty-label {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 80px;
+            height: 35px;
+            border: 2px solid var(--border-color);
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            position: relative;
+            background-color: var(--card-bg);
+        }
+
+        /* 原始颜色作为小点缀 */
+        .difficulty-label::before {
+            content: '';
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        /* 定义不同难度的特定点缀颜色 */
+        .label-easy::before { background-color: var(--diff-easy); }
+        .label-mid::before { background-color: var(--diff-mid); }
+        .label-hard::before { background-color: var(--diff-hard); }
+        .label-vhard::before { background-color: var(--diff-vhard); }
+
+        /* 鼠标悬停效果 */
+        .difficulty-label:hover {
+            border-color: var(--primary-orange);
+            background-color: #FFFBF9;
+        }
+
+        /* 选中状态：填涂效果 */
+        .difficulty-options input[type="radio"]:checked + .difficulty-label {
+            background-color: var(--primary-orange);
+            border-color: var(--primary-orange);
+            color: #FFFFFF;
+            box-shadow: 0 4px 10px rgba(249, 168, 125, 0.4);
+        }
+
+        /* 选中状态下，小点缀变成白色 */
+        .difficulty-options input[type="radio"]:checked + .difficulty-label::before {
+            background-color: #FFFFFF;
+        }
+
+        /* --- 提交按钮 --- */
+        .submit-section {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        #submit-btn {
+            background-color: var(--card-bg);
+            color: var(--primary-orange);
+            border: 3px solid var(--primary-orange);
+            padding: 12px 40px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        #submit-btn:hover {
+            background-color: var(--primary-orange);
+            color: #FFFFFF;
+            box-shadow: 0 5px 15px rgba(249, 168, 125, 0.4);
+        }
+
+        #submit-btn:disabled {
+            border-color: var(--border-color);
+            color: var(--text-sub);
+            cursor: not-allowed;
+        }
+
+        /* --- 结果弹窗 (Modal) 样式优化 --- */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background-color: var(--card-bg);
+            padding: 30px;
+            border-radius: 15px;
+            border: 2px solid var(--primary-orange);
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-sub);
+        }
+
+        #modal-result { font-size: 20px; font-weight: bold; margin-bottom: 10px; }
+        #modal-short { font-size: 16px; color: var(--text-main); margin-bottom: 15px; }
+        #modal-explanation { font-size: 14px; color: var(--text-sub); text-align: left; background: #F9F9F9; padding: 15px; border-radius: 8px; }
+
+        /* 结果颜色 */
+        .res-correct { color: #2ECC71; }
+        .res-wrong { color: #E74C3C; }
+
+    </style>
 </head>
 <body>
 
-<header>
-  <div class="logo">V</div>
-  <h1>VEX Practice</h1>
-  <span class="tagline">Houdini VEX · AI-powered</span>
-</header>
+    <div class="answer-sheet">
+        
+        <header>
+            <h1>VEX 代码练习答题卡</h1>
+            <p>功能简介：这是一个 VEX 代码在线练习小网站。请在下方输入你的 VEX 代码，选择你认为的难度等级，然后点击提交。后台 AI 将会对你的代码进行判断和解释。</p>
+        </header>
 
-<aside>
-  <div class="sidebar-section">Beginner</div>
-  <div class="q-item active" onclick="loadQuestion(0)" id="qitem-0">
-    <span class="q-num">#001</span><span class="q-title">点染红色</span>
-    <span class="q-badge easy">Easy</span>
-  </div>
-  <div class="q-item" onclick="loadQuestion(1)" id="qitem-1">
-    <span class="q-num">#002</span><span class="q-title">随机缩放点</span>
-    <span class="q-badge easy">Easy</span>
-  </div>
-  <div class="q-item" onclick="loadQuestion(2)" id="qitem-2">
-    <span class="q-num">#003</span><span class="q-title">按Y轴染色</span>
-    <span class="q-badge medium">Medium</span>
-  </div>
-  <div class="sidebar-section">Intermediate</div>
-  <div class="q-item" onclick="loadQuestion(3)" id="qitem-3">
-    <span class="q-num">#004</span><span class="q-title">噪波位移</span>
-    <span class="q-badge medium">Medium</span>
-  </div>
-  <div class="q-item" onclick="loadQuestion(4)" id="qitem-4">
-    <span class="q-num">#005</span><span class="q-title">删除偶数点</span>
-    <span class="q-badge hard">Hard</span>
-  </div>
-</aside>
-
-<main>
-  <div class="content">
-    <div class="question-panel">
-      <div class="q-header">
-        <span class="diff-badge" id="q-diff"></span>
-        <span class="category-tag" id="q-cat"></span>
-      </div>
-      <div class="q-main-title" id="q-title"></div>
-      <div class="q-desc" id="q-desc"></div>
-      <div class="expected-box hidden" id="expected-box">
-        <div class="expected-label">
-          <span>期望结果</span>
-          <span class="reveal-hint" id="reveal-hint">提交后显示</span>
+        <div class="question-section">
+            <h2>题目描述</h2>
+            <p style="color: var(--text-sub); font-size: 14px; margin: 0;">(这是一个练习网站，请在这里编写用于控制 VEX 机器人的 VEX C++ 或 Python 代码。你可以尝试实现一个简单的控制逻辑，例如让机器人前进或转弯。)</p>
         </div>
-        <pre id="q-expected"></pre>
-      </div>
+
+        <div class="code-section">
+            <label for="vex-code">VEX 代码 (在此填涂):</label>
+            <textarea id="vex-code" placeholder="// 在此输入 VEX C++ 或 Python 代码...&#10;// 例如: Motor1.spin(forward);"></textarea>
+        </div>
+
+        <div class="difficulty-section">
+            <h3>选择你认为的难度等级 (单选):</h3>
+            <div class="difficulty-options">
+                
+                <input type="radio" name="difficulty" id="diff-1" value="Easy" checked>
+                <label for="diff-1" class="difficulty-label label-easy">Easy</label>
+
+                <input type="radio" name="difficulty" id="diff-2" value="Mid">
+                <label for="diff-2" class="difficulty-label label-mid">Mid</label>
+
+                <input type="radio" name="difficulty" id="diff-3" value="Hard">
+                <label for="diff-3" class="difficulty-label label-hard">Hard</label>
+
+                <input type="radio" name="difficulty" id="diff-4" value="V-Hard">
+                <label for="diff-4" class="difficulty-label label-vhard">V-Hard</label>
+
+            </div>
+        </div>
+
+        <div class="submit-section">
+            <button id="submit-btn">提交答题卡</button>
+        </div>
+
     </div>
 
-    <div class="editor-panel">
-      <div class="editor-toolbar">
-        <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
-        <span style="margin-left:4px;">wrangle.vex</span>
-      </div>
-      <textarea id="vex-editor" placeholder="// 在这里输入你的 VEX 代码&#10;// Write your VEX code here"></textarea>
+    <div class="modal" id="result-modal">
+        <div class="modal-content">
+            <span class="close-modal" id="close-modal-btn">&times;</span>
+            <div id="modal-result"></div>
+            <div id="modal-short"></div>
+            <div id="modal-explanation"></div>
+        </div>
     </div>
-  </div>
 
-  <div class="bottom-bar">
-    <button class="submit-btn" id="submit-btn" onclick="submitVex()">
-      <span id="btn-icon">▶</span>
-      <div class="spinner" id="spinner"></div>
-      <span id="btn-text">提交判断</span>
-    </button>
-    <button class="hint-btn" onclick="getHint()">提示</button>
-    <div class="feedback-area">
-      <div class="feedback-pill" id="feedback-pill">
-        <span class="fb-icon" id="fb-icon"></span>
-        <span class="fb-short" id="fb-short"></span>
-        <span class="detail-link" onclick="openModal()">详情 →</span>
-      </div>
-    </div>
-  </div>
-</main>
+    <script>
+        document.getElementById('submit-btn').addEventListener('click', async function() {
+            const codeInput = document.getElementById('vex-code').value;
+            const difficulty = document.querySelector('input[name="difficulty"]:checked').value;
+            const submitBtn = document.getElementById('submit-btn');
+            const modal = document.getElementById('result-modal');
 
-<div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
-  <div class="modal">
-    <button class="modal-close" onclick="closeModal()">✕</button>
-    <h2 id="modal-title"></h2>
-    <div class="modal-body" id="modal-body"></div>
-  </div>
-</div>
+            if (!codeInput.trim()) {
+                alert('请先输入代码！就像答题卡不能留白一样。');
+                return;
+            }
 
-<script>
-const questions = [
-  {
-    title: "将所有点染成红色",
-    diff: "easy", cat: "ATTRIBUTE · WRANGLE",
-    desc: `在 Geometry Wrangle 中，将所有点的颜色属性 <code>@Cd</code> 设置为纯红色。<br><br>每个 point 都应该被设置，不需要循环。`,
-    expected: "@Cd = {1, 0, 0}\n// R=1, G=0, B=0",
-    judge: `题目：Geometry Wrangle 中将所有点的 @Cd 设为纯红色 {1,0,0}。判断：@Cd 最终必须等于 {1,0,0}，语法正确，语句以分号结尾。`,
-    hint: "@Cd 是 vector 类型。可以直接赋值字面量 {1, 0, 0}，也可以分别设置 .r .g .b 三个分量。"
-  },
-  {
-    title: "随机缩放每个点",
-    diff: "easy", cat: "ATTRIBUTE · WRANGLE",
-    desc: `为每个点添加 <code>@pscale</code> 属性，值为 0 到 2 之间的随机数。<br><br>要求：每个点的值不同，基于点的序号生成。`,
-    expected: "@pscale = rand(@ptnum) * 2\n// 每个点有不同的随机缩放",
-    judge: `题目：Geometry Wrangle 中为每个点设置 @pscale 为 0~2 的随机数，用 rand(@ptnum) 生成，确保每个点不同。`,
-    hint: "rand(@ptnum) 根据点序号生成 0~1 的随机数。乘以 2 即可扩展到 0~2 范围。"
-  },
-  {
-    title: "根据 Y 轴高度染色",
-    diff: "medium", cat: "ATTRIBUTE · MATH",
-    desc: `根据每个点的 Y 坐标将颜色从黑渐变到白。<br><br>假设 Y 范围为 0~1，使用 <code>@P.y</code> 获取 Y 坐标，赋给 <code>@Cd</code> 作为灰度值。`,
-    expected: "@Cd = @P.y\n// Y=0 → 黑色，Y=1 → 白色",
-    judge: `题目：用 @P.y 值设置 @Cd，形成从黑到白的灰度渐变。Y=0时@Cd={0,0,0}，Y=1时@Cd={1,1,1}。`,
-    hint: "@Cd 接受 float 值时，会自动广播到 R/G/B 三个通道，形成灰色。"
-  },
-  {
-    title: "用噪波位移点的位置",
-    diff: "medium", cat: "NOISE · DISPLACEMENT",
-    desc: `使用 <code>noise()</code> 函数，根据每个点的原始位置产生噪波值，将其乘以 0.5 后加到 <code>@P.y</code> 上。`,
-    expected: "@P.y += noise(@P) * 0.5\n// 产生不规则高度起伏",
-    judge: `题目：用 noise(@P) 采样，结果乘以 0.5 后加到 @P.y，产生 Y 轴方向的噪波位移。`,
-    hint: "noise(@P) 返回 0~1 的值。用 -= 0.5 可让值居中，避免整体抬高。"
-  },
-  {
-    title: "删除所有偶数编号的点",
-    diff: "hard", cat: "REMOVAL · CONDITIONAL",
-    desc: `删除所有 <code>@ptnum</code> 为偶数（0, 2, 4...）的点，只保留奇数点。<br><br>提示：使用 <code>removepoint()</code> 和取余运算符 <code>%</code>。`,
-    expected: "// 只保留奇数编号的点\n// 点数量减少约一半",
-    judge: `题目：删除所有 @ptnum 为偶数的点（0,2,4...），用 removepoint(0,@ptnum) 和 % 运算符。保留奇数点。`,
-    hint: "if (@ptnum % 2 == 0) 判断偶数。removepoint(0, @ptnum) 的第一个参数 0 代表当前几何体。"
-  }
-];
+            // UI 状态更新：加载中
+            submitBtn.disabled = true;
+            submitBtn.innerText = '正在判题...';
 
-let currentQ = 0;
-let lastFeedback = null;
+            try {
+                // 发起 API 请求
+                const response = await fetch('/api/judge', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        code: codeInput,
+                        difficulty: difficulty,
+                        // 这里的 system prompt 可以根据你的需要调整，让 AI 配合新的设计
+                        system: "你是一个专业的 VEX 机器人竞赛裁判。请判断用户提交的代码是否正确，并给出简短的解释和难度评估。无论发生什么，请只返回一个标准的 JSON 对象，格式为：{\"result\": \"correct/wrong\", \"short\": \"简短结果\", \"explanation\": \"详细解释\"}"
+                    })
+                });
 
-function loadQuestion(idx) {
-  currentQ = idx;
-  const q = questions[idx];
-  document.querySelectorAll('.q-item').forEach((el, i) => el.classList.toggle('active', i === idx));
+                const data = await response.json();
 
-  const diffEl = document.getElementById('q-diff');
-  diffEl.textContent = q.diff.charAt(0).toUpperCase() + q.diff.slice(1);
-  diffEl.className = 'diff-badge ' + q.diff;
-  document.getElementById('q-cat').textContent = q.cat;
-  document.getElementById('q-title').textContent = q.title;
-  document.getElementById('q-desc').innerHTML = q.desc;
-  document.getElementById('q-expected').textContent = q.expected;
+                // 填充弹窗内容
+                const resEl = document.getElementById('modal-result');
+                const shortEl = document.getElementById('modal-short');
+                const expEl = document.getElementById('modal-explanation');
 
-  // Hide expected result on load
-  const box = document.getElementById('expected-box');
-  box.classList.remove('revealed');
-  box.classList.add('hidden');
-  document.getElementById('reveal-hint').textContent = '提交后显示';
+                if (data.result === 'correct') {
+                    resEl.innerText = '✔ 正确';
+                    resEl.className = 'res-correct';
+                } else {
+                    resEl.innerText = '✘ 错误';
+                    resEl.className = 'res-wrong';
+                }
 
-  document.getElementById('vex-editor').value = '';
-  document.getElementById('feedback-pill').className = 'feedback-pill';
-  lastFeedback = null;
-}
+                shortEl.innerText = data.short || '无简短结果';
+                expEl.innerText = data.explanation || '无详细解释';
 
-function revealExpected() {
-  const box = document.getElementById('expected-box');
-  box.classList.remove('hidden');
-  box.classList.add('revealed');
-  document.getElementById('reveal-hint').textContent = '官方参考答案';
-}
+                // 显示弹窗
+                modal.style.display = 'flex';
 
-async function submitVex() {
-  const code = document.getElementById('vex-editor').value.trim();
-  if (!code) { alert('请先输入 VEX 代码'); return; }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('服务器崩溃了，请稍后再试。就像答题卡被撕破了一样。');
+            } finally {
+                // 恢复 UI 状态
+                submitBtn.disabled = false;
+                submitBtn.innerText = '提交答题卡';
+            }
+        });
 
-  const btn = document.getElementById('submit-btn');
-  const spinner = document.getElementById('spinner');
-  const btnIcon = document.getElementById('btn-icon');
-  btn.disabled = true;
-  btnIcon.style.display = 'none';
-  spinner.style.display = 'block';
-  document.getElementById('btn-text').textContent = '判断中...';
-  document.getElementById('feedback-pill').className = 'feedback-pill';
+        // 关闭弹窗逻辑
+        document.getElementById('close-modal-btn').addEventListener('click', function() {
+            document.getElementById('result-modal').style.display = 'none';
+        });
 
-  try {
-    const res = await fetch('/api/judge', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ questionContext: questions[currentQ].judge, code })
-    });
-    const data = await res.json();
-    lastFeedback = data;
-    showFeedback(data);
+        // 点击弹窗外部关闭
+        window.addEventListener('click', function(event) {
+            const modal = document.getElementById('result-modal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+    </script>
 
-    // Reveal expected result after first submission
-    revealExpected();
-
-  } catch (err) {
-    const fallback = { result: 'wrong', short: '连接错误', explanation: '无法连接判断服务：' + err.message };
-    lastFeedback = fallback;
-    showFeedback(fallback);
-  }
-
-  btn.disabled = false;
-  btnIcon.style.display = 'inline';
-  spinner.style.display = 'none';
-  document.getElementById('btn-text').textContent = '重新提交';
-}
-
-function showFeedback(data) {
-  const pill = document.getElementById('feedback-pill');
-  const icons = { correct: '✓', wrong: '✗', partial: '△' };
-  document.getElementById('fb-icon').textContent = icons[data.result] || '?';
-  document.getElementById('fb-short').textContent = data.short || '';
-  pill.className = 'feedback-pill ' + data.result;
-}
-
-function getHint() {
-  document.getElementById('modal-title').textContent = '💡 提示';
-  document.getElementById('modal-body').textContent = questions[currentQ].hint;
-  document.getElementById('modal-overlay').classList.add('open');
-}
-
-function openModal() {
-  if (!lastFeedback) return;
-  document.getElementById('modal-title').textContent = lastFeedback.short || '判断详情';
-  document.getElementById('modal-body').textContent = lastFeedback.explanation || '';
-  document.getElementById('modal-overlay').classList.add('open');
-}
-
-function closeModal() {
-  document.getElementById('modal-overlay').classList.remove('open');
-}
-
-loadQuestion(0);
-</script>
 </body>
 </html>
