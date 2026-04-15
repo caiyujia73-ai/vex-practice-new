@@ -3,83 +3,83 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VEX Practice Pro</title>
+  <title>VEX Lab Pro</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Syne:wght@400;600;700&display=swap" rel="stylesheet" />
   <style>
     :root {
       --bg: #FDF8F5; --surface: #FFFFFF; --surface2: #FFFBF9;
       --border: #F9A87D; --accent: #F9A87D; --text: #4A4A4A; 
-      --muted: #8C8C8C; --diff-easy: #A8E6CF; --diff-mid: #FFD3B6;
-      --diff-hard: #FFAAA5; --diff-vhard: #D4A5FF;
+      --muted: #8C8C8C; --diff-easy: #A8E6CF; --diff-medium: #FFD3B6;
+      --diff-hard: #FFAAA5;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Syne', sans-serif; background: var(--bg); color: var(--text);
       min-height: 100vh; display: grid;
-      grid-template-columns: 220px 1fr; grid-template-rows: 60px 1fr;
+      grid-template-columns: 240px 1fr; grid-template-rows: 60px 1fr;
     }
 
-    /* Header */
     header {
       grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between;
       padding: 0 25px; background: var(--surface); border-bottom: 2px solid var(--border); z-index: 100;
     }
-    .logo { font-weight: 700; font-size: 18px; color: var(--accent); letter-spacing: -0.5px; }
+    .logo { font-weight: 700; font-size: 18px; color: var(--accent); }
     .lang-switch { display: flex; gap: 8px; }
     .lang-btn {
       padding: 4px 10px; border: 1px solid var(--border); background: transparent;
-      border-radius: 12px; cursor: pointer; font-family: 'Syne'; font-size: 11px; transition: 0.3s;
+      border-radius: 12px; cursor: pointer; font-family: 'Syne'; font-size: 11px;
     }
     .lang-btn.active { background: var(--accent); color: white; }
 
-    /* Sidebar (Quest List) */
+    /* Sidebar */
     aside { background: var(--surface); border-right: 1px solid #EEE5E0; padding: 15px; overflow-y: auto; }
-    .nav-title { font-size: 11px; color: var(--muted); text-transform: uppercase; margin-bottom: 12px; letter-spacing: 1px; }
+    .sidebar-section { 
+      font-size: 11px; color: var(--muted); text-transform: uppercase; 
+      margin: 20px 0 10px 10px; letter-spacing: 1px; font-weight: 700;
+    }
     .q-item {
-      padding: 8px 12px; margin-bottom: 6px; border-radius: 6px; cursor: pointer;
+      padding: 10px 12px; margin-bottom: 4px; border-radius: 8px; cursor: pointer;
       font-size: 13px; transition: 0.2s; border: 1px solid transparent;
-      display: flex; align-items: center; gap: 8px; color: var(--text);
+      display: flex; align-items: center; justify-content: space-between;
     }
     .q-item:hover { background: var(--surface2); }
-    .q-item.active { background: var(--surface2); border-color: var(--border); font-weight: 600; color: var(--accent); }
-    .diff-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+    .q-item.active { background: var(--surface2); border-color: var(--border); font-weight: 600; }
+    
+    .q-num { font-family: 'JetBrains Mono'; font-size: 11px; color: var(--muted); margin-right: 8px; }
+    .q-badge { 
+      font-size: 9px; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; font-weight: 700;
+    }
+    .easy { background: var(--diff-easy); color: #1E5631; }
+    .medium { background: var(--diff-medium); color: #7A4E2D; }
+    .hard { background: var(--diff-hard); color: #7A2D2D; }
 
-    /* Main Content */
-    main { padding: 25px; display: flex; justify-content: center; overflow-y: auto; }
+    /* Main */
+    main { padding: 30px; display: flex; justify-content: center; }
     .answer-card {
       background: var(--surface); border: 2px solid var(--border); border-radius: 12px;
-      padding: 25px; width: 100%; max-width: 850px; height: fit-content;
-      box-shadow: 0 6px 15px rgba(249, 168, 125, 0.08);
+      padding: 30px; width: 100%; max-width: 800px; height: fit-content;
+      box-shadow: 0 8px 20px rgba(249, 168, 125, 0.1);
     }
-    .q-header h2 { font-size: 22px; margin-bottom: 10px; font-weight: 700; }
-    .asset-box { margin: 10px 0; display: flex; flex-wrap: wrap; gap: 6px; }
-    .asset-tag {
-      padding: 3px 8px; background: #F5F5F5; border-radius: 4px;
-      font-size: 11px; font-family: 'JetBrains Mono'; color: #666;
-    }
-    #q-desc { font-size: 14px; line-height: 1.6; color: #555; margin-top: 10px; }
+    .q-header h2 { font-size: 24px; margin-bottom: 12px; }
+    #q-desc { font-size: 15px; line-height: 1.7; color: #555; margin-bottom: 20px; }
 
-    /* Editor */
-    .editor-wrap { margin: 20px 0; }
     textarea {
       width: 100%; height: 350px; background: #FBFBFB; border: 1px solid #DDD;
-      border-radius: 8px; padding: 15px; font-family: 'JetBrains Mono', monospace;
-      font-size: 13px; line-height: 1.5; resize: none; color: #333;
+      border-radius: 8px; padding: 18px; font-family: 'JetBrains Mono', monospace;
+      font-size: 14px; line-height: 1.5; resize: none; color: #333; margin-bottom: 20px;
     }
-    textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(249, 168, 125, 0.1); }
+    textarea:focus { outline: none; border-color: var(--accent); }
 
-    /* Actions */
-    .actions { display: flex; justify-content: space-between; align-items: center; }
+    .actions { display: flex; justify-content: space-between; }
     .btn {
-      padding: 9px 20px; border-radius: 20px; border: 2px solid var(--accent);
+      padding: 10px 24px; border-radius: 20px; border: 2px solid var(--accent);
       background: transparent; color: var(--accent); font-weight: 700;
-      cursor: pointer; font-family: 'Syne'; transition: 0.3s; font-size: 14px;
+      cursor: pointer; font-family: 'Syne'; transition: 0.3s;
     }
     .btn:hover { background: var(--accent); color: white; }
     .btn-primary { background: var(--accent); color: white; }
-    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
     /* Modal */
     #modal-overlay {
@@ -88,19 +88,15 @@
     }
     #modal-overlay.open { display: flex; }
     .modal {
-      background: white; padding: 25px; border-radius: 12px; width: 450px;
-      border: 2px solid var(--border); position: relative;
+      background: white; padding: 30px; border-radius: 12px; width: 480px; border: 2px solid var(--border);
     }
-    #modal-body { 
-      background: #F9F9F9; padding: 15px; border-radius: 8px; 
-      font-size: 13px; line-height: 1.6; margin: 15px 0; max-height: 250px; overflow-y: auto;
-    }
+    #modal-body { background: #F9F9F9; padding: 15px; border-radius: 8px; font-size: 14px; margin: 15px 0; }
   </style>
 </head>
 <body>
 
   <header>
-    <div class="logo">VEX CODE INTERN</div>
+    <div class="logo">VEX LAB / HOUDINI</div>
     <div class="lang-switch">
       <button class="lang-btn active" id="btn-zh" onclick="setLang('zh')">中文</button>
       <button class="lang-btn" id="btn-en" onclick="setLang('en')">EN</button>
@@ -108,74 +104,67 @@
   </header>
 
   <aside>
-    <div class="nav-title" id="side-title">QUEST LIST</div>
-    <div id="q-list"></div>
+    <div id="q-list-container"></div>
   </aside>
 
   <main>
     <div class="answer-card">
       <div class="q-header">
-        <h2 id="q-title">载入中...</h2>
-        <div class="asset-box" id="q-assets"></div>
+        <h2 id="q-title">Loading...</h2>
         <p id="q-desc"></p>
       </div>
-
-      <div class="editor-wrap">
-        <textarea id="vex-code" placeholder="// Input your VEX code here..."></textarea>
-      </div>
-
+      <textarea id="vex-code" placeholder="Write your VEX code here..."></textarea>
       <div class="actions">
         <button class="btn" onclick="showHint()" id="hint-btn">HINT</button>
-        <button class="btn btn-primary" id="submit-btn" onclick="submitTask()">SUBMIT CARD</button>
+        <button class="btn btn-primary" id="submit-btn" onclick="submitCode()">SUBMIT CARD</button>
       </div>
     </div>
   </main>
 
   <div id="modal-overlay" onclick="closeModal()">
     <div class="modal" onclick="event.stopPropagation()">
-      <h3 id="modal-title" style="color: var(--accent)">RESULT</h3>
+      <h3 id="modal-title" style="color: var(--accent)">JUDGE</h3>
       <div id="modal-body"></div>
-      <button class="btn" style="width: 100%" onclick="closeModal()" id="close-btn">CLOSE</button>
+      <button class="btn" style="width: 100%" onclick="closeModal()" id="close-btn">BACK</button>
     </div>
   </div>
 
   <script>
-    // --- 完整题目库集成 ---
     const questions = [
       {
-        id: 1, difficulty: "easy",
-        title: { zh: "01. 基础前进", en: "01. Basic Forward" },
-        assets: ["Motor_Left", "Motor_Right"],
-        desc: { zh: "让机器人以 50% 的速度前进 2 秒后停止。", en: "Drive forward at 50% velocity for 2 seconds and then stop." },
-        hint: { zh: "使用 spin(forward) 配合 task::sleep(2000)。", en: "Use spin(forward) with task::sleep(2000)." }
+        section: "Beginner",
+        id: "001", difficulty: "easy",
+        title: { zh: "点染红色", en: "Color Points Red" },
+        desc: { zh: "编写 VEX 代码将所有点的颜色属性 (Cd) 设置为纯红色。", en: "Write VEX code to set the color attribute (Cd) of all points to pure red." },
+        hint: { zh: "@Cd = {1,0,0};", en: "Use @Cd = {1,0,0};" }
       },
       {
-        id: 2, difficulty: "easy",
-        title: { zh: "02. 精确后退", en: "02. Precise Reverse" },
-        assets: ["Drivetrain"],
-        desc: { zh: "使用 Drivetrain 让机器人后退 200 毫米。", en: "Use Drivetrain to move the robot reverse for 200 mm." },
-        hint: { zh: "尝试使用 driveFor(reverse, 200, mm)。", en: "Try using driveFor(reverse, 200, mm)." }
+        section: "Beginner",
+        id: "002", difficulty: "easy",
+        title: { zh: "随机缩放点", en: "Random Scale" },
+        desc: { zh: "基于点的编号 (@ptnum) 为每个点创建一个随机的缩放属性 (@pscale)。", en: "Create a random @pscale attribute for each point based on its point number (@ptnum)." },
+        hint: { zh: "@pscale = rand(@ptnum);", en: "Try @pscale = rand(@ptnum);" }
       },
       {
-        id: 3, difficulty: "mid",
-        title: { zh: "03. 原地转弯", en: "03. Point Turn" },
-        assets: ["Motor_Left", "Motor_Right"],
-        desc: { zh: "让左电机前进，右电机后退，实现原地右转 90 度（假设耗时 500ms）。", en: "Spin Left forward and Right reverse to turn 90 degrees (approx 500ms)." },
-        hint: { zh: "给两个电机设置相反的运动方向。", en: "Set opposite directions for the two motors." }
+        section: "Beginner",
+        id: "003", difficulty: "medium",
+        title: { zh: "按 Y 轴染色", en: "Color by Y-Axis" },
+        desc: { zh: "使点的红色通道 (Cd.r) 根据其在 Y 轴的高度 (@P.y) 进行变化。", en: "Make the red channel of the color (Cd.r) vary according to the Y-axis position (@P.y)." },
+        hint: { zh: "@Cd.r = @P.y;", en: "Set @Cd.r = @P.y;" }
       },
       {
-        id: 4, difficulty: "mid",
-        title: { zh: "04. 循环往复", en: "04. Loop Drive" },
-        assets: ["Drivetrain"],
-        desc: { zh: "使用 for 循环让机器人重复“前进10cm、后退10cm”动作 3 次。", en: "Use a for loop to repeat 'forward 10cm, reverse 10cm' 3 times." },
-        hint: { zh: "for(int i=0; i<3; i++) { ... }", en: "Use for(int i=0; i<3; i++) { ... }" }
+        section: "Intermediate",
+        id: "004", difficulty: "medium",
+        title: { zh: "噪波位移", en: "Noise Displacement" },
+        desc: { zh: "使用 Curl Noise 根据点的位置对点的坐标 (@P) 进行偏移。", en: "Offset point positions (@P) using Curl Noise based on current position." },
+        hint: { zh: "@P += curlnoise(@P);", en: "Use @P += curlnoise(@P * freq);" }
       },
       {
-        id: 5, difficulty: "hard",
-        title: { zh: "05. 触碰停止", en: "05. Bumper Stop" },
-        assets: ["Drivetrain", "Bumper_Sensor"],
-        desc: { zh: "让机器人一直前进，直到触碰传感器被按下时停止。", en: "Drive forward indefinitely until the Bumper sensor is pressed." },
-        hint: { zh: "使用 while(!Bumper.pressing()) 循环。", en: "Use a while(!Bumper.pressing()) loop." }
+        section: "Intermediate",
+        id: "005", difficulty: "hard",
+        title: { zh: "删除偶数点", en: "Remove Even Points" },
+        desc: { zh: "编写代码，如果点的编号是偶数，则将其删除。", en: "Write code to remove points if their point number (@ptnum) is an even number." },
+        hint: { zh: "if(@ptnum % 2 == 0) removepoint(0, @ptnum);", en: "Use the modulo operator % and removepoint()." }
       }
     ];
 
@@ -183,8 +172,8 @@
     let lang = 'zh';
 
     const uiText = {
-      zh: { side: "题目列表", hint: "查看提示", submit: "提交答题卡", close: "关闭", judging: "AI 判题中...", alert: "请输入代码" },
-      en: { side: "QUEST LIST", hint: "HINT", submit: "SUBMIT CARD", close: "CLOSE", judging: "JUDGING...", alert: "Enter code first" }
+      zh: { hint: "查看提示", submit: "提交答题卡", close: "返回练习", judging: "AI 判题中...", alert: "请输入代码" },
+      en: { hint: "HINT", submit: "SUBMIT CARD", close: "CLOSE", judging: "JUDGING...", alert: "Enter code first" }
     };
 
     function setLang(l) {
@@ -195,31 +184,38 @@
     }
 
     function render() {
-      // 侧边栏
-      document.getElementById('side-title').innerText = uiText[lang].side;
-      const list = document.getElementById('q-list');
-      list.innerHTML = '';
+      const listContainer = document.getElementById('q-list-container');
+      listContainer.innerHTML = '';
+      
+      let lastSection = "";
       questions.forEach((q, i) => {
+        if (q.section !== lastSection) {
+          const sectionDiv = document.createElement('div');
+          sectionDiv.className = 'sidebar-section';
+          sectionDiv.innerText = q.section;
+          listContainer.appendChild(sectionDiv);
+          lastSection = q.section;
+        }
+
         const div = document.createElement('div');
         div.className = `q-item ${i === currentIdx ? 'active' : ''}`;
         div.onclick = () => { currentIdx = i; render(); };
-        div.innerHTML = `<span class="diff-dot" style="background:var(--diff-${q.difficulty})"></span>${q.title[lang]}`;
-        list.appendChild(div);
+        div.innerHTML = `
+          <div><span class="q-num">#${q.id}</span>${q.title[lang]}</div>
+          <span class="q-badge ${q.difficulty}">${q.difficulty}</span>
+        `;
+        listContainer.appendChild(div);
       });
 
-      // 主内容
       const q = questions[currentIdx];
       document.getElementById('q-title').innerText = q.title[lang];
       document.getElementById('q-desc').innerText = q.desc[lang];
       document.getElementById('hint-btn').innerText = uiText[lang].hint;
       document.getElementById('submit-btn').innerText = uiText[lang].submit;
       document.getElementById('close-btn').innerText = uiText[lang].close;
-
-      const assetEl = document.getElementById('q-assets');
-      assetEl.innerHTML = q.assets.map(a => `<span class="asset-tag">${a}</span>`).join('');
     }
 
-    async function submitTask() {
+    async function submitCode() {
       const code = document.getElementById('vex-code').value;
       if (!code.trim()) return alert(uiText[lang].alert);
 
@@ -233,20 +229,15 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             code: code,
-            system: `你是一个 VEX 机器人竞赛裁判。当前题目：${questions[currentIdx].title.zh}。可用设备：${questions[currentIdx].assets.join(',')}。请判断代码逻辑。必须返回 JSON：{"result":"correct/wrong","short":"简短标题","explanation":"详细分析"}`
+            system: `你是一个 Houdini VEX 专家。题目：${questions[currentIdx].title.zh}。请判断代码。返回JSON：{"result":"correct/wrong","short":"总结","explanation":"分析"}`
           })
         });
         const data = await res.json();
-        
-        document.getElementById('modal-title').innerText = (data.result === 'correct' ? '✅ ' : '❌ ') + (data.short || 'Result');
-        document.getElementById('modal-body').innerText = data.explanation || 'No details provided.';
+        document.getElementById('modal-title').innerText = (data.result === 'correct' ? '✅ ' : '❌ ') + data.short;
+        document.getElementById('modal-body').innerText = data.explanation;
         document.getElementById('modal-overlay').classList.add('open');
-      } catch (e) {
-        alert("Server Error");
-      } finally {
-        btn.disabled = false;
-        btn.innerText = uiText[lang].submit;
-      }
+      } catch (e) { alert("Error"); }
+      finally { btn.disabled = false; btn.innerText = uiText[lang].submit; }
     }
 
     function showHint() {
@@ -257,8 +248,7 @@
 
     function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); }
 
-    // 初始化渲染
-    render();
+    setLang('zh');
   </script>
 </body>
 </html>
