@@ -3,248 +3,301 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VEX Lab | Transparent Pro</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,600;1,700&family=Space+Mono:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <title>VEX Minimalist Lab</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Syne:wght@400;600&display=swap" rel="stylesheet" />
   <style>
     :root {
-      /* 核心色彩：深邃、透明 */
-      --bg-color: #08090a;
-      --glass-surface: rgba(25, 28, 35, 0.65);
-      --glass-border: rgba(255, 255, 255, 0.08);
-      --accent-color: #c8f060; /* 青柠色 */
-      --text-main: #e0e0e0;
-      --text-dim: #888888;
+      --bg: #F9F9F9; /* 极简暖白 */
+      --card: #FFFFFF;
+      --border: #EEEEEE;
+      --text: #333333;
+      --text-sub: #999999;
+      
+      /* 莫兰迪色系难度标识 */
+      --diff-easy: #A3B18A;   /* 莫兰迪绿 */
+      --diff-medium: #E9C46A; /* 莫兰迪黄 */
+      --diff-hard: #E07A5F;   /* 莫兰迪红 */
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
     
     body {
-      font-family: 'Space Mono', monospace;
-      background: var(--bg-color);
-      /* 背景装饰：微弱的径向渐变，增强透明感 */
-      background-image: radial-gradient(circle at 50% 50%, #1a1c22 0%, #08090a 100%);
-      color: var(--text-main);
-      display: grid;
-      grid-template-columns: 280px 1fr;
+      font-family: 'Syne', sans-serif;
+      background: var(--bg);
       height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* --- 插画风主卡片 --- */
+    .lab-container {
+      width: 90vw;
+      height: 85vh;
+      max-width: 1100px;
+      background: var(--card);
+      border-radius: 40px;
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      box-shadow: 0 30px 60px rgba(0,0,0,0.02);
+      border: 1px solid var(--border);
       overflow: hidden;
     }
 
-    /* --- Sidebar (毛玻璃侧边栏) --- */
+    /* --- 极简侧边栏 --- */
     aside {
-      background: var(--glass-surface);
-      backdrop-filter: blur(20px);
-      border-right: 1px solid var(--glass-border);
-      padding: 40px 0;
+      background: #FFFFFF;
+      border-right: 1px solid var(--border);
+      padding: 40px 20px;
       display: flex;
       flex-direction: column;
-      z-index: 10;
     }
 
     .brand {
-      padding: 0 30px 40px;
-      font-family: 'Cormorant Garamond', serif; /* 复古英文标题 */
-      font-size: 26px;
-      font-style: italic;
-      letter-spacing: 1px;
-      color: var(--accent-color);
+      font-weight: 700;
+      font-size: 20px;
+      margin-bottom: 40px;
+      padding-left: 10px;
+      letter-spacing: -0.5px;
     }
 
-    .q-list { overflow-y: auto; flex: 1; padding: 0 15px; }
-    
     .q-item {
-      padding: 14px 20px;
-      margin-bottom: 4px;
-      border-radius: 8px;
+      padding: 12px 15px;
+      margin-bottom: 5px;
+      border-radius: 15px;
       cursor: pointer;
       font-size: 13px;
-      transition: all 0.3s ease;
-      color: var(--text-dim);
-      border: 1px solid transparent;
-    }
-    .q-item:hover { background: rgba(255, 255, 255, 0.03); color: var(--text-main); }
-    .q-item.active {
-      background: rgba(200, 240, 96, 0.1);
-      border-color: rgba(200, 240, 96, 0.2);
-      color: var(--accent-color);
-    }
-
-    /* --- Main Area --- */
-    main {
-      padding: 60px;
+      color: var(--text-sub);
+      transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      overflow-y: auto;
-      position: relative;
+      align-items: center;
+      gap: 10px;
+    }
+    .q-item:hover { background: #F5F5F5; color: var(--text); }
+    .q-item.active {
+      background: #F0F0F0;
+      color: var(--text);
+      font-weight: 600;
     }
 
-    /* 装饰：背景的大圆 */
-    main::before {
-      content: ""; position: absolute; top: 10%; left: 20%; width: 300px; height: 300px;
-      background: var(--accent-color); opacity: 0.03; filter: blur(100px); pointer-events: none;
+    /* 难度圆点指示器 */
+    .indicator { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+    /* --- 主操作区 --- */
+    main {
+      padding: 40px 60px;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      background: #FFFFFF;
     }
 
-    .glass-card {
-      background: var(--glass-surface);
-      backdrop-filter: blur(30px);
-      border: 1px solid var(--glass-border);
-      width: 100%;
-      max-width: 850px;
+    header {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 30px;
+    }
+
+    .lang-switcher {
+      display: flex; gap: 20px; font-size: 11px; font-weight: 700; color: #CCC;
+    }
+    .lang-btn { cursor: pointer; transition: 0.3s; }
+    .lang-btn.active { color: var(--text); }
+
+    /* 内容布局 */
+    .content-area {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 50px;
+      align-items: start;
+    }
+
+    /* 左侧题目卡片：模拟插画风格 */
+    .info-panel {
+      padding-top: 20px;
+    }
+    .info-panel h2 {
+      font-size: 36px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      line-height: 1.1;
+      letter-spacing: -1px;
+    }
+    .info-panel p {
+      font-size: 14px;
+      line-height: 1.8;
+      color: var(--text-sub);
+      margin-bottom: 30px;
+    }
+
+    .diff-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
       border-radius: 20px;
-      padding: 50px;
-      box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 20px;
     }
 
-    h1 { 
-      font-family: 'Cormorant Garamond', serif; 
-      font-size: 38px; font-weight: 700; font-style: italic;
-      margin-bottom: 15px; color: var(--text-main);
-    }
-    
-    .desc { 
-      font-size: 14px; line-height: 1.8; color: var(--text-dim); 
-      margin-bottom: 40px; border-left: 2px solid var(--accent-color); padding-left: 20px;
-    }
-
-    /* Editor Box */
-    .editor-container {
-      background: rgba(0, 0, 0, 0.2);
-      border: 1px solid var(--glass-border);
-      border-radius: 12px;
-      padding: 10px;
-      margin-bottom: 35px;
+    /* 右侧编辑器：手绘感线条 */
+    .editor-box {
+      border: 1.5px solid #E0E0E0; /* 模仿插画的中性线条 */
+      border-radius: 30px;
+      padding: 20px;
+      height: 450px;
+      display: flex;
+      flex-direction: column;
+      background: #FCFCFC;
     }
 
-    textarea {
-      width: 100%; height: 320px;
-      background: transparent; border: none;
-      padding: 15px; color: #fff;
-      font-family: 'JetBrains Mono', monospace; font-size: 14px;
-      line-height: 1.6; resize: none; outline: none;
+    #vex-editor {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      line-height: 1.8;
+      color: #333;
+      resize: none;
     }
 
-    /* Buttons */
-    .footer { display: flex; gap: 20px; align-items: center; }
-    
+    /* 底部按钮 */
+    .footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 20px;
+      padding-top: 30px;
+    }
+
     .btn {
-      padding: 12px 30px; border-radius: 30px;
-      font-family: 'Space Mono', monospace; font-weight: 700; font-size: 13px;
-      cursor: pointer; transition: 0.3s; text-transform: uppercase;
+      padding: 12px 30px;
+      border-radius: 25px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 700;
+      transition: 0.2s;
+      font-family: 'Syne';
     }
+    .btn-hint { background: transparent; border: 1.5px solid #EEE; color: #999; }
+    .btn-submit { background: #333; color: #FFF; border: none; }
+    .btn:hover { transform: scale(1.02); opacity: 0.9; }
 
-    .btn-outline {
-      background: transparent; border: 1px solid var(--glass-border); color: var(--text-dim);
-    }
-    .btn-outline:hover { background: rgba(255,255,255,0.05); color: var(--text-main); }
-
-    .btn-fill {
-      background: var(--accent-color); border: none; color: #000;
-      box-shadow: 0 8px 20px rgba(200, 240, 96, 0.2);
-    }
-    .btn-fill:hover { transform: translateY(-2px); opacity: 0.9; }
-    .btn-fill:disabled { opacity: 0.4; transform: none; cursor: not-allowed; }
-
-    /* Modal (毛玻璃反馈窗) */
+    /* Modal (插画风反馈) */
     #modal-overlay {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.6); backdrop-filter: blur(8px);
-      display: none; align-items: center; justify-content: center; z-index: 1000;
+      position: fixed; inset: 0; background: rgba(255,255,255,0.8);
+      backdrop-filter: blur(10px); display: none; align-items: center; justify-content: center; z-index: 1000;
     }
     .modal {
-      background: rgba(30, 33, 40, 0.9); border: 1px solid var(--glass-border);
-      width: 550px; padding: 40px; border-radius: 20px; text-align: left;
+      background: white; width: 400px; padding: 40px; border-radius: 40px;
+      border: 1px solid #EEE; text-align: center;
+      box-shadow: 0 40px 80px rgba(0,0,0,0.05);
     }
-    #modal-body { 
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 13px; line-height: 1.7; color: #aaa;
-      margin: 25px 0; background: rgba(0,0,0,0.2); padding: 20px; border-radius: 10px;
-    }
+    #modal-body { font-size: 14px; line-height: 1.8; color: #666; margin: 20px 0; }
+
   </style>
 </head>
 <body>
 
-  <aside>
-    <div class="brand">Laboratory.</div>
-    <div class="q-list" id="q-list"></div>
-  </aside>
+  <div class="lab-container">
+    <aside>
+      <div class="brand">VEX.HEY</div>
+      <div class="q-list" id="q-list"></div>
+    </aside>
 
-  <main>
-    <div class="glass-card">
-      <h1 id="q-title">Loading...</h1>
-      <div class="desc" id="q-desc"></div>
+    <main>
+      <header>
+        <div class="lang-switcher">
+          <span class="lang-btn active" id="btn-zh" onclick="setLang('zh')">中文</span>
+          <span class="lang-btn" id="btn-en" onclick="setLang('en')">EN</span>
+        </div>
+      </header>
 
-      <div class="editor-container">
-        <textarea id="vex-editor" spellcheck="false" placeholder="// Initializing VEX kernel..."></textarea>
+      <div class="content-area">
+        <div class="info-panel">
+          <div id="diff-pill" class="diff-label"></div>
+          <h2 id="q-title">...</h2>
+          <p id="q-desc"></p>
+        </div>
+
+        <div class="editor-box">
+          <textarea id="vex-editor" spellcheck="false" placeholder="// 在此开始创作你的代码..."></textarea>
+        </div>
       </div>
 
       <div class="footer">
-        <button class="btn btn-outline" onclick="showHint()">Hint</button>
-        <button class="btn btn-fill" id="submit-btn" onclick="submitCode()">Execute Analysis</button>
+        <button class="btn btn-hint" onclick="showHint()" id="hint-txt">提示</button>
+        <button class="btn btn-submit" id="submit-btn" onclick="submitTask()">提交判断</button>
       </div>
-    </div>
-  </main>
+    </main>
+  </div>
 
   <div id="modal-overlay" onclick="closeModal()">
     <div class="modal" onclick="event.stopPropagation()">
-      <h3 id="modal-title" style="font-family: 'Cormorant Garamond', serif; font-size: 28px; font-style: italic;">Analysis Result</h3>
+      <h3 id="modal-title" style="font-size: 24px;">RESULT</h3>
       <div id="modal-body"></div>
-      <button class="btn btn-outline" style="width: 100%" onclick="closeModal()">Close Console</button>
+      <button class="btn btn-submit" style="width: 100%" onclick="closeModal()">返回</button>
     </div>
   </div>
 
   <script>
     const questions = [
-      { id: "01", title: "Point Coloring", desc: "Write VEX code to set the color attribute (@Cd) of all points to pure red {1,0,0}. This is the foundation of attribute manipulation.", hint: "@Cd = {1,0,0};" },
-      { id: "02", title: "Random Scale", desc: "Create a random @pscale for each point based on the @ptnum. Ensure each point has a unique size.", hint: "@pscale = rand(@ptnum);" },
-      { id: "03", title: "Noise Displacement", desc: "Use the curlnoise() function to offset the position (@P) of points in 3D space.", hint: "@P += curlnoise(@P);" }
+      { id: "01", difficulty: "easy", color: "var(--diff-easy)", title: { zh: "点染红色", en: "Paint it Red" }, desc: { zh: "将几何体中所有点的 @Cd 属性设置为红色。就像在茶底中加入西柚色。", en: "Set @Cd of all points to red. Like adding grapefruit red to your tea base." }, hint: "@Cd = {1,0,0};" },
+      { id: "02", difficulty: "medium", color: "var(--diff-medium)", title: { zh: "随机缩放", en: "Random Mix" }, desc: { zh: "为每个点注入随机的 pscale。通过 @ptnum 让每一颗“珍珠”大小不同。", en: "Add random pscale to points. Use @ptnum to make every 'pearl' a different size." }, hint: "@pscale = rand(@ptnum);" },
+      { id: "03", difficulty: "hard", color: "var(--diff-hard)", title: { zh: "噪波位移", en: "Cloudy Noise" }, desc: { zh: "利用 curlnoise 让点的位置产生流动感。就像芝士奶盖在茶面上缓慢扩散。", en: "Use curlnoise to animate point positions. Like cheese foam spreading over tea." }, hint: "@P += curlnoise(@P);" }
     ];
 
     let currentIdx = 0;
+    let lang = 'zh';
 
-    function renderSidebar() {
+    function setLang(l) {
+      lang = l;
+      document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById(`btn-${l}`).classList.add('active');
+      render();
+    }
+
+    function render() {
       const list = document.getElementById('q-list');
       list.innerHTML = '';
       questions.forEach((q, i) => {
-        const div = document.createElement('div');
-        div.className = `q-item ${i === currentIdx ? 'active' : ''}`;
-        div.onclick = () => { currentIdx = i; renderSidebar(); updateContent(); };
-        div.innerText = `${q.id}. ${q.title}`;
-        list.appendChild(div);
+        const item = document.createElement('div');
+        item.className = `q-item ${i === currentIdx ? 'active' : ''}`;
+        item.onclick = () => { if(currentIdx !== i){ currentIdx = i; document.getElementById('vex-editor').value = ""; render(); } };
+        item.innerHTML = `<div class="indicator" style="background:${q.color}"></div>${q.title[lang]}`;
+        list.appendChild(item);
       });
-    }
 
-    function updateContent() {
       const q = questions[currentIdx];
-      document.getElementById('q-title').innerText = q.title;
-      document.getElementById('q-desc').innerText = q.desc;
+      document.getElementById('q-title').innerText = q.title[lang];
+      document.getElementById('q-desc').innerText = q.desc[lang];
+      document.getElementById('hint-txt').innerText = lang === 'zh' ? '提示' : 'HINT';
+      document.getElementById('submit-btn').innerText = lang === 'zh' ? '提交判断' : 'SUBMIT';
+
+      const pill = document.getElementById('diff-pill');
+      pill.style.background = q.color + '20'; // 20% 透明度
+      pill.style.color = q.color;
+      pill.innerText = q.difficulty;
     }
 
-    async function submitCode() {
+    async function submitTask() {
       const code = document.getElementById('vex-editor').value;
-      if (!code.trim()) return;
-
+      if(!code.trim()) return;
       const btn = document.getElementById('submit-btn');
-      btn.disabled = true;
-      btn.innerText = "Analyzing...";
-
+      btn.innerText = "...";
       try {
         const res = await fetch('/api/judge', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            code: code,
-            questionContext: `Task: ${questions[currentIdx].title}. Requirement: ${questions[currentIdx].desc}`
-          })
+          body: JSON.stringify({ code: code, questionContext: `Task: ${questions[currentIdx].title.en}` })
         });
         const data = await res.json();
-        showModal(data.result === 'correct' ? 'Success' : 'Correction Required', data.explanation);
-      } catch (err) {
-        alert("API Connection Error");
-      } finally {
-        btn.disabled = false;
-        btn.innerText = "Execute Analysis";
-      }
+        showModal(data.result === 'correct' ? 'PASSED' : 'RETRY', data.explanation);
+      } catch (e) { alert("Error"); }
+      finally { btn.innerText = lang === 'zh' ? '提交判断' : 'SUBMIT'; }
     }
 
     function showModal(title, content) {
@@ -252,17 +305,10 @@
       document.getElementById('modal-body').innerText = content;
       document.getElementById('modal-overlay').style.display = 'flex';
     }
+    function closeModal() { document.getElementById('modal-overlay').style.display = 'none'; }
+    function showHint() { showModal("HINT", questions[currentIdx].hint); }
 
-    function showHint() {
-      showModal("Logical Hint", questions[currentIdx].hint);
-    }
-
-    function closeModal() {
-      document.getElementById('modal-overlay').style.display = 'none';
-    }
-
-    renderSidebar();
-    updateContent();
+    render();
   </script>
 </body>
 </html>
