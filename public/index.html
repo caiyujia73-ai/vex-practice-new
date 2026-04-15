@@ -7,11 +7,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=JetBrains+Mono:wght@400;600&family=Syne:wght@400;600&display=swap" rel="stylesheet" />
   <style>
     :root {
-      /* 🎨 核心改动：象牙色手稿纸底色 */
-      --bg-base: #FCF8F3; 
-      /* 卡片保持半透明毛玻璃，让纸纹透过来 */
-      --glass: rgba(255, 255, 255, 0.45);
-      --card-white: #FFFFFF;
+      /* 象牙色草纸底色 */
+      --bg-base: #f4f1ea; 
+      --glass: rgba(255, 255, 255, 0.4);
+      --card-white: rgba(255, 255, 255, 0.85); /* 稍微透明，让纸纹透出来 */
       --accent-orange: #F9A87D;
       --text-main: #2D2D2D;
       --text-sub: #888888;
@@ -29,19 +28,38 @@
     
     body {
       font-family: 'Syne', sans-serif;
-      /* 🎨 核心改动：网页底色增加粗糙纸纹理图片 */
-      background-color: var(--bg-base); 
-      /* 📜 粗糙纸纹理平铺 */
-      background-image: url('data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD//...[此处为简化的纸张纤维base64图片代码，实际应用中可用图片URL]...'); /* 📜 */
-      background-repeat: repeat; /* 📜 纹理平铺 */
-      background-size: 1000px 1000px; /* 📜 */
+      background-color: var(--bg-base);
+      
+      /* --- 📜 核心：草纸纹理叠加 --- */
+      /* 第一层：微妙的纸张纤维图片 */
+      background-image: url('https://www.transparenttextures.com/patterns/handmade-paper.png');
+      /* 第二层：淡淡的颗粒感叠加 */
+      background-attachment: fixed;
+      
       height: 100vh;
       display: flex; align-items: center; justify-content: center;
       overflow: hidden;
       position: relative;
     }
 
-    /* 右上角双语切换 */
+    /* 增加一个全局的微弱暗角，增加纸张的物理深度感 */
+    body::after {
+      content: "";
+      position: absolute; inset: 0;
+      background: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.02) 100%);
+      pointer-events: none;
+    }
+
+    /* 标题：左上角 */
+    .page-logo {
+      position: absolute; top: 25px; left: 40px;
+      font-family: 'Special Elite', cursive;
+      font-size: 28px; color: var(--text-main);
+      letter-spacing: 2px; z-index: 200;
+      opacity: 0.8;
+    }
+
+    /* 右上角切换 */
     .top-right-lang {
       position: absolute; top: 25px; right: 40px;
       display: flex; gap: 15px; z-index: 200;
@@ -49,30 +67,22 @@
     .lang-link { cursor: pointer; font-size: 12px; font-weight: 700; color: var(--text-sub); text-transform: uppercase; transition: 0.3s; }
     .lang-link.active { color: var(--text-main); text-decoration: underline; }
 
-    /* 全局最左上角 Logo */
-    .page-logo {
-      position: absolute; top: 25px; left: 40px;
-      font-family: 'Special Elite', cursive;
-      font-size: 28px; color: var(--text-main);
-      letter-spacing: 2px; z-index: 200;
-    }
-
+    /* 主容器：毛玻璃感增强，让纸张纹理透过卡片边缘 */
     .alchemy-container {
-      width: 95vw; height: 80vh; max-width: 1200px;
+      width: 95vw; height: 82vh; max-width: 1200px;
       background: var(--glass);
-      backdrop-filter: blur(25px);
+      backdrop-filter: blur(12px);
       border-radius: 40px;
       display: flex;
-      box-shadow: 0 40px 100px rgba(0,0,0,0.03);
-      border: 1px solid rgba(255,255,255,0.7);
+      box-shadow: 0 40px 100px rgba(0,0,0,0.03), inset 0 0 40px rgba(255,255,255,0.2);
+      border: 1px solid rgba(255,255,255,0.5);
       overflow: hidden;
     }
 
-    /* aside 和大卡片保持不变 */
     aside {
       width: 80px; height: 100%;
-      background: rgba(255, 255, 255, 0.1);
-      border-right: 1px solid rgba(0,0,0,0.05);
+      background: rgba(255, 255, 255, 0.05);
+      border-right: 1px solid rgba(0,0,0,0.03);
       transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
       overflow: hidden; display: flex; flex-direction: column;
       padding-top: 30px;
@@ -84,13 +94,13 @@
       font-size: 13px; font-weight: 700; color: var(--text-main);
       padding: 25px 25px 10px; opacity: 0; transition: 0.3s;
     }
-    aside:hover .category-header { opacity: 0.9; }
+    aside:hover .category-header { opacity: 0.7; }
 
     .nav-item {
       display: flex; align-items: center;
       padding: 10px 20px; cursor: pointer; transition: 0.3s;
     }
-    .nav-item:hover { background: rgba(255,255,255,0.3); }
+    .nav-item:hover { background: rgba(255,255,255,0.2); }
 
     .nav-icon-circle {
       width: 40px; height: 40px; border-radius: 12px;
@@ -102,22 +112,22 @@
     .nav-text-box { margin-left: 15px; opacity: 0; transition: 0.2s; white-space: nowrap; flex: 1; }
     aside:hover .nav-text-box { opacity: 1; }
 
-    /* 战绩小圆点列 */
     .record-dots { display: flex; gap: 4px; margin-top: 4px; }
     .mini-dot { width: 6px; height: 6px; border-radius: 50%; }
     .mini-dot.red { background: var(--fail-red); }
     .mini-dot.green { background: var(--success-green); }
 
-    /* 主内容融合大卡片 */
     main { flex: 1; padding: 40px; overflow: hidden; }
 
+    /* 合一卡片：增加极其细腻的内阴影，使其看起来更像嵌在纸里的厚重卡片 */
     .unified-card {
       background: var(--card-white);
       width: 100%; height: 100%;
       border-radius: 35px;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.04);
+      box-shadow: 0 15px 45px rgba(0,0,0,0.02);
       display: flex; flex-direction: column;
       position: relative; overflow: hidden;
+      border: 1px solid rgba(0,0,0,0.02);
     }
 
     .question-overlay { padding: 40px 50px 0 50px; z-index: 5; }
@@ -131,7 +141,6 @@
     }
     .question-overlay p { font-size: 15px; color: var(--text-sub); max-width: 650px; line-height: 1.6; }
 
-    /* 编辑器保持专业感 */
     .editor-area { flex: 1; padding: 20px 50px 100px 50px; }
     #vex-editor {
       width: 100%; height: 100%; border: none; outline: none;
@@ -140,23 +149,22 @@
     }
     #vex-editor::placeholder { color: #000; opacity: 0.15; }
 
-    /* 内嵌按钮 */
     .embedded-controls {
       position: absolute; bottom: 30px; right: 40px;
       display: flex; gap: 15px; z-index: 10;
     }
     .btn { padding: 12px 30px; border-radius: 20px; cursor: pointer; font-family: 'Syne'; font-weight: 700; font-size: 12px; transition: 0.3s; border: none; }
-    .btn-hint { background: #F5F5F5; color: var(--text-sub); }
+    .btn-hint { background: rgba(0,0,0,0.03); color: var(--text-sub); }
     .btn-submit { background: var(--accent-orange); color: white; box-shadow: 0 4px 15px rgba(249, 168, 125, 0.3); }
 
-    /* 弹窗样式不变 */
+    /* 弹窗 */
     #modal-overlay {
-      position: fixed; inset: 0; background: rgba(255,255,255,0.3);
-      backdrop-filter: blur(15px); display: none; align-items: center; justify-content: center; z-index: 1000;
+      position: fixed; inset: 0; background: rgba(0,0,0,0.05);
+      backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 1000;
     }
-    .modal { width: 500px; padding: 45px; border-radius: 35px; text-align: center; box-shadow: 0 40px 80px rgba(0,0,0,0.05); }
-    .modal.success { background: #F2F9F5; border: 1px solid #D4EDDA; }
-    .modal.failure { background: #FFF5F5; border: 1px solid #FEB2B2; }
+    .modal { width: 500px; padding: 45px; border-radius: 35px; text-align: center; box-shadow: 0 40px 80px rgba(0,0,0,0.08); }
+    .modal.success { background: rgba(242, 249, 245, 0.95); border: 1px solid #D4EDDA; }
+    .modal.failure { background: rgba(255, 245, 245, 0.95); border: 1px solid #FEB2B2; }
     #modal-body { font-size: 14px; line-height: 1.8; color: #666; margin: 25px 0; }
     .correct-code { background: #FFFFFF; padding: 15px; border-radius: 12px; font-family: 'JetBrains Mono'; font-size: 12px; color: #C53030; text-align: left; }
   </style>
@@ -208,7 +216,6 @@
   </div>
 
   <script>
-    /* 📜 核心改动：题目和数据不变，逻辑不变 */
     const questions = [
       { category: "BEGINNER", items: [
         { qid: "b1", id: "01", difficulty: "easy", color: "var(--easy)", 
@@ -249,8 +256,8 @@
     function setLang(l) {
       lang = l;
       document.querySelectorAll('.lang-link').forEach(el => el.classList.remove('active'));
-      const btn = document.getElementById('ln-' + l);
-      if(btn) btn.classList.add('active');
+      const activeBtn = document.getElementById('ln-' + l);
+      if(activeBtn) activeBtn.classList.add('active');
       render();
     }
 
@@ -267,7 +274,14 @@
           const isActive = (cIdx===currentCat && iIdx===currentIdx);
           const el = document.createElement('div');
           el.className = `nav-item ${isActive ? 'active' : ''}`;
-          el.onclick = () => { if(currentIdx!==iIdx || currentCat!==cIdx) { currentCat=cIdx; currentIdx=iIdx; document.getElementById('vex-editor').value = savedCodes[questions[currentCat].items[currentIdx].qid] || ""; render(); } };
+          el.onclick = () => { 
+            if(currentIdx!==iIdx || currentCat!==cIdx) { 
+              currentCat=cIdx; 
+              currentIdx=iIdx; 
+              document.getElementById('vex-editor').value = savedCodes[questions[currentCat].items[currentIdx].qid] || ""; 
+              render(); 
+            } 
+          };
           
           const iconBg = isActive ? item.color : (item.color + '88');
           let dotsHtml = '<div class="record-dots">';
@@ -364,7 +378,6 @@
     function showModal() { document.getElementById('modal-overlay').style.display = 'flex'; }
     function closeModal() { document.getElementById('modal-overlay').style.display = 'none'; }
     
-    // Default to EN
     setLang('en');
   </script>
 </body>
