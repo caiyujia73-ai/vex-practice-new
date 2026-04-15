@@ -1,67 +1,63 @@
 export default async function handler(req, res) {
-  // 1. 基础校验
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
-
-  const { system, code } = req.body;
-  if (!code || !system) {
-    return res.status(400).json({ error: 'Missing code or system prompt' });
-  }
-
   try {
-    // 2. 发起 API 请求 (手动输入 URL 确保无乱码)
-    const apiUrl = '[https://api.anthropic.com/v1/messages](https://api.anthropic.com/v1/messages)';
+    // 1. 立即检查环境变量（防止 fetch 崩溃）
+    const apiKey = process.env.ANTHROPIC_API_KEY;
     
-    const response = await fetch(apiUrl, {
+    if (!apiKey || apiKey.trim() === "") {
+      return res.status(200).json({
+        result: 'wrong',
+        short: '配置缺失',
+        explanation: 'Vercel 后台找不到 ANTHROPIC_API_KEY，请检查 Environment Variables 并在保存后 Redeploy。'
+      });
+    }
+
+    if (req.method !== 'POST') {
+      return res.status(405).json({ error: 'Method not allowed' });
+    }
+
+    const { system, code } = req.body;
+
+    // 2. 使用更稳健的 fetch 调用
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': process.env.ANTHROPIC_API_KEY,
+        'x-api-key': apiKey.trim(),
         'anthropic-version': '2023-06-01'
       },
       body: JSON.stringify({
         model: 'claude-3-5-sonnet-20240620',
         max_tokens: 1024,
         system: system,
-        messages: [
-          { role: 'user', content: `用户提交的 VEX 代码：\n${code}` }
-        ]
+        messages: [{ role: 'user', content: `代码：\n${code}` }]
       })
     });
 
-    // 3. 处理 Anthropic 返回的错误 (比如 401, 404, 429)
+    const data = await response.json();
+
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      return res.status(500).json({
+      return res.status(200).json({
         result: 'wrong',
         short: 'API 报错',
-        explanation: `Anthropic 状态码 ${response.status}: ${errorData.error?.message || '未知错误'}`
+        explanation: data.error?.message || 'Anthropic 返回了错误'
       });
     }
 
-    const data = await response.json();
     const rawText = data.content[0].text;
-
-    // 4. 正则提取 JSON (防止 Claude 返回 Markdown 格式导致 JSON.parse 失败)
     const jsonMatch = rawText.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) {
-      return res.status(500).json({
-        result: 'wrong',
-        short: '格式错误',
-        explanation: '模型没有返回有效的 JSON 结构'
-      });
+    
+    if (jsonMatch) {
+      return res.status(200).json(JSON.parse(jsonMatch[0]));
+    } else {
+      return res.status(200).json({ result: 'wrong', short: '格式错误', explanation: '模型未返回 JSON' });
     }
-
-    const parsedData = JSON.parse(jsonMatch[0]);
-    return res.status(200).json(parsedData);
 
   } catch (err) {
-    // 5. 捕获运行时崩溃 (比如 URL 解析失败、网络超时等)
-    return res.status(500).json({
+    // 捕获所有错误并返回 200，这样你能直接在网页弹窗看到报错文字
+    return res.status(200).json({
       result: 'wrong',
-      short: '服务器崩溃',
-      explanation: `运行错误: ${err.message}`
+      short: '运行时错误',
+      explanation: err.message
     });
   }
 }
