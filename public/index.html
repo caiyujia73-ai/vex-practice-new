@@ -65,13 +65,16 @@
     }
     aside:hover { width: 300px; }
 
-    /* 分类大标题统一打字机字体 */
+    /* 分类标题：统一打字机字体 + 加粗 */
     .category-header {
       font-family: 'Special Elite', cursive;
-      font-size: 13px; color: var(--text-main);
+      font-size: 13px; 
+      font-weight: 700; /* 加粗 */
+      color: var(--text-main);
       padding: 25px 25px 10px; opacity: 0; transition: 0.3s;
+      letter-spacing: 1px;
     }
-    aside:hover .category-header { opacity: 0.8; }
+    aside:hover .category-header { opacity: 0.9; }
 
     .nav-item {
       display: flex; align-items: center;
@@ -91,7 +94,7 @@
 
     .attempt-tag { font-family: 'JetBrains Mono'; font-size: 10px; color: var(--text-sub); background: rgba(255,255,255,0.5); padding: 2px 6px; border-radius: 4px; }
 
-    /* --- 合一卡片布局 --- */
+    /* 合一卡片布局 */
     main { flex: 1; padding: 40px; overflow: hidden; }
 
     .unified-card {
@@ -112,7 +115,6 @@
     }
     .diff-dot { width: 10px; height: 10px; border-radius: 50%; }
     
-    /* 题目大标题统一打字机字体 */
     .question-overlay h2 {
       font-family: 'Special Elite', cursive;
       font-size: 32px; color: var(--active-color);
@@ -123,7 +125,6 @@
       font-size: 15px; color: var(--text-sub); max-width: 650px; line-height: 1.6;
     }
 
-    /* 编辑器区域 */
     .editor-area {
       flex: 1;
       padding: 20px 50px 100px 50px;
@@ -136,7 +137,6 @@
       resize: none; background: transparent; color: #444;
     }
 
-    /* 内嵌按钮 */
     .embedded-controls {
       position: absolute; bottom: 30px; right: 40px;
       display: flex; gap: 15px; z-index: 10;
