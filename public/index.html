@@ -3,261 +3,335 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VEX Alchemy Lab</title>
+  <title>VEX LAB | Alchemy Edition</title>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,600;1,700&family=JetBrains+Mono:wght@400;600&family=Syne:wght@400;600&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg: #F0F2F5; /* 极淡的灰米色，模拟参考图底色 */
-      --glass: rgba(255, 255, 255, 0.7);
+      --bg: #F0F2F5;
       --card-white: #FFFFFF;
-      --accent-orange: #F9A87D;
       --text-main: #2D2D2D;
       --text-sub: #888888;
       
-      /* 难度颜色，参考图中的配色风格 */
-      --easy-blue: #7395AE;
-      --mid-orange: #F9A87D;
-      --hard-beige: #E1D8C1;
+      /* 莫兰迪难度色系 */
+      --easy: #A3B18A;   /* 绿 */
+      --medium: #E9C46A; /* 黄 */
+      --hard: #E07A5F;   /* 红 */
+      
+      --active-color: var(--easy); /* 动态变化 */
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    
     body {
       font-family: 'Syne', sans-serif;
       background: var(--bg);
       height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: flex; align-items: center; justify-content: center;
       overflow: hidden;
     }
 
-    /* --- 全局背景装饰 (参考图中的光影感) --- */
-    body::before {
-      content: ""; position: absolute; top: -10%; right: -10%; width: 50vw; height: 50vw;
-      background: radial-gradient(circle, rgba(249, 168, 125, 0.08) 0%, transparent 70%);
-      pointer-events: none;
-    }
-
-    /* --- 主容器 (那层大的圆角浅色背景) --- */
+    /* 主容器 */
     .alchemy-container {
-      width: 95vw;
-      height: 90vh;
-      max-width: 1200px;
+      width: 95vw; height: 92vh; max-width: 1200px;
       background: rgba(255, 255, 255, 0.4);
       backdrop-filter: blur(20px);
       border-radius: 40px;
-      display: grid;
-      grid-template-columns: 80px 1fr;
+      display: flex; /* 改为 flex 布局方便侧边栏伸缩 */
       box-shadow: 0 40px 100px rgba(0,0,0,0.03);
       border: 1px solid rgba(255,255,255,0.6);
       position: relative;
     }
 
-    /* --- 极简左侧栏 --- */
+    /* --- 第一点：伸缩侧边栏 --- */
     aside {
+      width: 80px;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.3);
       border-right: 1px solid rgba(0,0,0,0.05);
-      padding: 30px 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 20px;
+      transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow: hidden;
+      display: flex; flex-direction: column;
+      z-index: 10;
     }
-    
-    .nav-icon {
+    aside:hover { width: 280px; } /* 悬停展开 */
+
+    .sidebar-header {
+      padding: 30px 20px; font-weight: 700; color: var(--text-main);
+      white-space: nowrap; opacity: 0; transition: 0.3s;
+    }
+    aside:hover .sidebar-header { opacity: 1; }
+
+    .q-group-title {
+      padding: 10px 25px; font-size: 10px; color: var(--text-sub);
+      text-transform: uppercase; letter-spacing: 1px;
+      display: none;
+    }
+    aside:hover .q-group-title { display: block; }
+
+    .nav-item {
+      display: flex; align-items: center;
+      padding: 12px 20px; margin: 5px 10px;
+      border-radius: 15px; cursor: pointer; transition: 0.3s;
+      white-space: nowrap;
+    }
+    .nav-icon-circle {
       width: 40px; height: 40px; border-radius: 12px;
       background: var(--card-white);
       display: flex; align-items: center; justify-content: center;
-      cursor: pointer; transition: 0.3s;
+      flex-shrink: 0; font-size: 12px; color: var(--text-sub);
       box-shadow: 0 4px 10px rgba(0,0,0,0.03);
-      font-size: 12px; color: var(--text-sub);
     }
-    .nav-icon.active { background: var(--accent-orange); color: white; transform: scale(1.1); }
-
-    /* --- 内容主区域 --- */
-    main {
-      display: grid;
-      grid-template-rows: 80px 1fr 80px;
-      padding: 0 40px;
-    }
-
-    header {
-      display: flex; align-items: center; justify-content: space-between;
-    }
-    .brand { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 24px; }
+    .nav-text-box { margin-left: 15px; opacity: 0; transition: 0.2s; }
+    aside:hover .nav-text-box { opacity: 1; }
     
-    .lang-switcher {
-      display: flex; gap: 15px;
-    }
-    .lang-link { cursor: pointer; font-size: 11px; font-weight: 700; color: var(--text-sub); text-transform: uppercase; letter-spacing: 1px; }
-    .lang-link.active { color: var(--accent-orange); }
+    .nav-item.active .nav-icon-circle { background: var(--active-color); color: white; }
+    .nav-item.active .nav-text-box b { color: var(--active-color); }
 
-    /* --- 卡片展示区 --- */
+    /* --- 主内容区 --- */
+    main { flex: 1; display: flex; flex-direction: column; padding: 0 40px; }
+
+    header { height: 80px; display: flex; align-items: center; justify-content: space-between; }
+    .brand { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 26px; font-weight: 700; }
+    
+    .lang-switcher { display: flex; gap: 15px; }
+    .lang-link { cursor: pointer; font-size: 11px; font-weight: 700; color: var(--text-sub); text-transform: uppercase; }
+    .lang-link.active { color: var(--active-color); }
+
     .content-grid {
-      display: grid;
-      grid-template-columns: 350px 1fr;
-      gap: 30px;
-      align-items: center;
+      flex: 1; display: grid; grid-template-columns: 350px 1fr; gap: 30px; align-items: center;
     }
 
-    /* 左侧描述卡片 */
     .desc-card {
-      background: var(--card-white);
-      padding: 40px;
-      border-radius: 32px;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.04);
-      height: 480px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
+      background: var(--card-white); padding: 40px; border-radius: 32px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.04); height: 500px;
+      display: flex; flex-direction: column; justify-content: center;
     }
-    .desc-card h2 { font-family: 'Cormorant Garamond', serif; font-size: 32px; margin-bottom: 20px; line-height: 1.2; }
-    .desc-card p { font-size: 14px; color: var(--text-sub); line-height: 1.8; margin-bottom: 30px; }
-    
-    .diff-dots { display: flex; gap: 10px; }
-    .dot { width: 12px; height: 12px; border-radius: 50%; }
+    .diff-status { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
+    .dot { width: 12px; height: 12px; border-radius: 50%; background: var(--active-color); }
+    .desc-card h2 { font-family: 'Cormorant Garamond', serif; font-size: 36px; line-height: 1.1; margin-bottom: 20px; transition: 0.3s; color: var(--active-color); }
+    .desc-card p { font-size: 14px; color: var(--text-sub); line-height: 1.8; }
 
-    /* 右侧编辑器卡片 */
     .editor-card {
-      background: var(--card-white);
-      padding: 20px;
-      border-radius: 32px;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.04);
-      height: 520px;
-      display: flex;
-      flex-direction: column;
+      background: var(--card-white); padding: 20px; border-radius: 32px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.04); height: 540px;
+      display: flex; flex-direction: column;
     }
     #vex-editor {
-      flex: 1; border: none; outline: none;
-      font-family: 'JetBrains Mono', monospace; font-size: 14px;
-      line-height: 1.8; padding: 20px; color: #444; resize: none;
+      flex: 1; border: none; outline: none; padding: 20px;
+      font-family: 'JetBrains Mono', monospace; font-size: 14px; line-height: 1.8; resize: none;
     }
 
-    /* --- 底部操作栏 --- */
-    footer {
-      display: flex; align-items: center; justify-content: flex-end; gap: 20px;
-    }
-    .btn {
-      padding: 12px 35px; border-radius: 25px; cursor: pointer;
-      font-family: 'Syne'; font-weight: 700; font-size: 12px; transition: 0.3s;
-      text-transform: uppercase; letter-spacing: 1px;
-    }
+    /* --- 第二点：按钮上移 (在 footer 中调整) --- */
+    footer { height: 100px; display: flex; align-items: center; justify-content: flex-end; gap: 20px; margin-top: -20px; }
+    
+    .btn { padding: 12px 35px; border-radius: 25px; cursor: pointer; font-family: 'Syne'; font-weight: 700; font-size: 12px; transition: 0.3s; }
     .btn-hint { background: transparent; border: 1px solid #EEE; color: var(--text-sub); }
-    .btn-submit { background: #2D2D2D; color: white; border: none; }
-    .btn:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+    .btn-submit { background: var(--text-main); color: white; border: none; }
+    .btn-submit:hover { background: var(--active-color); transform: translateY(-3px); }
 
-    /* Modal (反馈窗也要美) */
+    /* --- 第三点：结果弹窗设计 --- */
     #modal-overlay {
-      position: fixed; inset: 0; background: rgba(255,255,255,0.4);
-      backdrop-filter: blur(10px); display: none; align-items: center; justify-content: center; z-index: 1000;
+      position: fixed; inset: 0; background: rgba(255,255,255,0.2);
+      backdrop-filter: blur(15px); display: none; align-items: center; justify-content: center; z-index: 1000;
     }
-    .modal {
-      background: white; width: 450px; padding: 40px; border-radius: 32px;
-      box-shadow: 0 40px 80px rgba(0,0,0,0.1); text-align: center;
+    .modal { width: 500px; padding: 45px; border-radius: 35px; text-align: center; box-shadow: 0 40px 80px rgba(0,0,0,0.1); }
+    
+    /* 成功卡片 (淡绿色) */
+    .modal.success { background: #F2F9F5; border: 1px solid #D4EDDA; }
+    .modal.success h3 { color: #28a745; }
+    
+    /* 失败卡片 (淡红色) */
+    .modal.failure { background: #FFF5F5; border: 1px solid #FEB2B2; }
+    .modal.failure h3 { color: #C53030; }
+
+    #modal-body { font-size: 14px; line-height: 1.8; color: #666; margin: 25px 0; }
+    .correct-code { 
+      background: #FFFFFF; padding: 15px; border-radius: 12px; 
+      font-family: 'JetBrains Mono'; font-size: 12px; color: #C53030; text-align: left; 
     }
   </style>
 </head>
 <body>
 
   <div class="alchemy-container">
-    <aside id="nav-list">
-      </aside>
+    <aside id="sidebar">
+      <div class="sidebar-header">VEX LAB QUESTIONS</div>
+      <div id="q-list-container"></div>
+    </aside>
 
     <main>
       <header>
-        <div class="brand">VEX Alchemy.</div>
+        <div class="brand">VEX LAB.</div>
         <div class="lang-switcher">
-          <span class="lang-link active" onclick="setLang('zh')">ZH</span>
-          <span class="lang-link" onclick="setLang('en')">EN</span>
+          <span class="lang-link active" onclick="setLang('zh')" id="ln-zh">ZH</span>
+          <span class="lang-link" onclick="setLang('en')" id="ln-en">EN</span>
         </div>
       </header>
 
       <div class="content-grid">
         <div class="desc-card">
-          <div class="diff-dots" id="diff-dots"></div>
+          <div class="diff-status">
+            <div class="dot"></div>
+            <span id="q-diff-text" style="font-size: 10px; font-weight: 700; letter-spacing: 1px;">EASY</span>
+          </div>
           <h2 id="q-title">...</h2>
           <p id="q-desc"></p>
         </div>
 
         <div class="editor-card">
-          <textarea id="vex-editor" spellcheck="false" placeholder="// 开始你的逻辑调制..."></textarea>
+          <textarea id="vex-editor" spellcheck="false" placeholder="// Initializing VEX Kernel..."></textarea>
         </div>
       </div>
 
       <footer>
-        <button class="btn btn-hint" onclick="showHint()">Hint</button>
-        <button class="btn btn-submit" id="submit-btn" onclick="submit()">提交分析</button>
+        <button class="btn btn-hint" onclick="showHint()" id="btn-hint-text">HINT</button>
+        <button class="btn btn-submit" id="submit-btn" onclick="handleSubmit()">SUBMIT</button>
       </footer>
     </main>
   </div>
 
   <div id="modal-overlay" onclick="closeModal()">
-    <div class="modal" onclick="event.stopPropagation()">
-      <h3 id="modal-title" style="font-family:'Cormorant Garamond'; font-size:28px; font-style:italic; margin-bottom:20px;">Result</h3>
-      <div id="modal-body" style="font-size:14px; line-height:1.7; color:#666; margin-bottom:30px;"></div>
-      <button class="btn btn-submit" style="width: 100%" onclick="closeModal()">返回</button>
+    <div class="modal" id="result-modal" onclick="event.stopPropagation()">
+      <h3 id="modal-title" style="font-family:'Cormorant Garamond'; font-size:30px; font-style:italic;">Result</h3>
+      <div id="modal-body"></div>
+      <div id="solution-area" style="display:none">
+         <p style="font-size:10px; color:#C53030; margin-bottom:5px;">OFFICIAL SOLUTION:</p>
+         <div class="correct-code" id="correct-code-text"></div>
+      </div>
+      <button class="btn btn-submit" style="width: 100%; margin-top:20px;" onclick="closeModal()" id="btn-modal-close">CONTINUE</button>
     </div>
   </div>
 
   <script>
     const questions = [
-      { id: "01", difficulty: "easy", color: "var(--easy-blue)", title: { zh: "点染红色", en: "Crimson Hue" }, desc: { zh: "在这杯逻辑中加入红色。将所有点的 @Cd 设为 {1,0,0}。", en: "Add a touch of red to this logic. Set @Cd to {1,0,0} for all points." }, hint: "@Cd = {1,0,0};" },
-      { id: "02", difficulty: "medium", color: "var(--mid-orange)", title: { zh: "随机缩放", en: "Random Growth" }, desc: { zh: "为每个点注入随机的生命力。基于 @ptnum 生成随机 @pscale。", en: "Inject random vitality into each point. Generate @pscale based on @ptnum." }, hint: "@pscale = rand(@ptnum);" },
-      { id: "03", difficulty: "hard", color: "var(--hard-beige)", title: { zh: "噪波位移", en: "Flowing Noise" }, desc: { zh: "让形态如液体般流动。使用 curlnoise 偏移位置 @P。", en: "Let the form flow like liquid. Offset position @P using curlnoise." }, hint: "@P += curlnoise(@P);" }
+      { 
+        section: "Beginner", id: "01", difficulty: "easy", color: "var(--easy)",
+        title: { zh: "点染红色", en: "Crimson Hue" },
+        desc: { zh: "将所有点的颜色属性 (@Cd) 设置为纯红色 {1,0,0}。", en: "Set the color attribute (@Cd) of all points to pure red {1,0,0}." },
+        hint: { zh: "使用 @Cd = {1,0,0};", en: "Use @Cd = {1,0,0};" },
+        solution: "@Cd = {1,0,0};"
+      },
+      { 
+        section: "Beginner", id: "02", difficulty: "medium", color: "var(--medium)",
+        title: { zh: "随机缩放", en: "Random Scale" },
+        desc: { zh: "基于 @ptnum 为每个点生成随机的 @pscale。", en: "Generate a random @pscale for each point based on @ptnum." },
+        hint: { zh: "尝试使用 rand() 函数。", en: "Try using the rand() function." },
+        solution: "@pscale = rand(@ptnum);"
+      },
+      { 
+        section: "Intermediate", id: "03", difficulty: "hard", color: "var(--hard)",
+        title: { zh: "噪波位移", en: "Flowing Noise" },
+        desc: { zh: "使用 curlnoise 偏移位置 @P。", en: "Offset position @P using curlnoise." },
+        hint: { zh: "将结果加到 @P 上。", en: "Add the result to @P." },
+        solution: "@P += curlnoise(@P);"
+      }
     ];
 
     let currentIdx = 0;
     let lang = 'zh';
+    let attempts = 0;
+
+    const uiTexts = {
+      zh: { hint: "提示", submit: "提交分析", next: "继续", close: "返回", retry: "逻辑错误，再试一次 (剩余次数: ", finalFail: "挑战失败", success: "炼金成功" },
+      en: { hint: "HINT", submit: "SUBMIT", next: "CONTINUE", close: "BACK", retry: "Logic Error, Try Again (Left: ", finalFail: "Analysis Failed", success: "Success" }
+    };
 
     function setLang(l) {
       lang = l;
+      document.querySelectorAll('.lang-link').forEach(el => el.classList.remove('active'));
+      document.getElementById('ln-' + l).classList.add('active');
       render();
     }
 
     function render() {
-      // 侧边栏图标
-      const nav = document.getElementById('nav-list');
-      nav.innerHTML = '';
+      const qContainer = document.getElementById('q-list-container');
+      qContainer.innerHTML = '';
+      let lastSection = "";
+      
       questions.forEach((q, i) => {
-        const icon = document.createElement('div');
-        icon.className = `nav-icon ${i === currentIdx ? 'active' : ''}`;
-        icon.innerText = q.id;
-        icon.onclick = () => { if(currentIdx !== i) { currentIdx = i; document.getElementById('vex-editor').value = ""; render(); } };
-        nav.appendChild(icon);
+        if (q.section !== lastSection) {
+          const st = document.createElement('div');
+          st.className = 'q-group-title';
+          st.innerText = q.section;
+          qContainer.appendChild(st);
+          lastSection = q.section;
+        }
+
+        const item = document.createElement('div');
+        item.className = `nav-item ${i === currentIdx ? 'active' : ''}`;
+        item.onclick = () => { if(currentIdx!==i) { currentIdx=i; attempts=0; document.getElementById('vex-editor').value=""; render(); } };
+        item.innerHTML = `
+          <div class="nav-icon-circle">${q.id}</div>
+          <div class="nav-text-box">
+            <b>${q.title[lang]}</b><br>
+            <span style="font-size:9px; color:#AAA;">${q.difficulty.toUpperCase()}</span>
+          </div>
+        `;
+        qContainer.appendChild(item);
       });
 
       const q = questions[currentIdx];
+      document.documentElement.style.setProperty('--active-color', q.color);
       document.getElementById('q-title').innerText = q.title[lang];
       document.getElementById('q-desc').innerText = q.desc[lang];
-      
-      const dots = document.getElementById('diff-dots');
-      dots.innerHTML = `<div class="dot" style="background:${q.color}"></div><span style="font-size:10px; color:#888; text-transform:uppercase">${q.difficulty}</span>`;
+      document.getElementById('q-diff-text').innerText = q.difficulty.toUpperCase();
+      document.getElementById('btn-hint-text').innerText = uiTexts[lang].hint;
+      document.getElementById('submit-btn').innerText = uiTexts[lang].submit;
     }
 
-    async function submit() {
+    async function handleSubmit() {
       const code = document.getElementById('vex-editor').value;
-      if(!code.trim()) return;
+      if (!code.trim()) return;
+
       const btn = document.getElementById('submit-btn');
       btn.innerText = "...";
+
       try {
         const res = await fetch('/api/judge', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ code: code, questionContext: `Task: ${questions[currentIdx].title.en}.` })
+          body: JSON.stringify({ code: code, questionContext: `Task: ${questions[currentIdx].title.en}` })
         });
         const data = await res.json();
-        showModal(data.result === 'correct' ? 'Success' : 'Revision', data.explanation);
+        
+        const modal = document.getElementById('result-modal');
+        const solArea = document.getElementById('solution-area');
+        
+        if (data.result === 'correct') {
+          // 成功页面：淡绿色
+          modal.className = "modal success";
+          document.getElementById('modal-title').innerText = uiTexts[lang].success;
+          document.getElementById('modal-body').innerText = data.explanation;
+          solArea.style.display = 'none';
+          showModal();
+        } else {
+          attempts++;
+          if (attempts < 3) {
+            // 失败尝试：提醒重试
+            alert(uiTexts[lang].retry + (3 - attempts) + ")");
+          } else {
+            // 3次失败：淡红色卡片 + 正确答案
+            modal.className = "modal failure";
+            document.getElementById('modal-title').innerText = uiTexts[lang].finalFail;
+            document.getElementById('modal-body').innerText = data.explanation;
+            document.getElementById('correct-code-text').innerText = questions[currentIdx].solution;
+            solArea.style.display = 'block';
+            showModal();
+          }
+        }
       } catch (e) { alert("Error"); }
-      finally { btn.innerText = "提交分析"; }
+      finally { btn.innerText = uiTexts[lang].submit; }
     }
 
-    function showModal(title, content) {
-      document.getElementById('modal-title').innerText = title;
-      document.getElementById('modal-body').innerText = content;
-      document.getElementById('modal-overlay').style.display = 'flex';
+    function showHint() {
+      const modal = document.getElementById('result-modal');
+      modal.className = "modal";
+      document.getElementById('modal-title').innerText = uiTexts[lang].hint;
+      document.getElementById('modal-body').innerText = questions[currentIdx].hint[lang];
+      document.getElementById('solution-area').style.display = 'none';
+      showModal();
     }
 
-    function showHint() { showModal("Hint", questions[currentIdx].hint); }
+    function showModal() { document.getElementById('modal-overlay').style.display = 'flex'; }
     function closeModal() { document.getElementById('modal-overlay').style.display = 'none'; }
 
     render();
