@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VEX LAB | Premium Studio</title>
+  <title>VEX LAB | Studio Pro</title>
   <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=JetBrains+Mono:wght@400;600&family=Syne:wght@400;600&display=swap" rel="stylesheet" />
   <style>
     :root {
@@ -34,7 +34,6 @@
       position: relative;
     }
 
-    /* 右上角语言切换 */
     .top-right-lang {
       position: absolute; top: 25px; right: 40px;
       display: flex; gap: 15px; z-index: 200;
@@ -42,7 +41,6 @@
     .lang-link { cursor: pointer; font-size: 12px; font-weight: 700; color: var(--text-sub); text-transform: uppercase; transition: 0.3s; }
     .lang-link.active { color: var(--text-main); text-decoration: underline; }
 
-    /* 全局最左上角 Logo */
     .page-logo {
       position: absolute; top: 25px; left: 40px;
       font-family: 'Special Elite', cursive;
@@ -94,7 +92,6 @@
     .nav-text-box { margin-left: 15px; opacity: 0; transition: 0.2s; white-space: nowrap; flex: 1; }
     aside:hover .nav-text-box { opacity: 1; }
 
-    /* 战绩小圆点 */
     .record-dots { display: flex; gap: 4px; margin-top: 4px; }
     .mini-dot { width: 6px; height: 6px; border-radius: 50%; }
     .mini-dot.red { background: var(--fail-red); }
@@ -198,26 +195,26 @@
   <script>
     const questions = [
       { category: "BEGINNER", items: [
-        { id: "01", difficulty: "easy", color: "var(--easy)", 
+        { qid: "b1", id: "01", difficulty: "easy", color: "var(--easy)", 
           title: { zh: "点染红色", en: "Crimson Hue" },
           desc: { zh: "将几何体中所有点的颜色属性 (@Cd) 设置为红色 {1,0,0}。", en: "Set the color attribute (@Cd) of all points to red {1,0,0}." },
           hint: { zh: "@Cd = {1,0,0};", en: "@Cd = {1,0,0};" },
           solution: "@Cd = {1,0,0};", attempts: 3, records: [] },
-        { id: "02", difficulty: "easy", color: "var(--easy)", 
+        { qid: "b2", id: "02", difficulty: "easy", color: "var(--easy)", 
           title: { zh: "坐标映射", en: "Position Map" },
           desc: { zh: "将 X 坐标映射给红色通道。", en: "Map X-coordinate to Red channel." },
           hint: { zh: "@Cd.r = @P.x;", en: "@Cd.r = @P.x;" },
           solution: "@Cd.r = @P.x;", attempts: 3, records: [] }
       ]},
       { category: "INTERMEDIATE", items: [
-        { id: "01", difficulty: "medium", color: "var(--medium)", 
+        { qid: "i1", id: "01", difficulty: "medium", color: "var(--medium)", 
           title: { zh: "随机缩放", en: "Random Scale" },
           desc: { zh: "基于 @ptnum 生成随机 @pscale。", en: "Generate random @pscale based on @ptnum." },
           hint: { zh: "rand()", en: "Use rand()" },
           solution: "@pscale = rand(@ptnum);", attempts: 3, records: [] }
       ]},
       { category: "ADVANCED", items: [
-        { id: "01", difficulty: "hard", color: "var(--hard)", 
+        { qid: "a1", id: "01", difficulty: "hard", color: "var(--hard)", 
           title: { zh: "噪波位移", en: "Flowing Noise" },
           desc: { zh: "使用 curlnoise 偏移位置 @P。", en: "Offset position @P using curlnoise." },
           hint: { zh: "@P += curlnoise(@P);", en: "@P += curlnoise(@P);" },
@@ -226,6 +223,9 @@
     ];
 
     let currentCat = 0, currentIdx = 0, lang = 'en', lastCorrect = false;
+    
+    // 核心：保存已答对题目的代码，用于跨题目切换读取
+    const savedCodes = {};
 
     const uiTexts = {
       zh: { hint: "提示", submit: "提交分析", success: "正确", fail: "分析失败", retry: "请再试一次 (Try Again)", left: "剩余机会: ", solution: "参考方案:" },
@@ -235,8 +235,8 @@
     function setLang(l) {
       lang = l;
       document.querySelectorAll('.lang-link').forEach(el => el.classList.remove('active'));
-      const activeBtn = document.getElementById('ln-' + l);
-      if(activeBtn) activeBtn.classList.add('active');
+      const btn = document.getElementById('ln-' + l);
+      if(btn) btn.classList.add('active');
       render();
     }
 
@@ -253,14 +253,21 @@
           const isActive = (cIdx===currentCat && iIdx===currentIdx);
           const el = document.createElement('div');
           el.className = `nav-item ${isActive ? 'active' : ''}`;
-          el.onclick = () => { if(currentIdx!==iIdx || currentCat!==cIdx) { currentCat=cIdx; currentIdx=iIdx; document.getElementById('vex-editor').value=""; render(); } };
+          el.onclick = () => { 
+            if(currentIdx!==iIdx || currentCat!==cIdx) { 
+              // 切换前先根据 savedCodes 决定是否保留代码
+              currentCat=cIdx; 
+              currentIdx=iIdx; 
+              const nextQ = questions[currentCat].items[currentIdx];
+              // 只有答对过的题目才会自动填回代码，否则清空
+              document.getElementById('vex-editor').value = savedCodes[nextQ.qid] || ""; 
+              render(); 
+            } 
+          };
           
           const iconBg = isActive ? item.color : (item.color + '88');
-          
           let dotsHtml = '<div class="record-dots">';
-          item.records.forEach(type => {
-            dotsHtml += `<div class="mini-dot ${type}"></div>`;
-          });
+          item.records.forEach(type => { dotsHtml += `<div class="mini-dot ${type}"></div>`; });
           dotsHtml += '</div>';
 
           el.innerHTML = `
@@ -306,6 +313,9 @@
         if (data.result === 'correct') {
           lastCorrect = true;
           q.records.push('green');
+          // 答对时，将代码存入永久记忆字典
+          savedCodes[q.qid] = code;
+          
           modal.className = "modal success";
           document.getElementById('modal-title').innerText = uiTexts[lang].success;
           document.getElementById('modal-body').innerText = data.explanation;
@@ -335,6 +345,8 @@
     }
 
     function closeFeedback() {
+      const q = questions[currentCat].items[currentIdx];
+      // 如果答错了，清空当前编辑器
       if (!lastCorrect) {
         document.getElementById('vex-editor').value = "";
       }
@@ -354,7 +366,6 @@
     function showModal() { document.getElementById('modal-overlay').style.display = 'flex'; }
     function closeModal() { document.getElementById('modal-overlay').style.display = 'none'; }
     
-    // Default to EN
     setLang('en');
   </script>
 </body>
