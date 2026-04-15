@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VEX Lab Pro</title>
+  <title>VEX Lab Pro | Houdini Edition</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Syne:wght@400;600;700&display=swap" rel="stylesheet" />
   <style>
@@ -21,15 +21,16 @@
       grid-template-columns: 240px 1fr; grid-template-rows: 60px 1fr;
     }
 
+    /* Header */
     header {
       grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between;
       padding: 0 25px; background: var(--surface); border-bottom: 2px solid var(--border); z-index: 100;
     }
-    .logo { font-weight: 700; font-size: 18px; color: var(--accent); }
+    .logo { font-weight: 700; font-size: 18px; color: var(--accent); letter-spacing: -0.5px; }
     .lang-switch { display: flex; gap: 8px; }
     .lang-btn {
-      padding: 4px 10px; border: 1px solid var(--border); background: transparent;
-      border-radius: 12px; cursor: pointer; font-family: 'Syne'; font-size: 11px;
+      padding: 4px 12px; border: 1px solid var(--border); background: transparent;
+      border-radius: 15px; cursor: pointer; font-family: 'Syne'; font-size: 11px; transition: 0.3s;
     }
     .lang-btn.active { background: var(--accent); color: white; }
 
@@ -45,24 +46,22 @@
       display: flex; align-items: center; justify-content: space-between;
     }
     .q-item:hover { background: var(--surface2); }
-    .q-item.active { background: var(--surface2); border-color: var(--border); font-weight: 600; }
+    .q-item.active { background: var(--surface2); border-color: var(--border); font-weight: 600; color: var(--accent); }
     
     .q-num { font-family: 'JetBrains Mono'; font-size: 11px; color: var(--muted); margin-right: 8px; }
-    .q-badge { 
-      font-size: 9px; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; font-weight: 700;
-    }
+    .q-badge { font-size: 9px; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; font-weight: 700; }
     .easy { background: var(--diff-easy); color: #1E5631; }
     .medium { background: var(--diff-medium); color: #7A4E2D; }
     .hard { background: var(--diff-hard); color: #7A2D2D; }
 
-    /* Main */
-    main { padding: 30px; display: flex; justify-content: center; }
+    /* Main Card */
+    main { padding: 30px; display: flex; justify-content: center; overflow-y: auto; }
     .answer-card {
       background: var(--surface); border: 2px solid var(--border); border-radius: 12px;
       padding: 30px; width: 100%; max-width: 800px; height: fit-content;
       box-shadow: 0 8px 20px rgba(249, 168, 125, 0.1);
     }
-    .q-header h2 { font-size: 24px; margin-bottom: 12px; }
+    .q-header h2 { font-size: 24px; margin-bottom: 12px; font-weight: 700; }
     #q-desc { font-size: 15px; line-height: 1.7; color: #555; margin-bottom: 20px; }
 
     textarea {
@@ -70,9 +69,9 @@
       border-radius: 8px; padding: 18px; font-family: 'JetBrains Mono', monospace;
       font-size: 14px; line-height: 1.5; resize: none; color: #333; margin-bottom: 20px;
     }
-    textarea:focus { outline: none; border-color: var(--accent); }
+    textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(249, 168, 125, 0.1); }
 
-    .actions { display: flex; justify-content: space-between; }
+    .actions { display: flex; justify-content: space-between; align-items: center; }
     .btn {
       padding: 10px 24px; border-radius: 20px; border: 2px solid var(--accent);
       background: transparent; color: var(--accent); font-weight: 700;
@@ -80,6 +79,7 @@
     }
     .btn:hover { background: var(--accent); color: white; }
     .btn-primary { background: var(--accent); color: white; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
     /* Modal */
     #modal-overlay {
@@ -88,9 +88,13 @@
     }
     #modal-overlay.open { display: flex; }
     .modal {
-      background: white; padding: 30px; border-radius: 12px; width: 480px; border: 2px solid var(--border);
+      background: white; padding: 30px; border-radius: 12px; width: 480px;
+      border: 2px solid var(--border); position: relative;
     }
-    #modal-body { background: #F9F9F9; padding: 15px; border-radius: 8px; font-size: 14px; margin: 15px 0; }
+    #modal-body { 
+      background: #F9F9F9; padding: 15px; border-radius: 8px; 
+      font-size: 14px; line-height: 1.6; margin: 15px 0; max-height: 250px; overflow-y: auto;
+    }
   </style>
 </head>
 <body>
@@ -103,9 +107,7 @@
     </div>
   </header>
 
-  <aside>
-    <div id="q-list-container"></div>
-  </aside>
+  <aside id="q-list-sidebar"></aside>
 
   <main>
     <div class="answer-card">
@@ -113,7 +115,7 @@
         <h2 id="q-title">Loading...</h2>
         <p id="q-desc"></p>
       </div>
-      <textarea id="vex-code" placeholder="Write your VEX code here..."></textarea>
+      <textarea id="vex-code" placeholder="// Write your VEX code here..."></textarea>
       <div class="actions">
         <button class="btn" onclick="showHint()" id="hint-btn">HINT</button>
         <button class="btn btn-primary" id="submit-btn" onclick="submitCode()">SUBMIT CARD</button>
@@ -130,12 +132,13 @@
   </div>
 
   <script>
+    // --- 完整 Houdini VEX 题库 ---
     const questions = [
       {
         section: "Beginner",
         id: "001", difficulty: "easy",
         title: { zh: "点染红色", en: "Color Points Red" },
-        desc: { zh: "编写 VEX 代码将所有点的颜色属性 (Cd) 设置为纯红色。", en: "Write VEX code to set the color attribute (Cd) of all points to pure red." },
+        desc: { zh: "编写 VEX 代码将所有点的颜色属性 (@Cd) 设置为纯红色 {1,0,0}。", en: "Write VEX code to set the color attribute (@Cd) of all points to pure red {1,0,0}." },
         hint: { zh: "@Cd = {1,0,0};", en: "Use @Cd = {1,0,0};" }
       },
       {
@@ -149,22 +152,22 @@
         section: "Beginner",
         id: "003", difficulty: "medium",
         title: { zh: "按 Y 轴染色", en: "Color by Y-Axis" },
-        desc: { zh: "使点的红色通道 (Cd.r) 根据其在 Y 轴的高度 (@P.y) 进行变化。", en: "Make the red channel of the color (Cd.r) vary according to the Y-axis position (@P.y)." },
+        desc: { zh: "使点的红色通道 (@Cd.r) 根据其在 Y 轴的高度 (@P.y) 进行变化。", en: "Make the red channel of the color (@Cd.r) vary according to the Y-axis position (@P.y)." },
         hint: { zh: "@Cd.r = @P.y;", en: "Set @Cd.r = @P.y;" }
       },
       {
         section: "Intermediate",
         id: "004", difficulty: "medium",
         title: { zh: "噪波位移", en: "Noise Displacement" },
-        desc: { zh: "使用 Curl Noise 根据点的位置对点的坐标 (@P) 进行偏移。", en: "Offset point positions (@P) using Curl Noise based on current position." },
-        hint: { zh: "@P += curlnoise(@P);", en: "Use @P += curlnoise(@P * freq);" }
+        desc: { zh: "使用 curlnoise() 根据点的位置对点的坐标 (@P) 进行偏移。", en: "Offset point positions (@P) using curlnoise() based on current position." },
+        hint: { zh: "@P += curlnoise(@P);", en: "Use @P += curlnoise(@P);" }
       },
       {
         section: "Intermediate",
         id: "005", difficulty: "hard",
         title: { zh: "删除偶数点", en: "Remove Even Points" },
         desc: { zh: "编写代码，如果点的编号是偶数，则将其删除。", en: "Write code to remove points if their point number (@ptnum) is an even number." },
-        hint: { zh: "if(@ptnum % 2 == 0) removepoint(0, @ptnum);", en: "Use the modulo operator % and removepoint()." }
+        hint: { zh: "if(@ptnum % 2 == 0) removepoint(0, @ptnum);", en: "Use if(@ptnum % 2 == 0) removepoint(0, @ptnum);" }
       }
     ];
 
@@ -173,7 +176,7 @@
 
     const uiText = {
       zh: { hint: "查看提示", submit: "提交答题卡", close: "返回练习", judging: "AI 判题中...", alert: "请输入代码" },
-      en: { hint: "HINT", submit: "SUBMIT CARD", close: "CLOSE", judging: "JUDGING...", alert: "Enter code first" }
+      en: { hint: "HINT", submit: "SUBMIT CARD", close: "BACK", judging: "JUDGING...", alert: "Enter code first" }
     };
 
     function setLang(l) {
@@ -184,16 +187,16 @@
     }
 
     function render() {
-      const listContainer = document.getElementById('q-list-container');
-      listContainer.innerHTML = '';
+      const sidebar = document.getElementById('q-list-sidebar');
+      sidebar.innerHTML = '';
       
       let lastSection = "";
       questions.forEach((q, i) => {
         if (q.section !== lastSection) {
-          const sectionDiv = document.createElement('div');
-          sectionDiv.className = 'sidebar-section';
-          sectionDiv.innerText = q.section;
-          listContainer.appendChild(sectionDiv);
+          const sec = document.createElement('div');
+          sec.className = 'sidebar-section';
+          sec.innerText = q.section;
+          sidebar.appendChild(sec);
           lastSection = q.section;
         }
 
@@ -204,7 +207,7 @@
           <div><span class="q-num">#${q.id}</span>${q.title[lang]}</div>
           <span class="q-badge ${q.difficulty}">${q.difficulty}</span>
         `;
-        listContainer.appendChild(div);
+        sidebar.appendChild(div);
       });
 
       const q = questions[currentIdx];
@@ -216,28 +219,34 @@
     }
 
     async function submitCode() {
-      const code = document.getElementById('vex-code').value;
-      if (!code.trim()) return alert(uiText[lang].alert);
+      const codeInput = document.getElementById('vex-code').value;
+      if (!codeInput.trim()) return alert(uiText[lang].alert);
 
       const btn = document.getElementById('submit-btn');
       btn.disabled = true;
       btn.innerText = uiText[lang].judging;
 
       try {
-        const res = await fetch('/api/judge', {
+        const response = await fetch('/api/judge', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            code: code,
-            system: `你是一个 Houdini VEX 专家。题目：${questions[currentIdx].title.zh}。请判断代码。返回JSON：{"result":"correct/wrong","short":"总结","explanation":"分析"}`
+            code: codeInput,
+            // 匹配后端 judge.js 中的字段名 questionContext
+            questionContext: `题目: ${questions[currentIdx].title.zh} \n要求: ${questions[currentIdx].desc.zh} \n参考提示: ${questions[currentIdx].hint.zh}`
           })
         });
-        const data = await res.json();
+
+        const data = await response.json();
         document.getElementById('modal-title').innerText = (data.result === 'correct' ? '✅ ' : '❌ ') + data.short;
         document.getElementById('modal-body').innerText = data.explanation;
         document.getElementById('modal-overlay').classList.add('open');
-      } catch (e) { alert("Error"); }
-      finally { btn.disabled = false; btn.innerText = uiText[lang].submit; }
+      } catch (e) {
+        alert("Server Error");
+      } finally {
+        btn.disabled = false;
+        btn.innerText = uiText[lang].submit;
+      }
     }
 
     function showHint() {
@@ -248,6 +257,7 @@
 
     function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); }
 
+    // 初始化显示中文
     setLang('zh');
   </script>
 </body>
