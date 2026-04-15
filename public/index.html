@@ -3,12 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VEX LAB | Studio Pro</title>
+  <title>VEX LAB | Manuscript Studio</title>
   <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=JetBrains+Mono:wght@400;600&family=Syne:wght@400;600&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg-base: #FFF5EE; 
-      --glass: rgba(255, 255, 255, 0.4);
+      /* 🎨 核心改动：象牙色手稿纸底色 */
+      --bg-base: #FCF8F3; 
+      /* 卡片保持半透明毛玻璃，让纸纹透过来 */
+      --glass: rgba(255, 255, 255, 0.45);
       --card-white: #FFFFFF;
       --accent-orange: #F9A87D;
       --text-main: #2D2D2D;
@@ -27,13 +29,19 @@
     
     body {
       font-family: 'Syne', sans-serif;
-      background: var(--bg-base);
+      /* 🎨 核心改动：网页底色增加粗糙纸纹理图片 */
+      background-color: var(--bg-base); 
+      /* 📜 粗糙纸纹理平铺 */
+      background-image: url('data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD//...[此处为简化的纸张纤维base64图片代码，实际应用中可用图片URL]...'); /* 📜 */
+      background-repeat: repeat; /* 📜 纹理平铺 */
+      background-size: 1000px 1000px; /* 📜 */
       height: 100vh;
       display: flex; align-items: center; justify-content: center;
       overflow: hidden;
       position: relative;
     }
 
+    /* 右上角双语切换 */
     .top-right-lang {
       position: absolute; top: 25px; right: 40px;
       display: flex; gap: 15px; z-index: 200;
@@ -41,6 +49,7 @@
     .lang-link { cursor: pointer; font-size: 12px; font-weight: 700; color: var(--text-sub); text-transform: uppercase; transition: 0.3s; }
     .lang-link.active { color: var(--text-main); text-decoration: underline; }
 
+    /* 全局最左上角 Logo */
     .page-logo {
       position: absolute; top: 25px; left: 40px;
       font-family: 'Special Elite', cursive;
@@ -59,6 +68,7 @@
       overflow: hidden;
     }
 
+    /* aside 和大卡片保持不变 */
     aside {
       width: 80px; height: 100%;
       background: rgba(255, 255, 255, 0.1);
@@ -92,11 +102,13 @@
     .nav-text-box { margin-left: 15px; opacity: 0; transition: 0.2s; white-space: nowrap; flex: 1; }
     aside:hover .nav-text-box { opacity: 1; }
 
+    /* 战绩小圆点列 */
     .record-dots { display: flex; gap: 4px; margin-top: 4px; }
     .mini-dot { width: 6px; height: 6px; border-radius: 50%; }
     .mini-dot.red { background: var(--fail-red); }
     .mini-dot.green { background: var(--success-green); }
 
+    /* 主内容融合大卡片 */
     main { flex: 1; padding: 40px; overflow: hidden; }
 
     .unified-card {
@@ -119,6 +131,7 @@
     }
     .question-overlay p { font-size: 15px; color: var(--text-sub); max-width: 650px; line-height: 1.6; }
 
+    /* 编辑器保持专业感 */
     .editor-area { flex: 1; padding: 20px 50px 100px 50px; }
     #vex-editor {
       width: 100%; height: 100%; border: none; outline: none;
@@ -127,6 +140,7 @@
     }
     #vex-editor::placeholder { color: #000; opacity: 0.15; }
 
+    /* 内嵌按钮 */
     .embedded-controls {
       position: absolute; bottom: 30px; right: 40px;
       display: flex; gap: 15px; z-index: 10;
@@ -135,6 +149,7 @@
     .btn-hint { background: #F5F5F5; color: var(--text-sub); }
     .btn-submit { background: var(--accent-orange); color: white; box-shadow: 0 4px 15px rgba(249, 168, 125, 0.3); }
 
+    /* 弹窗样式不变 */
     #modal-overlay {
       position: fixed; inset: 0; background: rgba(255,255,255,0.3);
       backdrop-filter: blur(15px); display: none; align-items: center; justify-content: center; z-index: 1000;
@@ -193,6 +208,7 @@
   </div>
 
   <script>
+    /* 📜 核心改动：题目和数据不变，逻辑不变 */
     const questions = [
       { category: "BEGINNER", items: [
         { qid: "b1", id: "01", difficulty: "easy", color: "var(--easy)", 
@@ -223,8 +239,6 @@
     ];
 
     let currentCat = 0, currentIdx = 0, lang = 'en', lastCorrect = false;
-    
-    // 核心：保存已答对题目的代码，用于跨题目切换读取
     const savedCodes = {};
 
     const uiTexts = {
@@ -253,17 +267,7 @@
           const isActive = (cIdx===currentCat && iIdx===currentIdx);
           const el = document.createElement('div');
           el.className = `nav-item ${isActive ? 'active' : ''}`;
-          el.onclick = () => { 
-            if(currentIdx!==iIdx || currentCat!==cIdx) { 
-              // 切换前先根据 savedCodes 决定是否保留代码
-              currentCat=cIdx; 
-              currentIdx=iIdx; 
-              const nextQ = questions[currentCat].items[currentIdx];
-              // 只有答对过的题目才会自动填回代码，否则清空
-              document.getElementById('vex-editor').value = savedCodes[nextQ.qid] || ""; 
-              render(); 
-            } 
-          };
+          el.onclick = () => { if(currentIdx!==iIdx || currentCat!==cIdx) { currentCat=cIdx; currentIdx=iIdx; document.getElementById('vex-editor').value = savedCodes[questions[currentCat].items[currentIdx].qid] || ""; render(); } };
           
           const iconBg = isActive ? item.color : (item.color + '88');
           let dotsHtml = '<div class="record-dots">';
@@ -313,9 +317,7 @@
         if (data.result === 'correct') {
           lastCorrect = true;
           q.records.push('green');
-          // 答对时，将代码存入永久记忆字典
           savedCodes[q.qid] = code;
-          
           modal.className = "modal success";
           document.getElementById('modal-title').innerText = uiTexts[lang].success;
           document.getElementById('modal-body').innerText = data.explanation;
@@ -345,11 +347,7 @@
     }
 
     function closeFeedback() {
-      const q = questions[currentCat].items[currentIdx];
-      // 如果答错了，清空当前编辑器
-      if (!lastCorrect) {
-        document.getElementById('vex-editor').value = "";
-      }
+      if (!lastCorrect) { document.getElementById('vex-editor').value = ""; }
       closeModal();
     }
 
@@ -366,6 +364,7 @@
     function showModal() { document.getElementById('modal-overlay').style.display = 'flex'; }
     function closeModal() { document.getElementById('modal-overlay').style.display = 'none'; }
     
+    // Default to EN
     setLang('en');
   </script>
 </body>
