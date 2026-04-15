@@ -1,410 +1,264 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VEX 代码练习答题卡</title>
-    <style>
-        /* --- 核心 CSS 变量 --- */
-        :root {
-            --bg-color: #FDF8F5; /* 米白色背景 */
-            --card-bg: #FFFFFF; /* 答题卡白色 */
-            --primary-orange: #F9A87D; /* 浅橘色主色 */
-            --border-color: #E6E0DB; /* 淡淡的边框色 */
-            --text-main: #4A4A4A; /* 深灰文字 */
-            --text-sub: #8C8C8C; /* 浅灰文字 */
-            
-            /* 难度颜色 (保留原意，更柔和) */
-            --diff-easy: #A8E6CF; /* 浅绿 */
-            --diff-mid: #FFD3B6; /* 浅黄 */
-            --diff-hard: #FFAAA5; /* 浅红 */
-            --diff-vhard: #D4A5FF; /* 浅紫 */
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VEX Practice Pro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Syne:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #FDF8F5; --surface: #FFFFFF; --surface2: #FFFBF9;
+      --border: #F9A87D; --accent: #F9A87D; --text: #4A4A4A; 
+      --muted: #8C8C8C; --diff-easy: #A8E6CF; --diff-mid: #FFD3B6;
+      --diff-hard: #FFAAA5; --diff-vhard: #D4A5FF;
+    }
 
-        /* --- 基础样式 --- */
-        body {
-            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            min-height: 100vh;
-        }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Syne', sans-serif; background: var(--bg); color: var(--text);
+      min-height: 100vh; display: grid;
+      grid-template-columns: 220px 1fr; grid-template-rows: 60px 1fr;
+    }
 
-        /* --- 答题卡主容器 --- */
-        .answer-sheet {
-            background-color: var(--card-bg);
-            width: 100%;
-            max-width: 800px;
-            border: 2px solid var(--primary-orange);
-            border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(249, 168, 125, 0.15); /* 带有橘色调的阴影 */
-            padding: 40px;
-            box-sizing: border-box;
-            position: relative;
-        }
+    /* Header */
+    header {
+      grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between;
+      padding: 0 25px; background: var(--surface); border-bottom: 2px solid var(--border); z-index: 100;
+    }
+    .logo { font-weight: 700; font-size: 18px; color: var(--accent); letter-spacing: -0.5px; }
+    .lang-switch { display: flex; gap: 8px; }
+    .lang-btn {
+      padding: 4px 10px; border: 1px solid var(--border); background: transparent;
+      border-radius: 12px; cursor: pointer; font-family: 'Syne'; font-size: 11px; transition: 0.3s;
+    }
+    .lang-btn.active { background: var(--accent); color: white; }
 
-        /* 模拟答题卡顶部的装饰孔 */
-        .answer-sheet::before {
-            content: '';
-            position: absolute;
-            top: 15px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 80%;
-            height: 10px;
-            background-image: radial-gradient(circle, var(--border-color) 40%, transparent 50%);
-            background-size: 30px 10px;
-        }
+    /* Sidebar (Quest List) */
+    aside { background: var(--surface); border-right: 1px solid #EEE5E0; padding: 15px; overflow-y: auto; }
+    .nav-title { font-size: 11px; color: var(--muted); text-transform: uppercase; margin-bottom: 12px; letter-spacing: 1px; }
+    .q-item {
+      padding: 8px 12px; margin-bottom: 6px; border-radius: 6px; cursor: pointer;
+      font-size: 13px; transition: 0.2s; border: 1px solid transparent;
+      display: flex; align-items: center; gap: 8px; color: var(--text);
+    }
+    .q-item:hover { background: var(--surface2); }
+    .q-item.active { background: var(--surface2); border-color: var(--border); font-weight: 600; color: var(--accent); }
+    .diff-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
 
-        /* --- 头部区域 --- */
-        header {
-            text-align: center;
-            margin-bottom: 30px;
-            border-bottom: 1px dashed var(--border-color);
-            padding-bottom: 20px;
-        }
+    /* Main Content */
+    main { padding: 25px; display: flex; justify-content: center; overflow-y: auto; }
+    .answer-card {
+      background: var(--surface); border: 2px solid var(--border); border-radius: 12px;
+      padding: 25px; width: 100%; max-width: 850px; height: fit-content;
+      box-shadow: 0 6px 15px rgba(249, 168, 125, 0.08);
+    }
+    .q-header h2 { font-size: 22px; margin-bottom: 10px; font-weight: 700; }
+    .asset-box { margin: 10px 0; display: flex; flex-wrap: wrap; gap: 6px; }
+    .asset-tag {
+      padding: 3px 8px; background: #F5F5F5; border-radius: 4px;
+      font-size: 11px; font-family: 'JetBrains Mono'; color: #666;
+    }
+    #q-desc { font-size: 14px; line-height: 1.6; color: #555; margin-top: 10px; }
 
-        header h1 {
-            color: var(--primary-orange);
-            margin: 0 0 10px 0;
-            font-size: 24px;
-        }
+    /* Editor */
+    .editor-wrap { margin: 20px 0; }
+    textarea {
+      width: 100%; height: 350px; background: #FBFBFB; border: 1px solid #DDD;
+      border-radius: 8px; padding: 15px; font-family: 'JetBrains Mono', monospace;
+      font-size: 13px; line-height: 1.5; resize: none; color: #333;
+    }
+    textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(249, 168, 125, 0.1); }
 
-        header p {
-            color: var(--text-sub);
-            margin: 0;
-            font-size: 14px;
-        }
+    /* Actions */
+    .actions { display: flex; justify-content: space-between; align-items: center; }
+    .btn {
+      padding: 9px 20px; border-radius: 20px; border: 2px solid var(--accent);
+      background: transparent; color: var(--accent); font-weight: 700;
+      cursor: pointer; font-family: 'Syne'; transition: 0.3s; font-size: 14px;
+    }
+    .btn:hover { background: var(--accent); color: white; }
+    .btn-primary { background: var(--accent); color: white; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        /* --- 题目区域 --- */
-        .question-section {
-            background-color: #FFFBF9;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 25px;
-        }
-
-        .question-section h2 {
-            font-size: 18px;
-            margin-top: 0;
-            color: var(--primary-orange);
-        }
-
-        /* --- 代码输入区域 (核心修改) --- */
-        .code-section {
-            margin-bottom: 25px;
-        }
-
-        .code-section label {
-            display: block;
-            margin-bottom: 10px;
-            font-weight: bold;
-            color: var(--text-main);
-        }
-
-        /* 把 textarea 做成带有浅橘色边框的格子 */
-        #vex-code {
-            width: 100%;
-            height: 300px;
-            background-color: #FAFAFA;
-            border: 2px solid var(--primary-orange);
-            border-radius: 8px;
-            padding: 15px;
-            font-family: 'Consolas', 'Monaco', monospace;
-            font-size: 14px;
-            color: #2C3E50;
-            box-sizing: border-box;
-            resize: vertical;
-            line-height: 1.5;
-        }
-
-        #vex-code:focus {
-            outline: none;
-            box-shadow: 0 0 10px rgba(249, 168, 125, 0.3);
-        }
-
-        /* --- 难度等级答题卡选项 --- */
-        .difficulty-section {
-            margin-bottom: 30px;
-            text-align: center;
-        }
-
-        .difficulty-section h3 {
-            font-size: 16px;
-            margin-bottom: 15px;
-            color: var(--text-sub);
-        }
-
-        .difficulty-options {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-
-        /* 隐藏原始 radio */
-        .difficulty-options input[type="radio"] {
-            display: none;
-        }
-
-        /* 设计“填涂冒泡”样式 */
-        .difficulty-label {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 80px;
-            height: 35px;
-            border: 2px solid var(--border-color);
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            position: relative;
-            background-color: var(--card-bg);
-        }
-
-        /* 原始颜色作为小点缀 */
-        .difficulty-label::before {
-            content: '';
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            margin-right: 8px;
-        }
-
-        /* 定义不同难度的特定点缀颜色 */
-        .label-easy::before { background-color: var(--diff-easy); }
-        .label-mid::before { background-color: var(--diff-mid); }
-        .label-hard::before { background-color: var(--diff-hard); }
-        .label-vhard::before { background-color: var(--diff-vhard); }
-
-        /* 鼠标悬停效果 */
-        .difficulty-label:hover {
-            border-color: var(--primary-orange);
-            background-color: #FFFBF9;
-        }
-
-        /* 选中状态：填涂效果 */
-        .difficulty-options input[type="radio"]:checked + .difficulty-label {
-            background-color: var(--primary-orange);
-            border-color: var(--primary-orange);
-            color: #FFFFFF;
-            box-shadow: 0 4px 10px rgba(249, 168, 125, 0.4);
-        }
-
-        /* 选中状态下，小点缀变成白色 */
-        .difficulty-options input[type="radio"]:checked + .difficulty-label::before {
-            background-color: #FFFFFF;
-        }
-
-        /* --- 提交按钮 --- */
-        .submit-section {
-            text-align: center;
-            margin-top: 30px;
-        }
-
-        #submit-btn {
-            background-color: var(--card-bg);
-            color: var(--primary-orange);
-            border: 3px solid var(--primary-orange);
-            padding: 12px 40px;
-            font-size: 18px;
-            font-weight: bold;
-            border-radius: 30px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        #submit-btn:hover {
-            background-color: var(--primary-orange);
-            color: #FFFFFF;
-            box-shadow: 0 5px 15px rgba(249, 168, 125, 0.4);
-        }
-
-        #submit-btn:disabled {
-            border-color: var(--border-color);
-            color: var(--text-sub);
-            cursor: not-allowed;
-        }
-
-        /* --- 结果弹窗 (Modal) 样式优化 --- */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        .modal-content {
-            background-color: var(--card-bg);
-            padding: 30px;
-            border-radius: 15px;
-            border: 2px solid var(--primary-orange);
-            width: 90%;
-            max-width: 500px;
-            text-align: center;
-            position: relative;
-        }
-
-        .close-modal {
-            position: absolute;
-            top: 10px;
-            right: 15px;
-            font-size: 24px;
-            cursor: pointer;
-            color: var(--text-sub);
-        }
-
-        #modal-result { font-size: 20px; font-weight: bold; margin-bottom: 10px; }
-        #modal-short { font-size: 16px; color: var(--text-main); margin-bottom: 15px; }
-        #modal-explanation { font-size: 14px; color: var(--text-sub); text-align: left; background: #F9F9F9; padding: 15px; border-radius: 8px; }
-
-        /* 结果颜色 */
-        .res-correct { color: #2ECC71; }
-        .res-wrong { color: #E74C3C; }
-
-    </style>
+    /* Modal */
+    #modal-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.3); display: none; align-items: center; justify-content: center; z-index: 1000;
+    }
+    #modal-overlay.open { display: flex; }
+    .modal {
+      background: white; padding: 25px; border-radius: 12px; width: 450px;
+      border: 2px solid var(--border); position: relative;
+    }
+    #modal-body { 
+      background: #F9F9F9; padding: 15px; border-radius: 8px; 
+      font-size: 13px; line-height: 1.6; margin: 15px 0; max-height: 250px; overflow-y: auto;
+    }
+  </style>
 </head>
 <body>
 
-    <div class="answer-sheet">
+  <header>
+    <div class="logo">VEX CODE INTERN</div>
+    <div class="lang-switch">
+      <button class="lang-btn active" id="btn-zh" onclick="setLang('zh')">中文</button>
+      <button class="lang-btn" id="btn-en" onclick="setLang('en')">EN</button>
+    </div>
+  </header>
+
+  <aside>
+    <div class="nav-title" id="side-title">QUEST LIST</div>
+    <div id="q-list"></div>
+  </aside>
+
+  <main>
+    <div class="answer-card">
+      <div class="q-header">
+        <h2 id="q-title">载入中...</h2>
+        <div class="asset-box" id="q-assets"></div>
+        <p id="q-desc"></p>
+      </div>
+
+      <div class="editor-wrap">
+        <textarea id="vex-code" placeholder="// Input your VEX code here..."></textarea>
+      </div>
+
+      <div class="actions">
+        <button class="btn" onclick="showHint()" id="hint-btn">HINT</button>
+        <button class="btn btn-primary" id="submit-btn" onclick="submitTask()">SUBMIT CARD</button>
+      </div>
+    </div>
+  </main>
+
+  <div id="modal-overlay" onclick="closeModal()">
+    <div class="modal" onclick="event.stopPropagation()">
+      <h3 id="modal-title" style="color: var(--accent)">RESULT</h3>
+      <div id="modal-body"></div>
+      <button class="btn" style="width: 100%" onclick="closeModal()" id="close-btn">CLOSE</button>
+    </div>
+  </div>
+
+  <script>
+    // --- 完整题目库集成 ---
+    const questions = [
+      {
+        id: 1, difficulty: "easy",
+        title: { zh: "01. 基础前进", en: "01. Basic Forward" },
+        assets: ["Motor_Left", "Motor_Right"],
+        desc: { zh: "让机器人以 50% 的速度前进 2 秒后停止。", en: "Drive forward at 50% velocity for 2 seconds and then stop." },
+        hint: { zh: "使用 spin(forward) 配合 task::sleep(2000)。", en: "Use spin(forward) with task::sleep(2000)." }
+      },
+      {
+        id: 2, difficulty: "easy",
+        title: { zh: "02. 精确后退", en: "02. Precise Reverse" },
+        assets: ["Drivetrain"],
+        desc: { zh: "使用 Drivetrain 让机器人后退 200 毫米。", en: "Use Drivetrain to move the robot reverse for 200 mm." },
+        hint: { zh: "尝试使用 driveFor(reverse, 200, mm)。", en: "Try using driveFor(reverse, 200, mm)." }
+      },
+      {
+        id: 3, difficulty: "mid",
+        title: { zh: "03. 原地转弯", en: "03. Point Turn" },
+        assets: ["Motor_Left", "Motor_Right"],
+        desc: { zh: "让左电机前进，右电机后退，实现原地右转 90 度（假设耗时 500ms）。", en: "Spin Left forward and Right reverse to turn 90 degrees (approx 500ms)." },
+        hint: { zh: "给两个电机设置相反的运动方向。", en: "Set opposite directions for the two motors." }
+      },
+      {
+        id: 4, difficulty: "mid",
+        title: { zh: "04. 循环往复", en: "04. Loop Drive" },
+        assets: ["Drivetrain"],
+        desc: { zh: "使用 for 循环让机器人重复“前进10cm、后退10cm”动作 3 次。", en: "Use a for loop to repeat 'forward 10cm, reverse 10cm' 3 times." },
+        hint: { zh: "for(int i=0; i<3; i++) { ... }", en: "Use for(int i=0; i<3; i++) { ... }" }
+      },
+      {
+        id: 5, difficulty: "hard",
+        title: { zh: "05. 触碰停止", en: "05. Bumper Stop" },
+        assets: ["Drivetrain", "Bumper_Sensor"],
+        desc: { zh: "让机器人一直前进，直到触碰传感器被按下时停止。", en: "Drive forward indefinitely until the Bumper sensor is pressed." },
+        hint: { zh: "使用 while(!Bumper.pressing()) 循环。", en: "Use a while(!Bumper.pressing()) loop." }
+      }
+    ];
+
+    let currentIdx = 0;
+    let lang = 'zh';
+
+    const uiText = {
+      zh: { side: "题目列表", hint: "查看提示", submit: "提交答题卡", close: "关闭", judging: "AI 判题中...", alert: "请输入代码" },
+      en: { side: "QUEST LIST", hint: "HINT", submit: "SUBMIT CARD", close: "CLOSE", judging: "JUDGING...", alert: "Enter code first" }
+    };
+
+    function setLang(l) {
+      lang = l;
+      document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById(`btn-${l}`).classList.add('active');
+      render();
+    }
+
+    function render() {
+      // 侧边栏
+      document.getElementById('side-title').innerText = uiText[lang].side;
+      const list = document.getElementById('q-list');
+      list.innerHTML = '';
+      questions.forEach((q, i) => {
+        const div = document.createElement('div');
+        div.className = `q-item ${i === currentIdx ? 'active' : ''}`;
+        div.onclick = () => { currentIdx = i; render(); };
+        div.innerHTML = `<span class="diff-dot" style="background:var(--diff-${q.difficulty})"></span>${q.title[lang]}`;
+        list.appendChild(div);
+      });
+
+      // 主内容
+      const q = questions[currentIdx];
+      document.getElementById('q-title').innerText = q.title[lang];
+      document.getElementById('q-desc').innerText = q.desc[lang];
+      document.getElementById('hint-btn').innerText = uiText[lang].hint;
+      document.getElementById('submit-btn').innerText = uiText[lang].submit;
+      document.getElementById('close-btn').innerText = uiText[lang].close;
+
+      const assetEl = document.getElementById('q-assets');
+      assetEl.innerHTML = q.assets.map(a => `<span class="asset-tag">${a}</span>`).join('');
+    }
+
+    async function submitTask() {
+      const code = document.getElementById('vex-code').value;
+      if (!code.trim()) return alert(uiText[lang].alert);
+
+      const btn = document.getElementById('submit-btn');
+      btn.disabled = true;
+      btn.innerText = uiText[lang].judging;
+
+      try {
+        const res = await fetch('/api/judge', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            code: code,
+            system: `你是一个 VEX 机器人竞赛裁判。当前题目：${questions[currentIdx].title.zh}。可用设备：${questions[currentIdx].assets.join(',')}。请判断代码逻辑。必须返回 JSON：{"result":"correct/wrong","short":"简短标题","explanation":"详细分析"}`
+          })
+        });
+        const data = await res.json();
         
-        <header>
-            <h1>VEX 代码练习答题卡</h1>
-            <p>功能简介：这是一个 VEX 代码在线练习小网站。请在下方输入你的 VEX 代码，选择你认为的难度等级，然后点击提交。后台 AI 将会对你的代码进行判断和解释。</p>
-        </header>
+        document.getElementById('modal-title').innerText = (data.result === 'correct' ? '✅ ' : '❌ ') + (data.short || 'Result');
+        document.getElementById('modal-body').innerText = data.explanation || 'No details provided.';
+        document.getElementById('modal-overlay').classList.add('open');
+      } catch (e) {
+        alert("Server Error");
+      } finally {
+        btn.disabled = false;
+        btn.innerText = uiText[lang].submit;
+      }
+    }
 
-        <div class="question-section">
-            <h2>题目描述</h2>
-            <p style="color: var(--text-sub); font-size: 14px; margin: 0;">(这是一个练习网站，请在这里编写用于控制 VEX 机器人的 VEX C++ 或 Python 代码。你可以尝试实现一个简单的控制逻辑，例如让机器人前进或转弯。)</p>
-        </div>
+    function showHint() {
+      document.getElementById('modal-title').innerText = "💡 HINT";
+      document.getElementById('modal-body').innerText = questions[currentIdx].hint[lang];
+      document.getElementById('modal-overlay').classList.add('open');
+    }
 
-        <div class="code-section">
-            <label for="vex-code">VEX 代码 (在此填涂):</label>
-            <textarea id="vex-code" placeholder="// 在此输入 VEX C++ 或 Python 代码...&#10;// 例如: Motor1.spin(forward);"></textarea>
-        </div>
+    function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); }
 
-        <div class="difficulty-section">
-            <h3>选择你认为的难度等级 (单选):</h3>
-            <div class="difficulty-options">
-                
-                <input type="radio" name="difficulty" id="diff-1" value="Easy" checked>
-                <label for="diff-1" class="difficulty-label label-easy">Easy</label>
-
-                <input type="radio" name="difficulty" id="diff-2" value="Mid">
-                <label for="diff-2" class="difficulty-label label-mid">Mid</label>
-
-                <input type="radio" name="difficulty" id="diff-3" value="Hard">
-                <label for="diff-3" class="difficulty-label label-hard">Hard</label>
-
-                <input type="radio" name="difficulty" id="diff-4" value="V-Hard">
-                <label for="diff-4" class="difficulty-label label-vhard">V-Hard</label>
-
-            </div>
-        </div>
-
-        <div class="submit-section">
-            <button id="submit-btn">提交答题卡</button>
-        </div>
-
-    </div>
-
-    <div class="modal" id="result-modal">
-        <div class="modal-content">
-            <span class="close-modal" id="close-modal-btn">&times;</span>
-            <div id="modal-result"></div>
-            <div id="modal-short"></div>
-            <div id="modal-explanation"></div>
-        </div>
-    </div>
-
-    <script>
-        document.getElementById('submit-btn').addEventListener('click', async function() {
-            const codeInput = document.getElementById('vex-code').value;
-            const difficulty = document.querySelector('input[name="difficulty"]:checked').value;
-            const submitBtn = document.getElementById('submit-btn');
-            const modal = document.getElementById('result-modal');
-
-            if (!codeInput.trim()) {
-                alert('请先输入代码！就像答题卡不能留白一样。');
-                return;
-            }
-
-            // UI 状态更新：加载中
-            submitBtn.disabled = true;
-            submitBtn.innerText = '正在判题...';
-
-            try {
-                // 发起 API 请求
-                const response = await fetch('/api/judge', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        code: codeInput,
-                        difficulty: difficulty,
-                        // 这里的 system prompt 可以根据你的需要调整，让 AI 配合新的设计
-                        system: "你是一个专业的 VEX 机器人竞赛裁判。请判断用户提交的代码是否正确，并给出简短的解释和难度评估。无论发生什么，请只返回一个标准的 JSON 对象，格式为：{\"result\": \"correct/wrong\", \"short\": \"简短结果\", \"explanation\": \"详细解释\"}"
-                    })
-                });
-
-                const data = await response.json();
-
-                // 填充弹窗内容
-                const resEl = document.getElementById('modal-result');
-                const shortEl = document.getElementById('modal-short');
-                const expEl = document.getElementById('modal-explanation');
-
-                if (data.result === 'correct') {
-                    resEl.innerText = '✔ 正确';
-                    resEl.className = 'res-correct';
-                } else {
-                    resEl.innerText = '✘ 错误';
-                    resEl.className = 'res-wrong';
-                }
-
-                shortEl.innerText = data.short || '无简短结果';
-                expEl.innerText = data.explanation || '无详细解释';
-
-                // 显示弹窗
-                modal.style.display = 'flex';
-
-            } catch (error) {
-                console.error('Error:', error);
-                alert('服务器崩溃了，请稍后再试。就像答题卡被撕破了一样。');
-            } finally {
-                // 恢复 UI 状态
-                submitBtn.disabled = false;
-                submitBtn.innerText = '提交答题卡';
-            }
-        });
-
-        // 关闭弹窗逻辑
-        document.getElementById('close-modal-btn').addEventListener('click', function() {
-            document.getElementById('result-modal').style.display = 'none';
-        });
-
-        // 点击弹窗外部关闭
-        window.addEventListener('click', function(event) {
-            const modal = document.getElementById('result-modal');
-            if (event.target === modal) {
-                modal.style.display = 'none';
-            }
-        });
-    </script>
-
+    // 初始化渲染
+    render();
+  </script>
 </body>
 </html>
