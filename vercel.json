@@ -1,0 +1,12 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "/vex-practice/api/:path*"
+    },
+    {
+      "source": "/((?!api/).*)",
+      "destination": "/vex-practice/public/$1"
+    }
+  ]
+}
