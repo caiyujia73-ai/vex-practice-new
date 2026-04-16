@@ -391,6 +391,259 @@
           judge:"Set @Alpha to 1.0 / length(@P) so opacity falls off with distance from origin.",
           attempts:3, records:[] }
 
+      ]},
+
+      { category: "BEGINNER II", cat_zh: "初级 II", items: [
+
+        { qid:"q11", id:"11", difficulty:"easy", color:"var(--easy)",
+          cat: { zh:"数学 / 属性", en:"Math / Attribute" },
+          title: { zh:"奇偶地砖", en:"Checkerboard Tiles" },
+          desc: {
+            zh:"为了打破地砖颜色的单一感，请根据点的序号 (@ptnum) 的奇偶性，将点分别染成灰色 {0.5,0.5,0.5} 和深灰色 {0.2,0.2,0.2}。",
+            en:"Break the monotony of the floor tiles. Color each point light grey or dark grey based on whether its @ptnum is even or odd."
+          },
+          hint: { zh:"使用取模运算符 % 判断奇偶。", en:"Use the modulo operator % to check odd/even." },
+          solution:"if(@ptnum % 2 == 0) @Cd = 0.5; else @Cd = 0.2;",
+          judge:"If @ptnum is even, set @Cd to 0.5 (grey); otherwise set @Cd to 0.2 (dark grey). Use modulo %.",
+          attempts:3, records:[] },
+
+        { qid:"q12", id:"12", difficulty:"easy", color:"var(--easy)",
+          cat: { zh:"法线", en:"Normal" },
+          title: { zh:"向天生长", en:"Growth Direction" },
+          desc: {
+            zh:"不管地表如何倾斜，这些发光的蘑菇都要笔直向上生长。请将所有点的法线 (@N) 统一设为指向天空 {0,1,0}。",
+            en:"No matter how the ground slopes, these mushrooms must grow straight up. Set every point's normal (@N) to point skyward {0,1,0}."
+          },
+          hint: { zh:"直接覆盖法线向量，赋一个字面量。", en:"Directly overwrite @N with a vector literal." },
+          solution:"@N = {0,1,0};",
+          judge:"Set @N to {0,1,0} for all points.",
+          attempts:3, records:[] },
+
+        { qid:"q13", id:"13", difficulty:"easy", color:"var(--easy)",
+          cat: { zh:"属性 / 数学", en:"Attribute / Math" },
+          title: { zh:"反转植被区", en:"Invert Growth Mask" },
+          desc: {
+            zh:"当前的 @mask 属性标记了岩石区，但我需要它的反向区域来种草。请将 @mask 属性的值进行翻转（0变1，1变0）。",
+            en:"The @mask attribute currently marks rocky areas. Invert it so we can use the opposite region for planting grass (0 becomes 1, 1 becomes 0)."
+          },
+          hint: { zh:"用 1 减去当前值即可实现 0→1 反转。", en:"Subtract the current value from 1 to flip the range." },
+          solution:"@mask = 1.0 - @mask;",
+          judge:"Invert @mask by setting it to 1.0 - @mask.",
+          attempts:3, records:[] },
+
+        { qid:"q14", id:"14", difficulty:"easy", color:"var(--easy)",
+          cat: { zh:"数学 / 位置", en:"Math / Position" },
+          title: { zh:"路边旗帜", en:"Path Flags" },
+          desc: {
+            zh:"为了增加节日气氛，请让路边的点沿 Y 轴随 X 坐标产生正弦波动，模拟旗帜随风摆动。",
+            en:"Add some festivity. Make the roadside points oscillate vertically by applying a sine wave along their X coordinate."
+          },
+          hint: { zh:"使用 sin() 函数，以 @P.x 作为输入。", en:"Use sin() with @P.x as the input." },
+          solution:"@P.y += sin(@P.x);",
+          judge:"Add sin(@P.x) to @P.y so points undulate like waving flags.",
+          attempts:3, records:[] },
+
+        { qid:"q15", id:"15", difficulty:"easy", color:"var(--easy)",
+          cat: { zh:"数学 / 颜色", en:"Math / Color" },
+          title: { zh:"亮度提取", en:"Luminance Extract" },
+          desc: {
+            zh:"我们需要根据颜色亮度来控制发光强度。请计算颜色 @Cd 三个通道的平均值，并将其存入新属性 @brightness 中。",
+            en:"We need luminance to drive glow intensity. Compute the average of @Cd's three channels and store it in a new @brightness attribute."
+          },
+          hint: { zh:"三个通道相加后除以 3.0。", en:"Add the three channels together and divide by 3.0." },
+          solution:"@brightness = (@Cd.r + @Cd.g + @Cd.b) / 3.0;",
+          judge:"Set @brightness to the average of @Cd.r, @Cd.g, @Cd.b (i.e. divided by 3.0).",
+          attempts:3, records:[] },
+
+        { qid:"q16", id:"16", difficulty:"easy", color:"var(--easy)",
+          cat: { zh:"数学 / 位置", en:"Math / Position" },
+          title: { zh:"中心排斥", en:"Center Repel" },
+          desc: {
+            zh:"中心点 {0,0,0} 处要放一个大型装置，请让周围所有的点沿水平方向向外扩散 2 个单位。",
+            en:"A large installation will occupy the centre {0,0,0}. Push all surrounding points outward horizontally by 2 units." 
+          },
+          hint: { zh:"normalize() 得到方向，乘以距离；注意只取 XZ 平面方向。", en:"Use normalize() to get direction, multiply by distance; keep movement on the XZ plane." },
+          solution:"@P += normalize(set(@P.x, 0, @P.z)) * 2.0;",
+          judge:"Push each point outward on the XZ plane by 2 units using normalize(set(@P.x,0,@P.z))*2.0.",
+          attempts:3, records:[] },
+
+        { qid:"q17", id:"17", difficulty:"easy", color:"var(--easy)",
+          cat: { zh:"数学 / 属性", en:"Math / Attribute" },
+          title: { zh:"点序渐变", en:"Point ID Gradient" },
+          desc: {
+            zh:"为了给流水线资产做标记，请将每个点的序号 (@ptnum) 除以总点数 (@numpt)，并将结果赋值给颜色，形成 0 到 1 的渐变。",
+            en:"Tag pipeline assets by coloring each point based on its index. Divide @ptnum by @numpt and assign the result to @Cd for a 0-to-1 gradient." 
+          },
+          hint: { zh:"注意整数除法需要强制转换为 float，否则结果全是 0。", en:"Cast to float before dividing — integer division truncates to 0." },
+          solution:"@Cd = (float)@ptnum / (float)@numpt;",
+          judge:"Set @Cd to (float)@ptnum / (float)@numpt, producing a 0-1 gradient across all points.",
+          attempts:3, records:[] },
+
+        { qid:"q18", id:"18", difficulty:"easy", color:"var(--easy)",
+          cat: { zh:"逻辑 / 法线", en:"Logic / Normal" },
+          title: { zh:"积雪覆盖", en:"Snow Accumulation" },
+          desc: {
+            zh:"雪只会落在朝上的面上。如果法线的 Y 分量大于 0.9，将颜色设为纯白色，模拟积雪效果。",
+            en:"Snow only settles on upward-facing surfaces. If a point's normal Y component exceeds 0.9, paint it white to simulate snow."
+          },
+          hint: { zh:"判断 @N.y 是否大于 0.9，用 if 语句。", en:"Check if @N.y > 0.9 using an if statement." },
+          solution:"if(@N.y > 0.9) @Cd = 1;",
+          judge:"If @N.y > 0.9, set @Cd to 1 (white) to simulate snow on flat surfaces.",
+          attempts:3, records:[] },
+
+        { qid:"q19", id:"19", difficulty:"easy", color:"var(--easy)",
+          cat: { zh:"随机 / 实例", en:"Random / Instance" },
+          title: { zh:"水平随机旋转", en:"Random Y-Rotate" },
+          desc: {
+            zh:"为了让散布的石块看起来更自然，请给 @orient 属性（四元数）赋予一个围绕 Y 轴的随机旋转。",
+            en:"Scattered rocks look unnatural when they all face the same way. Assign a random Y-axis rotation to each point's @orient quaternion."
+          },
+          hint: { zh:"使用 rand(@ptnum) * PI * 2 生成随机角度，再用 quaternion() 构建四元数。", en:"Generate a random angle with rand(@ptnum)*PI*2, then build a quaternion with quaternion(angle, {0,1,0})." },
+          solution:"float angle = rand(@ptnum) * $PI * 2;
+@orient = quaternion(angle, {0,1,0});",
+          judge:"Set @orient to a random Y-axis rotation using rand(@ptnum)*PI*2 and quaternion() or eulertoquaternion().",
+          attempts:3, records:[] },
+
+        { qid:"q20", id:"20", difficulty:"easy", color:"var(--easy)",
+          cat: { zh:"位置 / 法线", en:"Position / Normal" },
+          title: { zh:"阴影收缩", en:"Shadow Push" },
+          desc: {
+            zh:"为了让阴影看起来更深，请将属于 shadow_group 组的点沿法线反方向向内推入 0.1 单位。",
+            en:"To deepen the shadows, push points inside the shadow_group inward along their reversed normal by 0.1 units."
+          },
+          hint: { zh:"使用 ingroup() 检查点是否在组内，然后沿 -@N 方向移动。", en:"Use ingroup() to check group membership, then offset along -@N." },
+          solution:'if(ingroup(0, "shadow_group", @ptnum)) @P -= @N * 0.1;',
+          judge:'If a point is in the "shadow_group" group, subtract @N*0.1 from @P. Use ingroup().',
+          attempts:3, records:[] }
+
+      ]},
+
+      { category: "INTERMEDIATE", cat_zh: "中级", items: [
+
+        { qid:"q21", id:"21", difficulty:"medium", color:"var(--medium)",
+          cat: { zh:"噪波 / 位置", en:"Noise / Position" },
+          title: { zh:"粗糙岩石", en:"Rough Rock Noise" },
+          desc: {
+            zh:"平滑的球体不像岩石。请使用 snoise() 根据点的位置对 @P 进行偏移，让表面产生凹凸不平的纹理。",
+            en:"A smooth sphere doesn't look like a rock. Use snoise() on the point position to displace @P and create a rough, irregular surface."
+          },
+          hint: { zh:"用当前位置 @P 作为噪声种子，乘以缩放因子控制强度。", en:"Use the current position @P as the noise seed, multiply by a scale factor to control intensity." },
+          solution:"@P += snoise(@P) * 0.5;",
+          judge:"Displace @P by snoise(@P)*0.5 to create rocky surface irregularity.",
+          attempts:3, records:[] },
+
+        { qid:"q22", id:"22", difficulty:"medium", color:"var(--medium)",
+          cat: { zh:"数学 / 映射", en:"Math / Fit" },
+          title: { zh:"植被重映射", en:"Sharp Growth Mask" },
+          desc: {
+            zh:"当前的噪声遮罩边缘太模糊了。请将 @mask 中 0.4 到 0.6 之间的值映射到 0 到 1，让植被的生长边界变得锐利。",
+            en:"The noise mask has a soft edge. Remap values between 0.4 and 0.6 to the full 0–1 range, sharpening the vegetation boundary."
+          },
+          hint: { zh:"使用 fit() 函数，指定输入范围和输出范围。", en:"Use fit() with the input range 0.4–0.6 and output range 0–1." },
+          solution:"@mask = fit(@mask, 0.4, 0.6, 0, 1);",
+          judge:"Remap @mask using fit(@mask, 0.4, 0.6, 0, 1) to sharpen the mask contrast.",
+          attempts:3, records:[] },
+
+        { qid:"q23", id:"23", difficulty:"medium", color:"var(--medium)",
+          cat: { zh:"点云 / 逻辑", en:"PC Open / Logic" },
+          title: { zh:"独居树检测", en:"Lone Tree Finder" },
+          desc: {
+            zh:"我们要移除那些落单的树。查询每个点半径 2.0 内的点数，如果点数小于 2（只有自己），将自己删除。",
+            en:"Isolated trees need to be removed. Query how many points exist within radius 2.0 of each point; if fewer than 2 are found (just itself), delete that point."
+          },
+          hint: { zh:"使用 pcopen() 配合 pcnumfound() 查询邻近点数量。", en:"Use pcopen() together with pcnumfound() to count nearby points." },
+          solution:"int count = pcnumfound(pcopen(0, "P", @P, 2.0, 10));
+if(count < 2) removepoint(0, @ptnum);",
+          judge:"Use pcopen()/pcnumfound() to count points within radius 2.0. If count < 2, call removepoint(0, @ptnum).",
+          attempts:3, records:[] },
+
+        { qid:"q24", id:"24", difficulty:"medium", color:"var(--medium)",
+          cat: { zh:"噪波 / 向量", en:"Noise / Vector" },
+          title: { zh:"风吹草低", en:"Wind Force Field" },
+          desc: {
+            zh:"草地需要动态。请使用 curlnoise() 根据位置生成一个向量场，并将其赋值给速度属性 @v。",
+            en:"The grass needs to feel alive. Use curlnoise() to generate a vector field from position and assign it to the velocity attribute @v."
+          },
+          hint: { zh:"curlnoise() 返回向量，直接赋值给 @v 即可；缩小输入坐标可降低频率。", en:"curlnoise() returns a vector — assign it directly to @v. Scale down @P to lower the frequency." },
+          solution:"@v = curlnoise(@P * 0.5);",
+          judge:"Set @v to curlnoise(@P * 0.5) to create a smooth vector flow field.",
+          attempts:3, records:[] },
+
+        { qid:"q25", id:"25", difficulty:"medium", color:"var(--medium)",
+          cat: { zh:"数学 / 位置", en:"Math / Position" },
+          title: { zh:"藤蔓螺旋", en:"Vine Spiral" },
+          desc: {
+            zh:"我们要生成一根绕柱子上升的藤蔓。结合 Y 轴高度，让点的 X 和 Z 坐标随高度呈圆周运动。",
+            en:"Generate a vine winding up a pillar. Use the Y height to drive circular motion in X and Z, forming a helix."
+          },
+          hint: { zh:"sin 和 cos 配合同一个输入频率可以产生圆周运动。", en:"sin and cos with the same input frequency produce circular motion." },
+          solution:"@P.x = cos(@P.y * 5);
+@P.z = sin(@P.y * 5);",
+          judge:"Set @P.x = cos(@P.y*5) and @P.z = sin(@P.y*5) to create a helical arrangement.",
+          attempts:3, records:[] },
+
+        { qid:"q26", id:"26", difficulty:"medium", color:"var(--medium)",
+          cat: { zh:"数学 / 坡度", en:"Math / Slope" },
+          title: { zh:"悬崖侵蚀", en:"Slope Sharpening" },
+          desc: {
+            zh:"我们已经有了坡度遮罩 @slope。请使用幂函数 pow() 提高对比度，让只有极陡峭的地方才有侵蚀效果。",
+            en:"You have a slope mask in @slope. Use pow() to increase contrast so only the steepest areas retain the erosion effect."
+          },
+          hint: { zh:"pow(val, n)，n 越大，暗部越黑，对比度越强。", en:"pow(val, n) — the larger n is, the darker the darks get and the higher the contrast." },
+          solution:"@slope = pow(@slope, 4.0);",
+          judge:"Set @slope = pow(@slope, 4.0) to sharpen the slope mask contrast.",
+          attempts:3, records:[] },
+
+        { qid:"q27", id:"27", difficulty:"medium", color:"var(--medium)",
+          cat: { zh:"噪波 / 法线", en:"Noise / Normal" },
+          title: { zh:"程序化起伏", en:"Noise Displacement" },
+          desc: {
+            zh:"沿法线方向挤出模型，但挤出的量要受到频率为 2.0 的噪声控制。",
+            en:"Extrude the mesh along its normals, but modulate the displacement amount with noise at frequency 2.0."
+          },
+          hint: { zh:"位移公式：@P += @N * 缩放值。噪声作为缩放值输入。", en:"Displacement formula: @P += @N * scale. Use noise as the scale value." },
+          solution:"@P += @N * noise(@P * 2.0);",
+          judge:"Displace @P along @N by noise(@P*2.0): @P += @N * noise(@P * 2.0).",
+          attempts:3, records:[] },
+
+        { qid:"q28", id:"28", difficulty:"medium", color:"var(--medium)",
+          cat: { zh:"随机 / 数学", en:"Random / Math" },
+          title: { zh:"模块化旋转", en:"Discrete Tile Rotate" },
+          desc: {
+            zh:"地砖只能旋转 0、90、180、270 度。请生成一个随机旋转，并将其限制在这些角度内。",
+            en:"Floor tiles can only rotate 0, 90, 180 or 270 degrees. Generate a random rotation snapped to one of these four values."
+          },
+          hint: { zh:"先用 rand() 生成 0~4 的随机数，floor() 取整后乘以 PI/2。", en:"Generate a 0–4 random with rand(), floor() it to an integer, then multiply by PI/2." },
+          solution:"float angle = floor(rand(@ptnum) * 4) * $PI/2;
+@orient = quaternion(angle, {0,1,0});",
+          judge:"Set @orient to a Y-axis rotation snapped to 0/90/180/270 degrees using floor(rand(@ptnum)*4)*PI/2.",
+          attempts:3, records:[] },
+
+        { qid:"q29", id:"29", difficulty:"medium", color:"var(--medium)",
+          cat: { zh:"点云 / 数学", en:"PC Open / Math" },
+          title: { zh:"伪环境光遮蔽", en:"Pseudo AO" },
+          desc: {
+            zh:"凹陷处应该更暗。查询周围 0.2 半径内的点数量，点数越多，颜色 @Cd 越黑，模拟环境光遮蔽。",
+            en:"Recessed areas should appear darker. Count nearby points within radius 0.2 — the more points found, the darker @Cd should be, simulating ambient occlusion."
+          },
+          hint: { zh:"将邻近点数映射到 0~1 范围，再用 1 减去它得到颜色反向。", en:"Map the point count to 0–1 and invert it to get darker colors in denser areas." },
+          solution:"int n = pcnumfound(pcopen(0, "P", @P, 0.2, 50));
+@Cd = 1.0 - (float)n/50.0;",
+          judge:"Use pcopen()/pcnumfound() within radius 0.2, then set @Cd = 1.0 - (float)n/50.0 for pseudo AO.",
+          attempts:3, records:[] },
+
+        { qid:"q30", id:"30", difficulty:"medium", color:"var(--medium)",
+          cat: { zh:"属性 / 随机", en:"Attribute / Random" },
+          title: { zh:"叶片随机色偏移", en:"UV Leaf Shift" },
+          desc: {
+            zh:"为了让一棵树的叶子贴图不重复，请根据每个点的 @id 给 v@uv_offset 属性赋予随机的 XY 偏移。",
+            en:"Prevent leaf texture repetition on a tree. Assign a random XY UV offset to each leaf point based on @id."
+          },
+          hint: { zh:"使用 set() 构造向量；给随机种子加偏移量防止 X 和 Y 产生相同的值。", en:"Use set() to build the vector; offset the random seed to prevent X and Y from matching." },
+          solution:"v@uv_offset = set(rand(@id), rand(@id + 7), 0);",
+          judge:"Set v@uv_offset to set(rand(@id), rand(@id+7), 0) for random per-leaf UV offsets.",
+          attempts:3, records:[] }
+
       ]}
     ];
 
