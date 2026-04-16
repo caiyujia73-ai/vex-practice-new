@@ -47,6 +47,26 @@
       font-size: 19px; color: var(--text-main);
       z-index: 200; opacity: 0.75; letter-spacing: 0.02em;
     }
+
+    /* ── Top nav tabs ── */
+    .top-nav {
+      position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
+      display: flex; z-index: 200; gap: 0;
+      background: rgba(255,255,255,0.6);
+      border: 2px solid #2D2D2D; border-radius: 100px; padding: 3px;
+    }
+    .top-nav-tab {
+      padding: 7px 22px; border-radius: 100px; cursor: pointer;
+      font-family: 'Courier Prime', monospace; font-size: 10px; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: #999; background: transparent;
+      transition: background 0.22s, color 0.22s;
+      user-select: none; white-space: nowrap; border: none;
+    }
+    .top-nav-tab.active { background: #2D2D2D !important; color: #fff !important; }
+    .top-nav-tab:not(.active):hover { color: #2D2D2D; }
+
+
     .top-right-lang {
       position: absolute; top: 16px; right: 22px;
       display: flex; gap: 14px; z-index: 200; align-items: center;
@@ -310,6 +330,7 @@
 
     /* ── Mobile ── */
     @media (max-width: 768px) {
+      .top-nav { top: auto; bottom: auto; position: absolute; top: 52px; transform: translateX(-50%); }
       .alchemy-container { height: 92vh; border-radius: 22px; }
       aside { display: none; }
       .question-overlay { padding: 18px 18px 0 18px; }
@@ -403,6 +424,237 @@
 
     @media (min-width: 769px) {
       #fab-menu, #mobile-drawer, #drawer-overlay { display: none !important; }
+      #field-fab, #field-mobile-drawer, #field-drawer-overlay { display: none !important; }
+    }
+
+    /* ── Field Work page ── */
+    #field-page {
+      display: none; width: 95vw; max-width: 1200px; height: 85vh;
+      animation: fade-up 0.4s cubic-bezier(0.4,0,0.2,1) both;
+    }
+    #field-page.active { display: flex; gap: 22px; }
+
+    .field-list {
+      width: 300px; flex-shrink: 0; display: flex; flex-direction: column; gap: 10px;
+      overflow-y: auto; padding-right: 4px;
+    }
+    .field-card {
+      background: var(--glass); backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.5); border-radius: 20px;
+      padding: 18px 20px; cursor: pointer; transition: all 0.2s;
+    }
+    .field-card:hover { background: rgba(255,255,255,0.6); transform: translateY(-1px); }
+    .field-card.active-field {
+      background: rgba(255,255,255,0.85);
+      border-color: var(--accent-orange);
+      box-shadow: 0 4px 20px rgba(249,168,125,0.2);
+    }
+    .field-card-tag {
+      font-size: 9px; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: white;
+      background: var(--hard); padding: 2px 8px; border-radius: 4px;
+      display: inline-block; margin-bottom: 8px;
+    }
+    .field-card-tag.adv { background: #8B7355; }
+    .field-card h3 {
+      font-family: 'Special Elite', cursive; font-size: 15px;
+      color: var(--text-main); margin-bottom: 5px; line-height: 1.3;
+    }
+    .field-card p {
+      font-size: 11px; color: var(--text-sub); line-height: 1.5;
+    }
+    .field-card-solved {
+      display: inline-flex; align-items: center; gap: 4px;
+      margin-top: 8px; font-size: 10px; color: var(--success-green);
+      font-family: 'Courier Prime', monospace; font-weight: 700;
+    }
+
+    .field-main {
+      flex: 1; display: flex; flex-direction: column; gap: 0; min-width: 0;
+    }
+    .field-detail-card {
+      background: rgba(255,255,255,0.88); border-radius: 24px;
+      box-shadow: 0 2px 20px rgba(0,0,0,0.04), 0 0 0 1px rgba(255,255,255,0.8) inset;
+      flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative;
+    }
+    .field-accent { height: 3px; background: linear-gradient(90deg, #8B7355, transparent); flex-shrink: 0; }
+    #field-attempts-row { position: absolute; bottom: 90px; left: 26px; z-index: 5; }
+    .field-accent.adv { background: linear-gradient(90deg, #8B7355, transparent); }
+    /* keep field attempts-row anchored inside field-detail-card */
+    #field-attempts-row { position: absolute; bottom: 90px; left: 26px; z-index: 5; }
+    .field-accent.adv { background: linear-gradient(90deg, #8B7355, transparent); }
+
+    .field-scenario {
+      padding: 24px 28px 0; overflow-y: auto; flex-shrink: 0; max-height: 42%;
+    }
+    .field-scenario-label {
+      font-size: 9px; font-weight: 700; letter-spacing: 0.12em; color: var(--text-sub);
+      text-transform: uppercase; font-family: 'Courier Prime', monospace;
+      margin-bottom: 6px; opacity: 0.6;
+    }
+    .field-scenario h2 {
+      font-family: 'Special Elite', cursive; font-size: 22px;
+      color: var(--text-main); margin-bottom: 10px; letter-spacing: 0.5px;
+    }
+    .field-scenario p {
+      font-size: 13px; color: var(--text-sub); line-height: 1.75; margin-bottom: 12px;
+    }
+    .field-criteria {
+      background: rgba(249,168,125,0.07); border: 1px solid rgba(249,168,125,0.2);
+      border-radius: 12px; padding: 12px 16px; margin-bottom: 4px;
+    }
+    .field-criteria-title {
+      font-size: 9px; font-weight: 700; letter-spacing: 0.1em; color: var(--accent-orange);
+      text-transform: uppercase; font-family: 'Courier Prime', monospace; margin-bottom: 8px;
+    }
+    .field-criteria ul { list-style: none; padding: 0; }
+    .field-criteria li {
+      font-size: 12px; color: var(--text-sub); padding: 3px 0;
+      display: flex; align-items: flex-start; gap: 8px; line-height: 1.5;
+    }
+    .field-criteria li::before {
+      content: '—'; color: var(--accent-orange); flex-shrink: 0; font-size: 11px; margin-top: 1px;
+    }
+
+    .field-editor-area { flex: 1; padding: 14px 28px 90px; position: relative; min-height: 0; }
+    .field-editor-label {
+      font-family: 'JetBrains Mono', monospace; font-size: 9px;
+      color: var(--text-sub); opacity: 0.4; letter-spacing: 0.08em;
+      margin-bottom: 6px; text-transform: uppercase;
+    }
+    #field-editor {
+      width: 100%; height: calc(100% - 20px); border: none; outline: none;
+      font-family: 'JetBrains Mono', monospace; font-size: 13px;
+      background: transparent; color: #3a3a3a; resize: none; line-height: 1.9;
+    }
+    #field-editor::placeholder { color: rgba(0,0,0,0.1); }
+
+    .field-controls {
+      position: absolute; bottom: 22px; right: 24px;
+      display: flex; gap: 10px; z-index: 10;
+    }
+
+    /* Mobile field page */
+    @media (max-width: 768px) {
+      #field-page.active { flex-direction: column; height: auto; min-height: 86vh; }
+      .field-list { width: 100%; flex-direction: row; overflow-x: auto; overflow-y: visible; padding-bottom: 4px; }
+      .field-card { min-width: 220px; }
+      .field-main { min-height: 70vh; }
+      .field-scenario { max-height: none; }
+    }
+
+    /* ── Field Work page ── */
+    #field-page {
+      display: none; width: 95vw; max-width: 1200px; height: 85vh;
+      animation: fade-up 0.4s cubic-bezier(0.4,0,0.2,1) both;
+    }
+    #field-page.active { display: flex; gap: 22px; }
+    .field-list {
+      width: 290px; flex-shrink: 0; display: flex; flex-direction: column; gap: 10px;
+      overflow-y: auto; padding-right: 4px;
+    }
+    .field-card {
+      background: var(--glass); backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.5); border-radius: 20px;
+      padding: 18px 20px; cursor: pointer; transition: all 0.2s;
+    }
+    .field-card:hover { background: rgba(255,255,255,0.6); transform: translateY(-1px); }
+    .field-card.active-field { background: rgba(255,255,255,0.88); border-color: var(--accent-orange); box-shadow: 0 4px 20px rgba(249,168,125,0.2); }
+    .field-card-tag {
+      font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+      color: white; background: #8B7355; padding: 2px 8px; border-radius: 4px;
+      display: inline-block; margin-bottom: 8px;
+    }
+    .field-card h3 { font-family: 'Courier Prime', monospace; font-size: 15px; font-weight: 700; color: var(--text-main); margin-bottom: 5px; line-height: 1.3; }
+    .field-card p { font-size: 11px; color: var(--text-sub); line-height: 1.5; }
+    .field-card-solved { display: inline-flex; align-items: center; gap: 4px; margin-top: 8px; font-size: 10px; color: var(--success-green); font-family: 'Courier Prime', monospace; font-weight: 700; }
+    .field-main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+    .field-detail-card {
+      background: rgba(255,255,255,0.88); border-radius: 24px;
+      box-shadow: 0 2px 20px rgba(0,0,0,0.04), 0 0 0 1px rgba(255,255,255,0.8) inset;
+      flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative;
+    }
+    .field-accent { height: 3px; background: linear-gradient(90deg, #8B7355, transparent); flex-shrink: 0; }
+    #field-page .attempts-row { display: none; }
+    .field-scenario { padding: 22px 26px 0; flex-shrink: 0; overflow-y: auto; max-height: 44%; }
+    .field-scenario-label { font-size: 9px; font-weight: 700; letter-spacing: 0.12em; color: var(--text-sub); text-transform: uppercase; font-family: 'Courier Prime', monospace; margin-bottom: 6px; opacity: 0.6; }
+    .field-scenario h2 { font-family: 'Special Elite', cursive; font-size: 21px; color: var(--text-main); margin-bottom: 8px; letter-spacing: 0.5px; }
+    .field-scenario p { font-size: 13px; color: var(--text-sub); line-height: 1.75; margin-bottom: 10px; }
+    .field-criteria { background: rgba(139,115,85,0.06); border: 1px solid rgba(139,115,85,0.18); border-radius: 12px; padding: 12px 16px; margin-bottom: 4px; }
+    .field-criteria-title { font-size: 9px; font-weight: 700; letter-spacing: 0.1em; color: #8B7355; text-transform: uppercase; font-family: 'Courier Prime', monospace; margin-bottom: 8px; }
+    .field-criteria ul { list-style: none; padding: 0; }
+    .field-criteria li { font-size: 12px; color: var(--text-sub); padding: 3px 0; display: flex; align-items: flex-start; gap: 8px; line-height: 1.5; }
+    .field-criteria li::before { content: '—'; color: #8B7355; flex-shrink: 0; font-size: 11px; margin-top: 1px; }
+    .field-editor-area { flex: 1; padding: 14px 26px 90px; position: relative; min-height: 0; }
+    .field-editor-label { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--text-sub); opacity: 0.4; letter-spacing: 0.08em; margin-bottom: 6px; text-transform: uppercase; }
+    #field-editor { width: 100%; height: calc(100% - 20px); border: none; outline: none; font-family: 'JetBrains Mono', monospace; font-size: 13px; background: transparent; color: #3a3a3a; resize: none; line-height: 1.9; }
+    #field-editor::placeholder { color: rgba(0,0,0,0.1); }
+    .field-controls { position: absolute; bottom: 22px; right: 24px; display: flex; gap: 10px; z-index: 10; }
+    @media (max-width: 768px) {
+      #field-page.active { flex-direction: column; height: 86vh; }
+      .field-list { display: none; }
+      .field-main { flex: 1; min-height: 0; }
+      .field-scenario { max-height: 45%; }
+
+      /* Field drawer */
+      #field-drawer-overlay {
+        display: none; position: fixed; inset: 0;
+        background: rgba(0,0,0,0.18); z-index: 700; backdrop-filter: blur(3px);
+      }
+      #field-drawer-overlay.open { display: block; }
+      #field-mobile-drawer {
+        position: fixed; left: -295px; top: 0; bottom: 0; width: 275px;
+        background: rgba(251,249,244,0.99);
+        box-shadow: 16px 0 48px rgba(0,0,0,0.12);
+        z-index: 750; padding-top: 60px;
+        transition: left 0.32s cubic-bezier(0.4,0,0.2,1);
+        display: flex; flex-direction: column; overflow-y: auto;
+      }
+      #field-mobile-drawer.open { left: 0; }
+      .field-drawer-title {
+        font-family: 'Special Elite', cursive; font-size: 17px; color: var(--text-main);
+        padding: 0 20px 16px; border-bottom: 1px solid rgba(0,0,0,0.06); margin-bottom: 6px;
+      }
+      .field-drawer-item {
+        display: flex; align-items: flex-start; gap: 12px; padding: 14px 20px;
+        cursor: pointer; user-select: none; transition: background 0.12s;
+        -webkit-tap-highlight-color: rgba(0,0,0,0.04);
+      }
+      .field-drawer-item:active { background: rgba(0,0,0,0.04); }
+      .field-drawer-item.active-field-item {
+        background: rgba(139,115,85,0.08);
+        border-left: 3px solid #8B7355; padding-left: 17px;
+      }
+      .field-drawer-tag {
+        font-size: 8px; font-weight: 700; letter-spacing: 0.08em;
+        color: white; background: #8B7355; padding: 2px 6px; border-radius: 3px;
+        display: inline-block; margin-bottom: 4px; pointer-events: none;
+      }
+      .field-drawer-label { flex: 1; pointer-events: none; }
+      .field-drawer-label b {
+        font-family: 'Special Elite', cursive; font-size: 13px;
+        color: var(--text-main); display: block; line-height: 1.3;
+      }
+      .field-drawer-label span { font-size: 10px; color: var(--text-sub); }
+      .field-drawer-solved {
+        font-size: 10px; color: var(--success-green);
+        font-family: 'Courier Prime', monospace; font-weight: 700;
+        pointer-events: none;
+      }
+
+      /* Field FAB */
+      #field-fab {
+        position: fixed; bottom: 30px; left: 30px;
+        width: 54px; height: 54px; border-radius: 50%;
+        background: #8B7355;
+        box-shadow: 0 8px 28px rgba(139,115,85,0.5);
+        display: none; align-items: center; justify-content: center;
+        z-index: 800; cursor: pointer; border: none;
+        transition: transform 0.28s cubic-bezier(0.34,1.56,0.64,1);
+        -webkit-tap-highlight-color: transparent;
+      }
+      #field-fab.open { transform: rotate(45deg) scale(1.05); }
+      #field-fab svg { pointer-events: none; }
     }
 
     /* ── Page load animation ── */
@@ -415,7 +667,17 @@
 </head>
 <body>
 
-  <div class="page-logo">VEX LAB.</div></div>
+  <div class="page-logo">VEX LAB.</div>
+
+  <div class="top-nav">
+    <div class="top-nav-tab active" id="tab-practice" onclick="switchTab('practice')">Practice</div>
+    <div class="top-nav-tab" id="tab-field" onclick="switchTab('field')">Field Work</div>
+  </div>
+
+  <!-- Top nav -->
+  <div class="top-nav">
+    <div class="top-nav-tab active" id="tab-practice" onclick="switchTab('practice')">Practice</div>
+    <div class="top-nav-tab" id="tab-field" onclick="switchTab('field')">Field Work</div>
   </div>
 
   <div class="top-right-lang">
@@ -435,6 +697,19 @@
 
   <div id="drawer-overlay"></div>
   <div id="mobile-drawer"><div class="drawer-title">VEX LAB.</div></div>
+
+  <!-- Field Work mobile drawer -->
+  <div id="field-drawer-overlay" onclick="closeFieldDrawer()"></div>
+  <div id="field-mobile-drawer">
+    <div class="field-drawer-title">Field Work</div>
+  </div>
+  <button id="field-fab" onclick="toggleFieldDrawer()">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+      <rect y="3"  width="20" height="2" rx="1" fill="white"/>
+      <rect y="9"  width="20" height="2" rx="1" fill="white"/>
+      <rect y="15" width="20" height="2" rx="1" fill="white"/>
+    </svg>
+  </button>
 
   <div class="alchemy-container">
     <aside id="sidebar-nav">
@@ -469,6 +744,68 @@
   </div>
 
   <!-- Modal -->
+  <!-- Field Work Page -->
+  <div id="field-page">
+    <div class="field-list" id="field-list"></div>
+    <div class="field-main">
+      <div class="field-detail-card">
+        <div class="field-accent" id="field-accent"></div>
+        <div class="field-scenario" id="field-scenario">
+          <div class="field-scenario-label">Field Work</div>
+          <h2 id="field-title">Select a mission</h2>
+          <p id="field-desc"></p>
+          <div class="field-criteria" id="field-criteria-box" style="display:none;">
+            <div class="field-criteria-title">Acceptance Criteria</div>
+            <ul id="field-criteria-list"></ul>
+          </div>
+        </div>
+        <div class="field-editor-area">
+          <div class="field-editor-label">// vex wrangle</div>
+          <textarea id="field-editor" spellcheck="false" placeholder="// Select a mission to begin..."></textarea>
+        </div>
+        <div class="attempts-row" id="field-attempts-row"></div>
+        <div class="field-controls">
+          <button class="btn btn-hint" id="field-hint-btn" onclick="showFieldHint()">HINT</button>
+          <button class="btn btn-submit" id="field-submit-btn" onclick="handleFieldSubmit()">
+            <div class="btn-spinner" id="field-spinner"></div>
+            <span id="field-btn-label">SUBMIT</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Field Work Page -->
+  <div id="field-page">
+    <div class="field-list" id="field-list"></div>
+    <div class="field-main">
+      <div class="field-detail-card">
+        <div class="field-accent"></div>
+        <div class="field-scenario" id="field-scenario">
+          <div class="field-scenario-label" id="field-mode-label">Field Work</div>
+          <h2 id="field-title">Select a mission</h2>
+          <p id="field-desc"></p>
+          <div class="field-criteria" id="field-criteria-box" style="display:none;">
+            <div class="field-criteria-title">Acceptance Criteria</div>
+            <ul id="field-criteria-list"></ul>
+          </div>
+        </div>
+        <div class="field-editor-area">
+          <div class="field-editor-label">// vex wrangle</div>
+          <textarea id="field-editor" spellcheck="false" placeholder="// Select a mission to begin..."></textarea>
+        </div>
+        <div class="attempts-row" id="field-attempts-row"></div>
+        <div class="field-controls">
+          <button class="btn btn-hint" id="field-hint-btn" onclick="showFieldHint()">HINT</button>
+          <button class="btn btn-submit" id="field-submit-btn" onclick="handleFieldSubmit()">
+            <div class="btn-spinner" id="field-spinner"></div>
+            <span id="field-btn-label">SUBMIT</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div id="modal-overlay">
     <div class="modal" id="result-modal" onclick="event.stopPropagation()">
       <div class="modal-icon" id="modal-icon"></div>
@@ -809,6 +1146,7 @@
       document.querySelectorAll('.lang-link').forEach(el => el.classList.remove('active'));
       document.getElementById('ln-' + l).classList.add('active');
       render();
+      if (currentTab === 'field') renderFieldPage();
     }
 
     /* ── Render ── */
@@ -1040,7 +1378,350 @@
       window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js'); });
     }
 
+
+    /* ══════════════════════════════════
+       FIELD WORK DATA & LOGIC
+       ══════════════════════════════════ */
+    const fieldMissions = [
+      {
+        fid: "f01", id: "01",
+        tag: { zh: "地形", en: "TERRAIN" },
+        title: { zh: "侵蚀地貌生成", en: "Erosion Terrain" },
+        summary: { zh: "用噪波和坡度遮罩模拟侵蚀效果", en: "Simulate erosion with noise and slope masking" },
+        scenario: {
+          zh: "你在制作一片荒野地形。原始地形太过平滑，需要用噪波位移让表面粗糙，同时只对坡度较大的区域（法线 Y 分量 < 0.7）施加侵蚀效果，平坦区域保持原样。",
+          en: "You're building a wilderness terrain. The raw mesh is too smooth. Apply noise-based displacement to roughen the surface, but restrict the erosion effect only to steep slopes where the normal's Y component is below 0.7. Flat areas should remain untouched."
+        },
+        criteria: {
+          zh: ["所有点沿法线方向进行了噪波位移", "位移只发生在 @N.y < 0.7 的区域", "平坦区域（@N.y >= 0.7）的 @P 保持不变", "使用了 noise() 或 snoise() 函数"],
+          en: ["All points displaced along normal with noise", "Displacement only on steep areas where @N.y < 0.7", "Flat areas (@N.y >= 0.7) remain unchanged", "Uses noise() or snoise() function"]
+        },
+        hint: { zh: "先用 if 判断坡度，符合条件再做 @P += @N * noise(@P * freq)。", en: "First check slope with if (@N.y < 0.7), then displace: @P += @N * noise(@P * freq)." },
+        solution: "if(@N.y < 0.7) { @P += @N * snoise(@P * 2.0) * 0.3; }",
+        judge: "Displace @P along @N using noise ONLY on steep slopes where @N.y < 0.7. Flat areas must be untouched. Must use noise() or snoise().",
+        attempts: 3, records: [], solved: false
+      },
+      {
+        fid: "f02", id: "02",
+        tag: { zh: "散布", en: "SCATTER" },
+        title: { zh: "自适应植被散布", en: "Adaptive Vegetation" },
+        summary: { zh: "根据坡度和高度双重条件控制散布密度", en: "Control scatter density by slope and altitude" },
+        scenario: {
+          zh: "你需要在地形上散布树木，但规则复杂：只有坡度平缓（@N.y > 0.8）且高度适中（0.2 < @P.y < 0.8）的点才能保留用于种树。其他所有点都要删除。",
+          en: "You're scattering trees on a terrain, but the rules are strict: only keep points where the slope is gentle (@N.y > 0.8) AND the altitude is within range (0.2 < @P.y < 0.8). Delete all other points."
+        },
+        criteria: {
+          zh: ["坡度不符合的点（@N.y <= 0.8）被删除", "高度过低（@P.y <= 0.2）的点被删除", "高度过高（@P.y >= 0.8）的点被删除", "同时满足两个条件的点被保留"],
+          en: ["Points with @N.y <= 0.8 (steep slope) are removed", "Points with @P.y <= 0.2 (too low) are removed", "Points with @P.y >= 0.8 (too high) are removed", "Points satisfying both conditions are kept"]
+        },
+        hint: { zh: "用 if 判断不符合条件的点，调用 removepoint(0, @ptnum) 删除。注意两个条件用 || 连接（满足任一就删）。", en: "Use if to check points that fail conditions and call removepoint(0, @ptnum). Connect conditions with || — remove if either fails." },
+        solution: "if(@N.y <= 0.8 || @P.y <= 0.2 || @P.y >= 0.8) removepoint(0, @ptnum);",
+        judge: "Keep only points where @N.y > 0.8 AND 0.2 < @P.y < 0.8. Delete everything else using removepoint().",
+        attempts: 3, records: [], solved: false
+      },
+      {
+        fid: "f03", id: "03",
+        tag: { zh: "实例化", en: "INSTANCING" },
+        title: { zh: "风格化石块摆放", en: "Stylized Rock Placement" },
+        summary: { zh: "随机朝向 + 随机缩放 + 随机垂直偏移", en: "Random orient + scale + vertical offset" },
+        scenario: {
+          zh: "场景里要摆放大量风格化石块。为了让每块石头看起来自然，需要同时完成三件事：给每个点一个围绕 Y 轴的随机旋转朝向（@orient），一个 0.5~2.0 范围内的随机缩放（@pscale），以及一个 ±0.15 范围内的随机垂直偏移。",
+          en: "A large number of stylized rocks need to be placed. To make each feel natural, simultaneously: assign a random Y-axis rotation (@orient), a random scale between 0.5 and 2.0 (@pscale), and a random vertical offset of ±0.15."
+        },
+        criteria: {
+          zh: ["@orient 被设置为围绕 Y 轴的随机四元数旋转", "@pscale 在 0.5 到 2.0 范围内随机", "@P.y 有 ±0.15 以内的随机垂直偏移", "每个实例的随机值都不同（基于 @ptnum）"],
+          en: ["@orient set to a random Y-axis quaternion rotation", "@pscale randomised between 0.5 and 2.0", "@P.y offset randomly within ±0.15", "Each instance has unique random values based on @ptnum"]
+        },
+        hint: { zh: "三步分开写：1) 用 quaternion() 设置 @orient，2) 用 fit01(rand()) 设置 @pscale，3) 用 (rand()-0.5)*0.3 偏移 @P.y。", en: "Write three lines: 1) set @orient with quaternion(), 2) set @pscale with fit01(rand()), 3) offset @P.y with (rand()-0.5)*0.3." },
+        solution: "@orient = quaternion(rand(@ptnum)*6.2832, {0,1,0}); @pscale = fit01(rand(@ptnum+1), 0.5, 2.0); @P.y += (rand(@ptnum+2)-0.5)*0.3;",
+        judge: "Must set all three: @orient (random Y-axis quaternion), @pscale (0.5-2.0), and @P.y random offset (±0.15). All must use @ptnum-based seeds.",
+        attempts: 3, records: [], solved: false
+      },
+      {
+        fid: "f04", id: "04",
+        tag: { zh: "光照", en: "LIGHTING" },
+        title: { zh: "多光源混合遮罩", en: "Multi-Light Blend Mask" },
+        summary: { zh: "模拟顶光与侧光叠加的光照遮罩", en: "Blend top-light and side-light masks" },
+        scenario: {
+          zh: "你需要为模型生成一个混合光照遮罩。规则：顶光（法线与 {0,1,0} 的点积）占 70% 权重，侧光（法线与 {1,0,0} 的点积的绝对值）占 30% 权重。将混合结果 clamp 到 0~1 范围后存入 @Cd。",
+          en: "Generate a blended lighting mask for a model. Rules: top light (dot of normal with {0,1,0}) has 70% weight; side light (absolute value of dot with {1,0,0}) has 30% weight. Clamp the blended result to 0–1 and store in @Cd."
+        },
+        criteria: {
+          zh: ["计算了顶光点积 dot(@N, {0,1,0})", "计算了侧光点积的绝对值 abs(dot(@N, {1,0,0}))", "两者按 0.7 / 0.3 比例混合", "@Cd 被 clamp 限制在 0~1 范围内"],
+          en: ["Top light computed: dot(@N, {0,1,0})", "Side light computed: abs(dot(@N, {1,0,0}))", "Blended at 0.7 / 0.3 ratio", "@Cd clamped to 0–1 range"]
+        },
+        hint: { zh: "分别计算两个点积，然后 float result = top*0.7 + side*0.3; @Cd = clamp(result, 0, 1);", en: "Compute both dot products separately, then: float result = top*0.7 + side*0.3; @Cd = clamp(result, 0, 1);" },
+        solution: "float top = dot(@N, {0,1,0}); float side = abs(dot(@N, {1,0,0})); @Cd = clamp(top*0.7 + side*0.3, 0, 1);",
+        judge: "Blend dot(@N,{0,1,0})*0.7 and abs(dot(@N,{1,0,0}))*0.3, clamp result to 0-1, store in @Cd.",
+        attempts: 3, records: [], solved: false
+      },
+      {
+        fid: "f05", id: "05",
+        tag: { zh: "程序化", en: "PROCEDURAL" },
+        title: { zh: "程序化颜色分带", en: "Procedural Color Banding" },
+        summary: { zh: "用 fit 和 floor 创建离散高度色带", en: "Discrete altitude bands with fit and floor" },
+        scenario: {
+          zh: "你在制作一张风格化地形图，需要按高度分出 5 个明显的色带（类似等高线）。将 @P.y 的范围 0~1 分成 5 段，每段用不同的灰度值表示（0.0, 0.25, 0.5, 0.75, 1.0）。要求使用 floor() 来量化高度，不能手写 5 个 if。",
+          en: "You're making a stylised terrain map with 5 distinct altitude bands (like a contour map). Divide @P.y (range 0–1) into 5 discrete steps, each represented by a different grey value (0.0, 0.25, 0.5, 0.75, 1.0). Must use floor() to quantise — no writing 5 separate if statements."
+        },
+        criteria: {
+          zh: ["使用了 floor() 对高度进行量化", "@P.y 被映射到 0~5 的整数步级", "颜色被归一化到 0~1 范围", "@Cd 呈现 5 个明显的离散色阶"],
+          en: ["Uses floor() to quantise height", "@P.y mapped to integer steps 0–4", "Color normalised back to 0–1", "@Cd shows 5 discrete grey bands"]
+        },
+        hint: { zh: "先 float band = floor(@P.y * 5); 然后 @Cd = band / 4.0; （4 是最大步级）", en: "float band = floor(@P.y * 5); then @Cd = band / 4.0; (4 is the max step)" },
+        solution: "float band = floor(clamp(@P.y, 0, 0.999) * 5); @Cd = band / 4.0;",
+        judge: "Quantise @P.y into 5 discrete bands using floor(). Map result back to 0-1 greyscale. Must use floor(), no 5 separate if statements.",
+        attempts: 3, records: [], solved: false
+      }
+    ];
+
+    let currentField = 0;
+    let currentTab = 'practice';
+    const fieldSavedCodes = {};
+    const FIELD_STORAGE_KEY = 'vexlab_field_records';
+
+    function saveFieldRecords() {
+      const data = {};
+      fieldMissions.forEach(m => { data[m.fid] = { records: m.records, attempts: m.attempts, solved: m.solved }; });
+      try { localStorage.setItem(FIELD_STORAGE_KEY, JSON.stringify(data)); } catch(e) {}
+    }
+
+    function loadFieldRecords() {
+      try {
+        const data = JSON.parse(localStorage.getItem(FIELD_STORAGE_KEY) || '{}');
+        fieldMissions.forEach(m => {
+          if (data[m.fid]) {
+            m.records = data[m.fid].records || [];
+            m.attempts = data[m.fid].attempts !== undefined ? data[m.fid].attempts : 3;
+            m.solved = data[m.fid].solved || false;
+          }
+        });
+      } catch(e) {}
+    }
+
+    /* ── Field drawer ── */
+    function toggleFieldDrawer() {
+      const d = document.getElementById('field-mobile-drawer');
+      d.classList.contains('open') ? closeFieldDrawer() : openFieldDrawer();
+    }
+    function openFieldDrawer() {
+      document.getElementById('field-mobile-drawer').classList.add('open');
+      document.getElementById('field-drawer-overlay').classList.add('open');
+      document.getElementById('field-fab').classList.add('open');
+    }
+    function closeFieldDrawer() {
+      document.getElementById('field-mobile-drawer').classList.remove('open');
+      document.getElementById('field-drawer-overlay').classList.remove('open');
+      document.getElementById('field-fab').classList.remove('open');
+    }
+    (function() {
+      const ov = document.getElementById('field-drawer-overlay');
+      let _moved = false;
+      ov.addEventListener('touchstart', () => { _moved = false; });
+      ov.addEventListener('touchmove', () => { _moved = true; });
+      ov.addEventListener('touchend', () => { if (!_moved) closeFieldDrawer(); });
+    })();
+
+    function renderFieldMobileDrawer() {
+      const drawer = document.getElementById('field-mobile-drawer');
+      if (!drawer) return;
+      drawer.innerHTML = '<div class="field-drawer-title">Field Work</div>';
+      fieldMissions.forEach((m, idx) => {
+        const el = document.createElement('div');
+        el.className = 'field-drawer-item' + (idx === currentField ? ' active-field-item' : '');
+        el.dataset.idx = idx;
+        el.innerHTML = `
+          <div class="field-drawer-label">
+            <div class="field-drawer-tag">${m.tag[lang]}</div>
+            <b>${m.title[lang]}</b>
+            <span>${m.summary[lang]}</span>
+            ${m.solved ? '<div class="field-drawer-solved">✓ SOLVED</div>' : ''}
+          </div>`;
+        drawer.appendChild(el);
+      });
+      if (!drawer._delegated) {
+        drawer._delegated = true;
+        const handler = (e) => {
+          const item = e.target.closest('.field-drawer-item');
+          if (item) { currentField = parseInt(item.dataset.idx); closeFieldDrawer(); renderFieldPage(); renderFieldMobileDrawer(); }
+        };
+        drawer.addEventListener('click', handler);
+        drawer.addEventListener('touchend', (e) => {
+          const item = e.target.closest('.field-drawer-item');
+          if (item && !drawer._scrolled) { currentField = parseInt(item.dataset.idx); closeFieldDrawer(); renderFieldPage(); renderFieldMobileDrawer(); }
+        });
+        drawer.addEventListener('touchstart', () => { drawer._scrolled = false; });
+        drawer.addEventListener('touchmove', () => { drawer._scrolled = true; });
+      }
+    }
+
+    function switchTab(tab) {
+      currentTab = tab;
+      document.getElementById('tab-practice').classList.toggle('active', tab === 'practice');
+      document.getElementById('tab-field').classList.toggle('active', tab === 'field');
+      const practiceEl = document.querySelector('.alchemy-container');
+      const fieldEl = document.getElementById('field-page');
+      const fabEl = document.getElementById('fab-menu');
+      const fieldFab = document.getElementById('field-fab');
+      const isMobile = window.innerWidth <= 768;
+      if (tab === 'practice') {
+        practiceEl.style.display = 'flex';
+        fieldEl.classList.remove('active');
+        if (fabEl) fabEl.style.display = isMobile ? 'flex' : 'none';
+        if (fieldFab) fieldFab.style.display = 'none';
+        document.getElementById('attempts-row').style.visibility = 'visible';
+        closeFieldDrawer();
+      } else {
+        practiceEl.style.display = 'none';
+        fieldEl.classList.add('active');
+        if (fabEl) fabEl.style.display = 'none';
+        if (fieldFab) fieldFab.style.display = isMobile ? 'flex' : 'none';
+        document.getElementById('attempts-row').style.visibility = 'hidden';
+        renderFieldPage();
+        renderFieldMobileDrawer();
+      }
+    }
+
+    function renderFieldPage() {
+      const list = document.getElementById('field-list');
+      list.innerHTML = '';
+      fieldMissions.forEach((m, idx) => {
+        const card = document.createElement('div');
+        card.className = 'field-card' + (idx === currentField ? ' active-field' : '');
+        card.dataset.idx = idx;
+        const solvedHtml = m.solved ? '<div class="field-card-solved">✓ SOLVED</div>' : '';
+        card.innerHTML = `
+          <div class="field-card-tag">${m.tag[lang]}</div>
+          <h3>${m.title[lang]}</h3>
+          <p>${m.summary[lang]}</p>
+          ${solvedHtml}`;
+        list.appendChild(card);
+      });
+
+      if (!list._delegated) {
+        list._delegated = true;
+        list.addEventListener('click', e => {
+          const card = e.target.closest('.field-card');
+          if (card) { currentField = parseInt(card.dataset.idx); renderFieldPage(); renderFieldMobileDrawer(); }
+        });
+        list.addEventListener('touchend', e => {
+          const card = e.target.closest('.field-card');
+          if (card && !list._scrolled) { currentField = parseInt(card.dataset.idx); renderFieldPage(); renderFieldMobileDrawer(); }
+        });
+        list.addEventListener('touchstart', () => { list._scrolled = false; });
+        list.addEventListener('touchmove', () => { list._scrolled = true; });
+      }
+
+      const m = fieldMissions[currentField];
+      document.getElementById('field-title').innerText = m.title[lang];
+      document.getElementById('field-desc').innerText = m.scenario[lang];
+      document.getElementById('field-hint-btn').innerText = uiTexts[lang].hint;
+      document.getElementById('field-btn-label').innerText = uiTexts[lang].submit;
+
+      const criteriaBox = document.getElementById('field-criteria-box');
+      const criteriaList = document.getElementById('field-criteria-list');
+      criteriaBox.style.display = 'block';
+      criteriaList.innerHTML = m.criteria[lang].map(c => `<li>${c}</li>`).join('');
+
+      document.getElementById('field-editor').value = fieldSavedCodes[m.fid] || '';
+
+      // Attempts dots
+      const row = document.getElementById('field-attempts-row');
+      const used = 3 - m.attempts;
+      row.innerHTML = '';
+      for (let i = 0; i < 3; i++) {
+        const d = document.createElement('div');
+        d.className = 'attempt-dot' + (i < used ? ' used' : ' active');
+        row.appendChild(d);
+      }
+    }
+
+    async function handleFieldSubmit() {
+      const m = fieldMissions[currentField];
+      const code = document.getElementById('field-editor').value;
+      if (!code.trim() || m.attempts <= 0) return;
+
+      const btn = document.getElementById('field-submit-btn');
+      const spinner = document.getElementById('field-spinner');
+      const label = document.getElementById('field-btn-label');
+      btn.disabled = true; spinner.style.display = 'block'; label.textContent = '...';
+
+      const systemPrompt = `You are a Houdini VEX expert judging a "Field Work" challenge. The task has specific acceptance criteria. Evaluate whether the submitted code satisfies ALL criteria.
+
+Task: ${m.judge}
+
+Acceptance Criteria:
+${m.criteria.en.map((c,i) => `${i+1}. ${c}`).join('\n')}
+
+Reply ONLY with JSON, no other text:
+{
+  "result": "correct" | "wrong" | "partial",
+  "short": "brief verdict under 12 words",
+  "explanation": "detailed Chinese explanation of which criteria pass/fail and why",
+  "criteria_results": [true/false for each criterion in order]
+}`;
+
+      try {
+        const res = await fetch('/api/judge', {
+          method: 'POST', headers: {'Content-Type':'application/json'},
+          body: JSON.stringify({ code, questionContext: systemPrompt })
+        });
+        const data = await res.json();
+        const modal = document.getElementById('result-modal');
+        const nextBtn = document.getElementById('btn-next');
+        const continueBtn = document.getElementById('btn-continue');
+        nextBtn.style.display = 'none';
+
+        if (data.result === 'correct') {
+          m.solved = true; m.records.push('green'); fieldSavedCodes[m.fid] = code;
+          saveFieldRecords();
+          modal.className = 'modal success';
+          document.getElementById('modal-icon').textContent = '✦';
+          document.getElementById('modal-title').innerText = uiTexts[lang].success;
+          document.getElementById('modal-body').innerText = data.explanation;
+          document.getElementById('solution-area').style.display = 'none';
+          continueBtn.textContent = uiTexts[lang].continue;
+        } else {
+          m.attempts--; m.records.push('red');
+          saveFieldRecords();
+          modal.className = 'modal failure';
+          if (m.attempts > 0) {
+            document.getElementById('modal-icon').textContent = '✕';
+            document.getElementById('modal-title').innerText = uiTexts[lang].retry;
+            document.getElementById('modal-body').innerText = data.explanation || (uiTexts[lang].left + m.attempts);
+            document.getElementById('solution-area').style.display = 'none';
+          } else {
+            document.getElementById('modal-icon').textContent = '○';
+            document.getElementById('modal-title').innerText = uiTexts[lang].fail;
+            document.getElementById('modal-body').innerText = data.explanation;
+            document.getElementById('correct-code-text').innerText = uiTexts[lang].solution + '\n' + m.solution;
+            document.getElementById('solution-area').style.display = 'block';
+          }
+          continueBtn.textContent = uiTexts[lang].continue;
+        }
+        document.getElementById('modal-overlay').classList.add('visible');
+      } catch(e) { alert('Error connecting to AI'); }
+      finally {
+        btn.disabled = false; spinner.style.display = 'none';
+        label.textContent = uiTexts[lang].submit;
+        renderFieldPage();
+      }
+    }
+
+    function showFieldHint() {
+      const m = fieldMissions[currentField];
+      document.getElementById('result-modal').className = 'modal hint-modal';
+      document.getElementById('modal-icon').textContent = '◈';
+      document.getElementById('modal-title').innerText = uiTexts[lang].hint;
+      document.getElementById('modal-body').innerText = m.hint[lang];
+      document.getElementById('solution-area').style.display = 'none';
+      document.getElementById('btn-next').style.display = 'none';
+      document.getElementById('btn-continue').textContent = uiTexts[lang].continue;
+      document.getElementById('modal-overlay').classList.add('visible');
+    }
+
     loadRecords();
+    loadFieldRecords();
     setLang('en');
   </script>
 </body>
