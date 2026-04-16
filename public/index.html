@@ -50,13 +50,13 @@
     .lang-link { cursor: pointer; font-size: 11px; font-weight: 700; color: var(--text-sub); text-transform: uppercase; }
     .lang-link.active { color: var(--text-main); text-decoration: underline; }
 
-    /* 📱 手机端专用菜单开关 - 置于绝对顶层 */
+    /* 📱 手机端专用菜单开关 - 绝对顶层 */
     #mobile-menu-toggle {
       display: none; position: fixed; bottom: 30px; left: 30px;
       width: 60px; height: 60px; border-radius: 50%;
       background: var(--accent-orange); color: white;
       box-shadow: 0 10px 30px rgba(249, 168, 125, 0.6);
-      z-index: 9999; align-items: center; justify-content: center;
+      z-index: 10001; align-items: center; justify-content: center;
       font-size: 28px; cursor: pointer; border: none;
     }
 
@@ -79,29 +79,27 @@
       padding-top: 70px; z-index: 500;
     }
 
-    /* PC端：悬停展开 */
     @media (min-width: 769px) {
       aside:hover { width: 300px; }
       aside:hover .category-header, aside:hover .nav-text-box { opacity: 0.8; }
     }
 
-    /* 📱 手机端：大幅提升明度与点击响应 */
+    /* 📱 手机端适配：高明度 + 修复点击 */
     @media (max-width: 768px) {
       #mobile-menu-toggle { display: flex; }
       aside {
-        position: fixed; left: -300px; top: 0; width: 300px; height: 100vh;
-        /* 提升明度，透明度设为 80% */
-        background: rgba(255, 255, 248, 0.8); 
-        backdrop-filter: blur(10px);
-        box-shadow: 15px 0 40px rgba(0,0,0,0.15);
-        z-index: 9000; padding-top: 100px;
+        position: fixed; left: -310px; top: 0; width: 300px; height: 100vh;
+        background: rgba(255, 255, 252, 0.95); /* 提升明度到 95% */
+        backdrop-filter: blur(15px);
+        box-shadow: 15px 0 40px rgba(0,0,0,0.1);
+        z-index: 9999; padding-top: 100px;
       }
       aside.open { left: 0; }
       aside.open .category-header, aside.open .nav-text-box { opacity: 1; }
       
       #sidebar-overlay {
         display: none; position: fixed; inset: 0;
-        background: rgba(0,0,0,0.15); z-index: 8500;
+        background: rgba(0,0,0,0.15); z-index: 9998;
       }
       #sidebar-overlay.open { display: block; }
     }
@@ -111,10 +109,10 @@
       padding: 25px 25px 10px; opacity: 0; transition: 0.3s; color: var(--text-main);
     }
 
-    /* 确保点击区域足够大 */
+    /* 核心修复：确保 item 容器有高度且可点击 */
     .nav-item { 
       display: flex; align-items: center; padding: 15px 25px; 
-      cursor: pointer; position: relative; z-index: 9001;
+      cursor: pointer; width: 100%; position: relative;
     }
     .nav-item:active { background: rgba(0,0,0,0.05); }
 
@@ -122,8 +120,12 @@
       width: 42px; height: 42px; border-radius: 12px;
       display: flex; align-items: center; justify-content: center;
       flex-shrink: 0; font-size: 13px; font-weight: 700; color: white;
+      pointer-events: none; /* 防止圆圈拦截点击 */
     }
-    .nav-text-box { margin-left: 18px; opacity: 0; transition: 0.2s; white-space: nowrap; flex: 1; }
+    .nav-text-box { 
+      margin-left: 18px; opacity: 0; transition: 0.2s; 
+      white-space: nowrap; flex: 1; pointer-events: none;
+    }
 
     .record-dots { display: flex; gap: 5px; margin-top: 6px; }
     .mini-dot { width: 7px; height: 7px; border-radius: 50%; }
@@ -154,7 +156,7 @@
     .btn-hint { background: rgba(0,0,0,0.05); color: var(--text-sub); }
     .btn-submit { background: var(--accent-orange); color: white; }
 
-    #modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.2); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 99999; padding: 20px; }
+    #modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.2); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 20000; padding: 20px; }
     .modal { width: 100%; max-width: 450px; padding: 35px; border-radius: 30px; background: white; text-align: center; }
   </style>
 </head>
@@ -250,6 +252,16 @@
       render();
     }
 
+    // 核心切换逻辑：显式函数
+    function switchQuestion(c, i) {
+      currentCat = c;
+      currentIdx = i;
+      const q = questions[c].items[i];
+      document.getElementById('vex-editor').value = savedCodes[q.qid] || "";
+      render();
+      if (window.innerWidth <= 768) toggleSidebar();
+    }
+
     function render() {
       const nav = document.getElementById('sidebar-nav');
       nav.innerHTML = '';
@@ -262,14 +274,8 @@
           const isActive = (cIdx===currentCat && iIdx===currentIdx);
           const el = document.createElement('div');
           el.className = `nav-item`;
-          // 彻底修复：使用普通 click 事件，并确保事件冒泡正确处理
-          el.onclick = function(e) {
-            e.preventDefault();
-            currentCat=cIdx; currentIdx=iIdx; 
-            document.getElementById('vex-editor').value = savedCodes[questions[currentCat].items[currentIdx].qid] || ""; 
-            render();
-            if (window.innerWidth <= 768) toggleSidebar();
-          };
+          // 手机端使用原生事件属性确保捕捉
+          el.setAttribute('onclick', `switchQuestion(${cIdx}, ${iIdx})`);
           
           const iconBg = isActive ? item.color : (item.color + '88');
           let dotsHtml = '<div class="record-dots">';
