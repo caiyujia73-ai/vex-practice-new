@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>VEX LAB</title>
   <link rel="manifest" href="manifest.json">
-  <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=JetBrains+Mono:wght@400;600&family=Syne:wght@400;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Courier+Prime:wght@400;700&family=JetBrains+Mono:wght@400;600&family=Syne:wght@400;600;800&display=swap" rel="stylesheet" />
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <link rel="apple-touch-icon" href="icon.png">
@@ -13,17 +13,19 @@
   <style>
     :root {
       --bg-base: #f4f1ea;
-      --glass: rgba(255,255,255,0.4);
-      --card-white: rgba(255,255,255,0.85);
+      --glass: rgba(255,255,255,0.42);
+      --card-white: rgba(255,255,255,0.88);
       --accent-orange: #F9A87D;
+      --accent-orange-dark: #e8895a;
       --text-main: #2D2D2D;
-      --text-sub: #888888;
+      --text-sub: #999;
       --easy: #A3B18A;
       --medium: #E9C46A;
       --hard: #E07A5F;
       --active-color: var(--easy);
-      --success-green: #28a745;
+      --success-green: #3aad5e;
       --fail-red: #e74c3c;
+      --border: rgba(0,0,0,0.06);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -38,193 +40,371 @@
       overflow: hidden; position: relative;
     }
 
+    /* ── Logo & Lang ── */
     .page-logo {
-      position: absolute; top: 15px; left: 20px;
+      position: absolute; top: 16px; left: 22px;
       font-family: 'Special Elite', cursive;
-      font-size: 20px; color: var(--text-main);
-      z-index: 200; opacity: 0.8;
+      font-size: 19px; color: var(--text-main);
+      z-index: 200; opacity: 0.75; letter-spacing: 0.02em;
     }
-
     .top-right-lang {
-      position: absolute; top: 15px; right: 20px;
-      display: flex; gap: 12px; z-index: 200;
+      position: absolute; top: 16px; right: 22px;
+      display: flex; gap: 14px; z-index: 200; align-items: center;
     }
-    .lang-link { cursor: pointer; font-size: 11px; font-weight: 700; color: var(--text-sub); text-transform: uppercase; transition: 0.3s; }
-    .lang-link.active { color: var(--text-main); text-decoration: underline; }
+    .lang-link {
+      cursor: pointer; font-size: 10px; font-weight: 800; color: var(--text-sub);
+      text-transform: uppercase; transition: color 0.2s; letter-spacing: 0.08em;
+    }
+    .lang-link.active { color: var(--text-main); }
+    .lang-sep { font-size: 10px; color: var(--border); }
 
+    /* ── Main container ── */
     .alchemy-container {
       width: 95vw; height: 85vh; max-width: 1200px;
-      background: var(--glass); backdrop-filter: blur(12px);
-      border-radius: 30px; display: flex;
-      box-shadow: 0 30px 60px rgba(0,0,0,0.05);
+      background: var(--glass); backdrop-filter: blur(14px);
+      border-radius: 32px; display: flex;
+      box-shadow: 0 32px 64px rgba(0,0,0,0.06), 0 0 0 1px rgba(255,255,255,0.6) inset;
       border: 1px solid rgba(255,255,255,0.5);
       overflow: hidden;
     }
 
-    /* ── 桌面侧边栏 ── */
+    /* ── Desktop sidebar ── */
     aside {
-      width: 70px; height: 100%;
-      background: rgba(255,255,255,0.05);
-      border-right: 1px solid rgba(0,0,0,0.03);
+      width: 72px; height: 100%;
+      background: rgba(255,255,255,0.08);
+      border-right: 1px solid var(--border);
       transition: width 0.4s cubic-bezier(0.4,0,0.2,1);
       overflow-x: hidden; display: flex; flex-direction: column;
-      padding-top: 60px;
+      padding-top: 64px; flex-shrink: 0;
     }
     @media (min-width: 769px) {
-      aside:hover { width: 280px; }
-      aside:hover .category-header { opacity: 0.7; }
+      aside:hover { width: 286px; }
+      aside:hover .category-header { opacity: 0.5; }
       aside:hover .nav-text-box { opacity: 1; }
     }
 
     .category-header {
-      font-family: 'Special Elite', cursive; font-size: 11px; font-weight: 700;
-      padding: 20px 15px 5px; opacity: 0; transition: 0.3s; white-space: nowrap;
-      color: var(--text-main);
+      font-family: 'Special Elite', cursive; font-size: 10px; font-weight: 700;
+      padding: 20px 16px 6px; opacity: 0; transition: 0.3s; white-space: nowrap;
+      color: var(--text-sub); letter-spacing: 0.1em; text-transform: uppercase;
     }
     .nav-item {
-      display: flex; align-items: center; padding: 12px 15px; cursor: pointer;
-      transition: background 0.15s;
+      display: flex; align-items: center; padding: 10px 16px; cursor: pointer;
+      transition: background 0.15s; position: relative;
     }
-    .nav-item:active { background: rgba(0,0,0,0.04); }
+    .nav-item:hover { background: rgba(255,255,255,0.25); }
+    .nav-item.active-nav { background: rgba(255,255,255,0.3); }
+    .nav-item.active-nav::before {
+      content: ''; position: absolute; left: 0; top: 6px; bottom: 6px;
+      width: 3px; background: var(--active-color); border-radius: 0 3px 3px 0;
+    }
     .nav-icon-circle {
-      width: 40px; height: 40px; border-radius: 12px;
+      width: 40px; height: 40px; border-radius: 11px;
       display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0; font-size: 12px; font-weight: 700; color: white;
-      pointer-events: none;
+      flex-shrink: 0; font-size: 11px; font-weight: 800; color: white;
+      pointer-events: none; position: relative; transition: transform 0.15s;
     }
+    .nav-item:hover .nav-icon-circle { transform: scale(1.05); }
+    /* checkmark for solved */
+    .nav-icon-circle .check-badge {
+      position: absolute; bottom: -3px; right: -3px;
+      width: 14px; height: 14px; border-radius: 50%;
+      background: var(--success-green); border: 2px solid var(--bg-base);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .nav-icon-circle .check-badge svg { width: 7px; height: 7px; }
+
     .nav-text-box {
-      margin-left: 15px; opacity: 0; transition: 0.2s;
+      margin-left: 14px; opacity: 0; transition: opacity 0.2s;
       white-space: nowrap; flex: 1; pointer-events: none;
     }
-    .record-dots { display: flex; gap: 4px; margin-top: 4px; pointer-events: none; }
-    .mini-dot { width: 6px; height: 6px; border-radius: 50%; }
+    .record-dots { display: flex; gap: 4px; margin-top: 3px; pointer-events: none; }
+    .mini-dot { width: 5px; height: 5px; border-radius: 50%; }
 
-    /* ── 主内容 ── */
-    main { flex: 1; padding: 25px; overflow: hidden; display: flex; flex-direction: column; }
+    /* ── Main content ── */
+    main { flex: 1; padding: 22px; overflow: hidden; display: flex; flex-direction: column; min-width: 0; }
+
     .unified-card {
       background: var(--card-white); flex: 1;
-      border-radius: 25px; box-shadow: 0 15px 40px rgba(0,0,0,0.02);
+      border-radius: 24px;
+      box-shadow: 0 2px 20px rgba(0,0,0,0.04), 0 0 0 1px rgba(255,255,255,0.8) inset;
       display: flex; flex-direction: column; position: relative; overflow: hidden;
     }
-    .question-overlay { padding: 30px 30px 0 30px; z-index: 5; }
-    .question-overlay h2 { font-family: 'Special Elite', cursive; font-size: 26px; color: var(--active-color); letter-spacing: 1px; }
-    .question-overlay p { font-size: 14px; color: var(--text-sub); margin-top: 8px; line-height: 1.6; max-width: 640px; }
-    .question-overlay p code {
-      font-family: 'JetBrains Mono', monospace; font-size: 12px;
-      background: rgba(0,0,0,0.06); padding: 1px 6px; border-radius: 4px;
-      color: var(--text-main);
+
+    /* Accent bar at top of card */
+    .card-accent {
+      height: 3px; width: 100%;
+      background: linear-gradient(90deg, var(--active-color), transparent);
+      transition: background 0.4s;
+      flex-shrink: 0;
     }
 
-    .editor-area { flex: 1; padding: 20px 30px 100px 30px; }
+    .question-overlay { padding: 26px 28px 0 28px; z-index: 5; }
+
+    .q-meta {
+      display: flex; align-items: center; gap: 8px; margin-bottom: 8px;
+    }
+    .q-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--active-color); flex-shrink: 0;
+      transition: background 0.3s;
+    }
+    .q-diff-badge {
+      font-size: 9px; font-weight: 800; letter-spacing: 0.1em;
+      color: white; background: var(--active-color);
+      padding: 2px 7px; border-radius: 4px; text-transform: uppercase;
+      transition: background 0.3s;
+    }
+    .q-cat-label {
+      font-size: 9px; color: var(--text-sub); letter-spacing: 0.06em;
+      text-transform: uppercase; opacity: 0.8;
+    }
+    .q-num-label {
+      font-size: 9px; color: var(--text-sub); opacity: 0.5;
+      font-family: 'JetBrains Mono', monospace; margin-left: auto;
+    }
+
+    .question-overlay h2 {
+      font-family: 'Special Elite', cursive; font-size: 24px;
+      color: var(--text-main); letter-spacing: 0.5px; line-height: 1.2;
+      margin-bottom: 10px;
+    }
+    .question-overlay p {
+      font-size: 13.5px; color: var(--text-sub); line-height: 1.7; max-width: 620px;
+    }
+
+    /* Editor */
+    .editor-area { flex: 1; padding: 16px 28px 96px 28px; position: relative; }
+    .editor-label {
+      font-family: 'JetBrains Mono', monospace; font-size: 9px;
+      color: var(--text-sub); opacity: 0.5; letter-spacing: 0.08em;
+      margin-bottom: 8px; text-transform: uppercase;
+    }
     #vex-editor {
-      width: 100%; height: 100%; border: none; outline: none;
-      font-family: 'JetBrains Mono', monospace; font-size: 14px;
-      background: transparent; color: #444; resize: none; line-height: 1.8;
+      width: 100%; height: calc(100% - 20px); border: none; outline: none;
+      font-family: 'JetBrains Mono', monospace; font-size: 13.5px;
+      background: transparent; color: #3a3a3a; resize: none; line-height: 1.9;
     }
-    #vex-editor::placeholder { color: #000; opacity: 0.1; }
+    #vex-editor::placeholder { color: rgba(0,0,0,0.12); }
 
+    /* Attempts indicator */
+    .attempts-row {
+      position: absolute; bottom: 96px; left: 28px;
+      display: flex; gap: 5px; align-items: center;
+    }
+    .attempt-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--accent-orange); opacity: 0.35;
+      transition: opacity 0.3s, background 0.3s;
+    }
+    .attempt-dot.active { opacity: 1; }
+    .attempt-dot.used { background: var(--fail-red); opacity: 0.6; }
+
+    /* Controls */
     .embedded-controls {
-      position: absolute; bottom: 25px; right: 30px;
-      display: flex; gap: 12px; z-index: 10;
+      position: absolute; bottom: 22px; right: 24px;
+      display: flex; gap: 10px; z-index: 10;
     }
-    .btn { padding: 12px 25px; border-radius: 18px; font-weight: 700; font-size: 11px; border: none; cursor: pointer; transition: 0.3s; font-family: 'Syne'; }
-    .btn-hint { background: rgba(0,0,0,0.03); color: var(--text-sub); }
-    .btn-submit { background: var(--accent-orange); color: white; box-shadow: 0 4px 12px rgba(249,168,125,0.3); }
+    .btn {
+      padding: 11px 22px; border-radius: 16px; font-weight: 700;
+      font-size: 10.5px; border: none; cursor: pointer;
+      transition: all 0.2s; font-family: 'Courier Prime', monospace; letter-spacing: 0.01em;
+    }
+    .btn:active { transform: scale(0.97); }
+    .btn-hint {
+      background: rgba(0,0,0,0.04); color: var(--text-sub);
+      border: 1px solid rgba(0,0,0,0.07);
+    }
+    .btn-hint:hover { background: rgba(0,0,0,0.07); }
+    .btn-submit {
+      background: var(--accent-orange); color: white;
+      box-shadow: 0 4px 16px rgba(249,168,125,0.4);
+      min-width: 90px; display: flex; align-items: center; justify-content: center; gap: 7px;
+    }
+    .btn-submit:hover { background: var(--accent-orange-dark); box-shadow: 0 6px 20px rgba(249,168,125,0.5); }
+    .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-    /* ── 弹窗 ── */
+    /* Spinner inside submit */
+    .btn-spinner {
+      width: 12px; height: 12px; border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: white; border-radius: 50%;
+      animation: spin 0.7s linear infinite; display: none; flex-shrink: 0;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Modal ── */
     #modal-overlay {
-      position: fixed; inset: 0; background: rgba(0,0,0,0.05);
-      backdrop-filter: blur(8px); display: none;
+      position: fixed; inset: 0; background: rgba(0,0,0,0.08);
+      backdrop-filter: blur(10px); display: none;
       align-items: center; justify-content: center; z-index: 1000; padding: 20px;
     }
-    .modal { width: 100%; max-width: 450px; padding: 35px; border-radius: 30px; background: white; text-align: center; box-shadow: 0 30px 60px rgba(0,0,0,0.1); }
-    .modal.success { background: #F2F9F5; border: 1px solid #D4EDDA; }
-    .modal.failure { background: #FFF5F5; border: 1px solid #FEB2B2; }
+    #modal-overlay.visible { display: flex; }
 
-    /* ── 移动端 ── */
+    .modal {
+      width: 100%; max-width: 440px; padding: 32px;
+      border-radius: 28px; background: white; text-align: center;
+      box-shadow: 0 40px 80px rgba(0,0,0,0.12);
+      animation: modal-in 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    @keyframes modal-in {
+      from { opacity: 0; transform: scale(0.88) translateY(10px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .modal.success { background: #F3FAF6; border: 1px solid #c3e6cb; }
+    .modal.failure { background: #FFF6F6; border: 1px solid #f5c6cb; }
+    .modal.hint-modal { background: #FEFAF4; border: 1px solid #f0e0c0; }
+
+    .modal-icon { font-size: 36px; margin-bottom: 12px; line-height: 1; }
+    #modal-title {
+      font-family: 'Special Elite', cursive; font-size: 21px;
+      margin-bottom: 12px; color: var(--text-main);
+    }
+    #modal-body { font-size: 13.5px; color: #666; line-height: 1.7; }
+    #solution-area { display: none; margin-top: 14px; }
+    #correct-code-text {
+      background: #fafafa; padding: 14px; border-radius: 12px;
+      font-family: 'JetBrains Mono'; font-size: 12px;
+      text-align: left; color: #C53030; border: 1px solid #eee; line-height: 1.7;
+    }
+    .modal-btn-row { margin-top: 22px; display: flex; gap: 10px; }
+    .btn-modal-continue {
+      flex: 1; padding: 12px; border-radius: 16px; font-weight: 700;
+      font-size: 11px; border: none; cursor: pointer; font-family: 'Courier Prime', monospace;
+      background: var(--accent-orange); color: white;
+      box-shadow: 0 4px 12px rgba(249,168,125,0.35);
+      transition: all 0.2s; letter-spacing: 0.04em;
+    }
+    .btn-modal-continue:hover { background: var(--accent-orange-dark); }
+    .btn-modal-next {
+      flex: 1; padding: 12px; border-radius: 16px; font-weight: 700;
+      font-size: 11px; border: 1px solid rgba(0,0,0,0.08); cursor: pointer;
+      font-family: 'Courier Prime', monospace; background: rgba(0,0,0,0.03); color: var(--text-sub);
+      transition: all 0.2s; letter-spacing: 0.04em; display: none;
+    }
+    .btn-modal-next:hover { background: rgba(0,0,0,0.07); }
+
+    /* ── Mobile ── */
     @media (max-width: 768px) {
-      .alchemy-container { height: 92vh; border-radius: 20px; }
+      .alchemy-container { height: 92vh; border-radius: 22px; }
       aside { display: none; }
-      .question-overlay { padding: 20px 20px 0 20px; }
-      .question-overlay h2 { font-size: 20px; }
-      .embedded-controls { width: calc(100% - 40px); left: 20px; bottom: 20px; }
+      .question-overlay { padding: 18px 18px 0 18px; }
+      .question-overlay h2 { font-size: 19px; }
+      .question-overlay p { font-size: 13px; }
+      .editor-area { padding: 14px 18px 90px 18px; }
+      .embedded-controls { width: calc(100% - 36px); left: 18px; bottom: 18px; }
       .btn { flex: 1; }
+      .attempts-row { left: 18px; bottom: 90px; }
 
       #fab-menu {
-        position: fixed; bottom: 32px; left: 32px;
-        width: 56px; height: 56px; border-radius: 50%;
+        position: fixed; bottom: 30px; left: 30px;
+        width: 54px; height: 54px; border-radius: 50%;
         background: var(--accent-orange);
-        box-shadow: 0 8px 24px rgba(249,168,125,0.55);
+        box-shadow: 0 8px 28px rgba(249,168,125,0.6);
         display: flex; align-items: center; justify-content: center;
         z-index: 800; cursor: pointer; border: none;
-        transition: transform 0.25s, box-shadow 0.25s;
+        transition: transform 0.28s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.25s;
         -webkit-tap-highlight-color: transparent;
       }
-      #fab-menu.open { transform: rotate(45deg); box-shadow: 0 8px 28px rgba(249,168,125,0.7); }
+      #fab-menu.open { transform: rotate(45deg) scale(1.05); }
       #fab-menu svg { pointer-events: none; }
 
       #drawer-overlay {
         display: none; position: fixed; inset: 0;
-        background: rgba(0,0,0,0.18); z-index: 700;
-        backdrop-filter: blur(3px);
+        background: rgba(0,0,0,0.2); z-index: 700;
+        backdrop-filter: blur(4px);
       }
       #drawer-overlay.open { display: block; }
 
       #mobile-drawer {
-        position: fixed; left: -290px; top: 0; bottom: 0;
-        width: 270px; background: rgba(250,248,243,0.98);
-        box-shadow: 12px 0 40px rgba(0,0,0,0.1);
-        z-index: 750; padding-top: 64px;
+        position: fixed; left: -295px; top: 0; bottom: 0; width: 275px;
+        background: rgba(251,249,244,0.99);
+        box-shadow: 16px 0 48px rgba(0,0,0,0.12);
+        z-index: 750; padding-top: 60px;
         transition: left 0.32s cubic-bezier(0.4,0,0.2,1);
         display: flex; flex-direction: column; overflow-y: auto;
       }
       #mobile-drawer.open { left: 0; }
 
       .drawer-title {
-        font-family: 'Special Elite', cursive; font-size: 18px; color: var(--text-main);
-        padding: 0 22px 18px; border-bottom: 1px solid rgba(0,0,0,0.06); margin-bottom: 8px;
+        font-family: 'Special Elite', cursive; font-size: 17px; color: var(--text-main);
+        padding: 0 20px 16px; border-bottom: 1px solid rgba(0,0,0,0.06); margin-bottom: 6px;
+      }
+      .drawer-progress {
+        padding: 10px 20px 0;
+        font-size: 10px; font-weight: 700; color: var(--text-sub);
+        letter-spacing: 0.06em; display: flex; align-items: center; gap: 8px;
+      }
+      .drawer-progress .dp-bar {
+        flex: 1; height: 3px; background: rgba(0,0,0,0.08); border-radius: 2px; overflow: hidden;
+      }
+      .drawer-progress .dp-fill {
+        height: 100%; background: var(--accent-orange); border-radius: 2px;
+        transition: width 0.4s;
       }
       .drawer-category {
-        font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
-        text-transform: uppercase; color: var(--text-sub); padding: 16px 22px 6px;
+        font-size: 9px; font-weight: 800; letter-spacing: 0.12em;
+        text-transform: uppercase; color: var(--text-sub); padding: 16px 20px 5px;
+        opacity: 0.6;
       }
       .drawer-item {
-        display: flex; align-items: center; gap: 14px; padding: 12px 22px;
+        display: flex; align-items: center; gap: 12px; padding: 11px 20px;
         cursor: pointer; -webkit-tap-highlight-color: rgba(0,0,0,0.04);
-        user-select: none; transition: background 0.12s;
+        user-select: none; transition: background 0.12s; position: relative;
       }
       .drawer-item:active { background: rgba(0,0,0,0.04); }
-      .drawer-item.active-item { background: rgba(0,0,0,0.03); }
-      .drawer-icon {
-        width: 38px; height: 38px; border-radius: 10px;
-        display: flex; align-items: center; justify-content: center;
-        font-size: 12px; font-weight: 700; color: white;
-        flex-shrink: 0; pointer-events: none;
+      .drawer-item.active-item {
+        background: rgba(249,168,125,0.08);
+        border-left: 3px solid var(--accent-orange);
+        padding-left: 17px;
       }
+      .drawer-icon {
+        width: 36px; height: 36px; border-radius: 9px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 11px; font-weight: 800; color: white;
+        flex-shrink: 0; pointer-events: none; position: relative;
+      }
+      .drawer-icon .check-sm {
+        position: absolute; bottom: -2px; right: -2px;
+        width: 12px; height: 12px; border-radius: 50%;
+        background: var(--success-green); border: 2px solid rgba(251,249,244,0.99);
+        display: flex; align-items: center; justify-content: center;
+      }
+      .drawer-icon .check-sm svg { width: 6px; height: 6px; }
       .drawer-label { flex: 1; pointer-events: none; }
-      .drawer-label b { font-size: 13px; display: block; }
-      .drawer-label span { font-size: 10px; color: var(--text-sub); text-transform: uppercase; }
-      .drawer-dots { display: flex; gap: 4px; margin-top: 4px; pointer-events: none; }
+      .drawer-label b { font-size: 13px; display: block; font-family: 'Special Elite', cursive !important; font-weight: 400; }
+      .drawer-label span { font-size: 9.5px; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.04em; }
+      .drawer-dots { display: flex; gap: 3px; margin-top: 3px; pointer-events: none; }
     }
 
     @media (min-width: 769px) {
       #fab-menu, #mobile-drawer, #drawer-overlay { display: none !important; }
     }
+
+    /* ── Page load animation ── */
+    @keyframes fade-up {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .alchemy-container { animation: fade-up 0.5s cubic-bezier(0.4,0,0.2,1) both; }
   </style>
 </head>
 <body>
 
-  <div class="page-logo">VEX LAB.</div>
+  <div class="page-logo">VEX LAB.</div></div>
+  </div>
+
   <div class="top-right-lang">
     <span class="lang-link" onclick="setLang('zh')" id="ln-zh">ZH</span>
+    <span class="lang-sep">/</span>
     <span class="lang-link" onclick="setLang('en')" id="ln-en">EN</span>
   </div>
 
+  <!-- Mobile FAB -->
   <button id="fab-menu" onclick="toggleDrawer()">
-    <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-      <rect y="4"  width="22" height="2.2" rx="1.1" fill="white"/>
-      <rect y="10" width="22" height="2.2" rx="1.1" fill="white"/>
-      <rect y="16" width="22" height="2.2" rx="1.1" fill="white"/>
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+      <rect y="3"  width="20" height="2" rx="1" fill="white"/>
+      <rect y="9"  width="20" height="2" rx="1" fill="white"/>
+      <rect y="15" width="20" height="2" rx="1" fill="white"/>
     </svg>
   </button>
 
@@ -235,35 +415,46 @@
     <aside id="sidebar-nav"></aside>
     <main>
       <div class="unified-card">
+        <div class="card-accent" id="card-accent"></div>
         <div class="question-overlay">
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
-            <div style="width:8px;height:8px;border-radius:50%;background:var(--active-color)"></div>
-            <span id="q-diff-text" style="font-size:9px;font-weight:700;color:var(--text-sub);letter-spacing:0.08em;">EASY</span>
-            <span id="q-cat-text" style="font-size:9px;color:var(--text-sub);opacity:0.6;">·</span>
-            <span id="q-cat-label" style="font-size:9px;color:var(--text-sub);opacity:0.6;letter-spacing:0.05em;"></span>
+          <div class="q-meta">
+            <div class="q-dot" id="q-dot"></div>
+            <span class="q-diff-badge" id="q-diff-badge">EASY</span>
+            <span class="q-cat-label" id="q-cat-label"></span>
+            <span class="q-num-label" id="q-num-label"></span>
           </div>
           <h2 id="q-title">...</h2>
           <p id="q-desc"></p>
         </div>
         <div class="editor-area">
+          <div class="editor-label">// vex wrangle</div>
           <textarea id="vex-editor" spellcheck="false" placeholder="// Initializing VEX Kernel..."></textarea>
         </div>
+        <div class="attempts-row" id="attempts-row"></div>
         <div class="embedded-controls">
           <button class="btn btn-hint" onclick="showHint()" id="btn-hint-txt">HINT</button>
-          <button class="btn btn-submit" id="submit-btn" onclick="handleSubmit()">SUBMIT</button>
+          <button class="btn btn-submit" id="submit-btn" onclick="handleSubmit()">
+            <div class="btn-spinner" id="btn-spinner"></div>
+            <span id="btn-label">SUBMIT</span>
+          </button>
         </div>
       </div>
     </main>
   </div>
 
+  <!-- Modal -->
   <div id="modal-overlay">
     <div class="modal" id="result-modal" onclick="event.stopPropagation()">
-      <h3 id="modal-title" style="font-family:'Special Elite',cursive;margin-bottom:15px;font-size:22px;">Result</h3>
-      <div id="modal-body" style="font-size:14px;color:#666;line-height:1.6;"></div>
-      <div id="solution-area" style="display:none;margin-top:15px;">
-        <div id="correct-code-text" style="background:#fff;padding:15px;border-radius:12px;font-family:'JetBrains Mono';font-size:12px;text-align:left;color:#C53030;border:1px solid #eee;"></div>
+      <div class="modal-icon" id="modal-icon"></div>
+      <h3 id="modal-title">Result</h3>
+      <div id="modal-body"></div>
+      <div id="solution-area">
+        <div id="correct-code-text"></div>
       </div>
-      <button class="btn btn-submit" style="width:100%;margin-top:25px;" onclick="closeFeedback()">CONTINUE</button>
+      <div class="modal-btn-row">
+        <button class="btn-modal-continue" onclick="closeFeedback()" id="btn-continue">CONTINUE</button>
+        <button class="btn-modal-next" onclick="goNext()" id="btn-next">NEXT →</button>
+      </div>
     </div>
   </div>
 
@@ -274,242 +465,142 @@
         { qid:"q01", id:"01", difficulty:"easy", color:"var(--easy)",
           cat: { zh:"属性", en:"Attribute" },
           title: { zh:"草原清理", en:"Meadow Clean-up" },
-          desc: {
-            zh:"场景里的点染上了乱七八糟的颜色，请将所有点的颜色属性 (@Cd) 初始化为纯白色，为重新种草做准备。",
-            en:"The points have been painted all sorts of messy colors. Reset every point's color (@Cd) to pure white to prepare for replanting."
-          },
+          desc: { zh:"场景里的点染上了乱七八糟的颜色，请将所有点的颜色属性 (@Cd) 初始化为纯白色，为重新种草做准备。", en:"The points have been painted all sorts of messy colors. Reset every point's color (@Cd) to pure white to prepare for replanting." },
           hint: { zh:"直接给向量属性赋值一个字面量 {1,1,1}。", en:"Assign a vector literal {1,1,1} directly to @Cd." },
-          solution:"@Cd = {1,1,1};",
-          judge:"Set @Cd to pure white {1,1,1} for every point.",
-          attempts:3, records:[] },
+          solution:"@Cd = {1,1,1};", judge:"Set @Cd to pure white {1,1,1} for every point.", attempts:3, records:[] },
 
         { qid:"q02", id:"02", difficulty:"easy", color:"var(--easy)",
           cat: { zh:"属性 / 数学", en:"Attribute / Math" },
           title: { zh:"海拔监控", en:"Altitude Marker" },
-          desc: {
-            zh:"为了观察地形起伏，请根据点的高度 (@P.y) 给模型上色。山脚 (y=0) 应该是黑色，高度增加颜色变亮。",
-            en:"To visualize terrain elevation, color each point based on its height (@P.y). The base (y=0) should be black; higher points should be brighter."
-          },
+          desc: { zh:"为了观察地形起伏，请根据点的高度 (@P.y) 给模型上色。山脚 (y=0) 应该是黑色，高度增加颜色变亮。", en:"To visualize terrain elevation, color each point based on its height (@P.y). The base (y=0) should be black; higher points should be brighter." },
           hint: { zh:"将 @P.y 直接赋值给 @Cd，float 会自动广播到 RGB 三个通道。", en:"Assign @P.y directly to @Cd — a float broadcasts to all three RGB channels." },
-          solution:"@Cd = @P.y;",
-          judge:"Set @Cd equal to @P.y so color brightness increases with height.",
-          attempts:3, records:[] },
+          solution:"@Cd = @P.y;", judge:"Set @Cd equal to @P.y so color brightness increases with height.", attempts:3, records:[] },
 
         { qid:"q03", id:"03", difficulty:"easy", color:"var(--easy)",
           cat: { zh:"属性 / 随机", en:"Attribute / Random" },
           title: { zh:"森林疏密", en:"Tree Randomizer" },
-          desc: {
-            zh:"这些树整齐得像假的一样。请给每个点生成一个随机的 @pscale 属性，范围在 0.5 到 1.5 之间。",
-            en:"These trees look unnaturally uniform. Give each point a random @pscale between 0.5 and 1.5."
-          },
+          desc: { zh:"这些树整齐得像假的一样。请给每个点生成一个随机的 @pscale 属性，范围在 0.5 到 1.5 之间。", en:"These trees look unnaturally uniform. Give each point a random @pscale between 0.5 and 1.5." },
           hint: { zh:"先用 rand(@ptnum) 生成 0~1 随机数，再用 fit01() 映射到目标范围。", en:"Use rand(@ptnum) to get a 0–1 random value, then fit01() to remap it to 0.5–1.5." },
-          solution:"@pscale = fit01(rand(@ptnum), 0.5, 1.5);",
-          judge:"Set @pscale to a random value between 0.5 and 1.5 per point, using rand(@ptnum) and fit01().",
-          attempts:3, records:[] },
+          solution:"@pscale = fit01(rand(@ptnum), 0.5, 1.5);", judge:"Set @pscale to a random value between 0.5 and 1.5 per point, using rand(@ptnum) and fit01().", attempts:3, records:[] },
 
         { qid:"q04", id:"04", difficulty:"easy", color:"var(--easy)",
           cat: { zh:"数学 / 位置", en:"Math / Position" },
           title: { zh:"镜像废墟", en:"The Ruin Mirror" },
-          desc: {
-            zh:"建筑废墟只需要做一半。请将所有点的 X 轴坐标翻转到对面，实现简单的镜像效果。",
-            en:"Only half the ruin needs to be built. Flip all points across the YZ plane by negating their X coordinate."
-          },
+          desc: { zh:"建筑废墟只需要做一半。请将所有点的 X 轴坐标翻转到对面，实现简单的镜像效果。", en:"Only half the ruin needs to be built. Flip all points across the YZ plane by negating their X coordinate." },
           hint: { zh:"将 @P.x 乘以 -1。", en:"Multiply @P.x by -1." },
-          solution:"@P.x *= -1;",
-          judge:"Negate @P.x to mirror all points across the YZ plane.",
-          attempts:3, records:[] },
+          solution:"@P.x *= -1;", judge:"Negate @P.x to mirror all points across the YZ plane.", attempts:3, records:[] },
 
         { qid:"q05", id:"05", difficulty:"easy", color:"var(--easy)",
           cat: { zh:"逻辑 / 属性", en:"Logic / Attribute" },
           title: { zh:"洪水淹没", en:"The Flood Line" },
-          desc: {
-            zh:"河水要涨了！如果点的高度 (@P.y) 低于 0.2，请将它们的颜色改为蓝色 {0,0,1}，其余保持原样。",
-            en:"The river is rising! If a point's height (@P.y) is below 0.2, paint it blue {0,0,1}. Leave all other points untouched."
-          },
+          desc: { zh:"河水要涨了！如果点的高度 (@P.y) 低于 0.2，请将它们的颜色改为蓝色 {0,0,1}，其余保持原样。", en:"The river is rising! If a point's height (@P.y) is below 0.2, paint it blue {0,0,1}. Leave all other points untouched." },
           hint: { zh:"使用 if 语句判断 @P.y 是否小于 0.2。", en:"Use an if statement to check whether @P.y is less than 0.2." },
-          solution:"if(@P.y < 0.2) @Cd = {0,0,1};",
-          judge:"If @P.y < 0.2, set @Cd to {0,0,1}. All other points unchanged.",
-          attempts:3, records:[] },
+          solution:"if(@P.y < 0.2) @Cd = {0,0,1};", judge:"If @P.y < 0.2, set @Cd to {0,0,1}. All other points unchanged.", attempts:3, records:[] },
 
         { qid:"q06", id:"06", difficulty:"easy", color:"var(--easy)",
           cat: { zh:"数学 / 法线", en:"Math / Normal" },
           title: { zh:"崖边禁区", en:"Cliff Danger Zone" },
-          desc: {
-            zh:"太陡峭的地方不能种树。检测法线 (@N)，如果它的 Y 分量小于 0.7（说明坡度很陡），就变红提示。",
-            en:"Slopes too steep to plant on must be flagged. If a point's normal (@N) has a Y component below 0.7, mark it red to indicate danger."
-          },
+          desc: { zh:"太陡峭的地方不能种树。检测法线 (@N)，如果它的 Y 分量小于 0.7（说明坡度很陡），就变红提示。", en:"Slopes too steep to plant on must be flagged. If a point's normal (@N) has a Y component below 0.7, mark it red to indicate danger." },
           hint: { zh:"访问法向量的 Y 分量 @N.y，与 0.7 比较。", en:"Access @N.y and compare it to 0.7." },
-          solution:"if(@N.y < 0.7) @Cd = {1,0,0};",
-          judge:"If @N.y < 0.7, set @Cd to {1,0,0} to flag steep slopes.",
-          attempts:3, records:[] },
+          solution:"if(@N.y < 0.7) @Cd = {1,0,0};", judge:"If @N.y < 0.7, set @Cd to {1,0,0} to flag steep slopes.", attempts:3, records:[] },
 
         { qid:"q07", id:"07", difficulty:"easy", color:"var(--easy)",
           cat: { zh:"位置", en:"Position" },
           title: { zh:"地基找平", en:"Foundation Leveling" },
-          desc: {
-            zh:"准备放房子了！请将所有点的 Y 轴坐标强制设为 0，压出一块绝对平坦的地基。",
-            en:"Time to lay the foundation. Force every point's Y coordinate to 0, creating a perfectly flat base."
-          },
+          desc: { zh:"准备放房子了！请将所有点的 Y 轴坐标强制设为 0，压出一块绝对平坦的地基。", en:"Time to lay the foundation. Force every point's Y coordinate to 0, creating a perfectly flat base." },
           hint: { zh:"直接给 @P.y 赋值 0。", en:"Directly assign 0 to @P.y." },
-          solution:"@P.y = 0;",
-          judge:"Set @P.y to 0 for all points to flatten the geometry.",
-          attempts:3, records:[] },
+          solution:"@P.y = 0;", judge:"Set @P.y to 0 for all points to flatten the geometry.", attempts:3, records:[] },
 
         { qid:"q08", id:"08", difficulty:"easy", color:"var(--easy)",
           cat: { zh:"数学 / 法线", en:"Math / Normal" },
           title: { zh:"阳光普照", en:"Sunlight Mask" },
-          desc: {
-            zh:"假设阳光从上方 {0,1,0} 直射。计算法线与阳光方向的点积，并存入颜色，模拟顶光效果。",
-            en:"Sunlight shines straight down from {0,1,0}. Compute the dot product of each point's normal and the light direction, and store it as the color."
-          },
+          desc: { zh:"假设阳光从上方 {0,1,0} 直射。计算法线与阳光方向的点积，并存入颜色，模拟顶光效果。", en:"Sunlight shines straight down from {0,1,0}. Compute the dot product of each point's normal and the light direction, and store it as the color." },
           hint: { zh:"使用 dot() 函数计算两个向量的相似度（夹角余弦）。", en:"Use dot() to compute the cosine similarity between two vectors." },
-          solution:"@Cd = dot(@N, {0,1,0});",
-          judge:"Set @Cd to dot(@N, {0,1,0}), simulating top-down lighting.",
-          attempts:3, records:[] },
+          solution:"@Cd = dot(@N, {0,1,0});", judge:"Set @Cd to dot(@N, {0,1,0}), simulating top-down lighting.", attempts:3, records:[] },
 
         { qid:"q09", id:"09", difficulty:"easy", color:"var(--easy)",
           cat: { zh:"随机 / 位置", en:"Random / Position" },
           title: { zh:"石块乱序", en:"Rock Scatter" },
-          desc: {
-            zh:"摆放的石头太死板。请给每个点的 @P 增加一个微小的随机垂直位移，Y轴上下偏移 0.1 左右。",
-            en:"The rocks look too orderly. Add a small random vertical offset to each point's @P — shifting Y by roughly ±0.1."
-          },
+          desc: { zh:"摆放的石头太死板。请给每个点的 @P 增加一个微小的随机垂直位移，Y轴上下偏移 0.1 左右。", en:"The rocks look too orderly. Add a small random vertical offset to each point's @P — shifting Y by roughly ±0.1." },
           hint: { zh:"rand(@ptnum) 是 0~1，减去 0.5 变成 -0.5~0.5，再乘以 0.2 缩小到目标范围。", en:"rand(@ptnum) gives 0–1; subtract 0.5 to center it, then multiply by 0.2 to scale the range." },
-          solution:"@P.y += (rand(@ptnum) - 0.5) * 0.2;",
-          judge:"Add a random Y offset of roughly ±0.1 to each point using rand(@ptnum).",
-          attempts:3, records:[] },
+          solution:"@P.y += (rand(@ptnum) - 0.5) * 0.2;", judge:"Add a random Y offset of roughly ±0.1 to each point using rand(@ptnum).", attempts:3, records:[] },
 
         { qid:"q10", id:"10", difficulty:"easy", color:"var(--easy)",
           cat: { zh:"数学 / 属性", en:"Math / Attribute" },
           title: { zh:"深度迷雾", en:"Fog Falloff" },
-          desc: {
-            zh:"距离中心点 {0,0,0} 越远，物体应该越透明。计算点到原点的距离，并将其取反（1/距离）赋值给 @Alpha。",
-            en:"Objects further from the origin {0,0,0} should appear more transparent. Compute each point's distance from the origin and assign its inverse (1/distance) to @Alpha."
-          },
+          desc: { zh:"距离中心点 {0,0,0} 越远，物体应该越透明。计算点到原点的距离，并将其取反（1/距离）赋值给 @Alpha。", en:"Objects further from the origin {0,0,0} should appear more transparent. Compute each point's distance from the origin and assign its inverse (1/distance) to @Alpha." },
           hint: { zh:"使用 length(@P) 计算位置向量的长度，即到原点的距离。", en:"Use length(@P) to get each point's distance from the origin." },
-          solution:"@Alpha = 1.0 / length(@P);",
-          judge:"Set @Alpha to 1.0 / length(@P) so opacity falls off with distance from origin.",
-          attempts:3, records:[] },
+          solution:"@Alpha = 1.0 / length(@P);", judge:"Set @Alpha to 1.0 / length(@P) so opacity falls off with distance from origin.", attempts:3, records:[] },
 
         { qid:"q11", id:"11", difficulty:"easy", color:"var(--easy)",
           cat: { zh:"数学 / 属性", en:"Math / Attribute" },
           title: { zh:"奇偶地砖", en:"Checkerboard Tiles" },
-          desc: {
-            zh:"为了打破地砖颜色的单一感，请根据点的序号 (@ptnum) 的奇偶性，将点分别染成灰色 {0.5,0.5,0.5} 和深灰色 {0.2,0.2,0.2}。",
-            en:"Break the monotony of the floor tiles. Color each point light grey or dark grey based on whether its @ptnum is even or odd."
-          },
+          desc: { zh:"为了打破地砖颜色的单一感，请根据点的序号 (@ptnum) 的奇偶性，将点分别染成灰色 {0.5,0.5,0.5} 和深灰色 {0.2,0.2,0.2}。", en:"Break the monotony of the floor tiles. Color each point light grey or dark grey based on whether its @ptnum is even or odd." },
           hint: { zh:"使用取模运算符 % 判断奇偶。", en:"Use the modulo operator % to check odd/even." },
-          solution:"if(@ptnum % 2 == 0) @Cd = 0.5; else @Cd = 0.2;",
-          judge:"If @ptnum is even, set @Cd to 0.5 (grey); otherwise set @Cd to 0.2 (dark grey). Use modulo %.",
-          attempts:3, records:[] },
+          solution:"if(@ptnum % 2 == 0) @Cd = 0.5; else @Cd = 0.2;", judge:"If @ptnum is even, set @Cd to 0.5 (grey); otherwise set @Cd to 0.2 (dark grey). Use modulo %.", attempts:3, records:[] },
 
         { qid:"q12", id:"12", difficulty:"easy", color:"var(--easy)",
           cat: { zh:"法线", en:"Normal" },
           title: { zh:"向天生长", en:"Growth Direction" },
-          desc: {
-            zh:"不管地表如何倾斜，这些发光的蘑菇都要笔直向上生长。请将所有点的法线 (@N) 统一设为指向天空 {0,1,0}。",
-            en:"No matter how the ground slopes, these mushrooms must grow straight up. Set every point's normal (@N) to point skyward {0,1,0}."
-          },
+          desc: { zh:"不管地表如何倾斜，这些发光的蘑菇都要笔直向上生长。请将所有点的法线 (@N) 统一设为指向天空 {0,1,0}。", en:"No matter how the ground slopes, these mushrooms must grow straight up. Set every point's normal (@N) to point skyward {0,1,0}." },
           hint: { zh:"直接覆盖法线向量，赋一个字面量。", en:"Directly overwrite @N with a vector literal." },
-          solution:"@N = {0,1,0};",
-          judge:"Set @N to {0,1,0} for all points.",
-          attempts:3, records:[] },
+          solution:"@N = {0,1,0};", judge:"Set @N to {0,1,0} for all points.", attempts:3, records:[] },
 
         { qid:"q13", id:"13", difficulty:"easy", color:"var(--easy)",
           cat: { zh:"属性 / 数学", en:"Attribute / Math" },
           title: { zh:"反转植被区", en:"Invert Growth Mask" },
-          desc: {
-            zh:"当前的 @mask 属性标记了岩石区，但我需要它的反向区域来种草。请将 @mask 属性的值进行翻转（0变1，1变0）。",
-            en:"The @mask attribute currently marks rocky areas. Invert it so we can use the opposite region for planting grass (0 becomes 1, 1 becomes 0)."
-          },
+          desc: { zh:"当前的 @mask 属性标记了岩石区，但我需要它的反向区域来种草。请将 @mask 属性的值进行翻转（0变1，1变0）。", en:"The @mask attribute currently marks rocky areas. Invert it so we can use the opposite region for planting grass (0 becomes 1, 1 becomes 0)." },
           hint: { zh:"用 1 减去当前值即可实现 0→1 反转。", en:"Subtract the current value from 1 to flip the range." },
-          solution:"@mask = 1.0 - @mask;",
-          judge:"Invert @mask by setting it to 1.0 - @mask.",
-          attempts:3, records:[] },
+          solution:"@mask = 1.0 - @mask;", judge:"Invert @mask by setting it to 1.0 - @mask.", attempts:3, records:[] },
 
         { qid:"q14", id:"14", difficulty:"easy", color:"var(--easy)",
           cat: { zh:"数学 / 位置", en:"Math / Position" },
           title: { zh:"路边旗帜", en:"Path Flags" },
-          desc: {
-            zh:"为了增加节日气氛，请让路边的点沿 Y 轴随 X 坐标产生正弦波动，模拟旗帜随风摆动。",
-            en:"Add some festivity. Make the roadside points oscillate vertically by applying a sine wave along their X coordinate."
-          },
+          desc: { zh:"为了增加节日气氛，请让路边的点沿 Y 轴随 X 坐标产生正弦波动，模拟旗帜随风摆动。", en:"Add some festivity. Make the roadside points oscillate vertically by applying a sine wave along their X coordinate." },
           hint: { zh:"使用 sin() 函数，以 @P.x 作为输入。", en:"Use sin() with @P.x as the input." },
-          solution:"@P.y += sin(@P.x);",
-          judge:"Add sin(@P.x) to @P.y so points undulate like waving flags.",
-          attempts:3, records:[] },
+          solution:"@P.y += sin(@P.x);", judge:"Add sin(@P.x) to @P.y so points undulate like waving flags.", attempts:3, records:[] },
 
         { qid:"q15", id:"15", difficulty:"easy", color:"var(--easy)",
           cat: { zh:"数学 / 颜色", en:"Math / Color" },
           title: { zh:"亮度提取", en:"Luminance Extract" },
-          desc: {
-            zh:"我们需要根据颜色亮度来控制发光强度。请计算颜色 @Cd 三个通道的平均值，并将其存入新属性 @brightness 中。",
-            en:"We need luminance to drive glow intensity. Compute the average of @Cd's three channels and store it in a new @brightness attribute."
-          },
+          desc: { zh:"我们需要根据颜色亮度来控制发光强度。请计算颜色 @Cd 三个通道的平均值，并将其存入新属性 @brightness 中。", en:"We need luminance to drive glow intensity. Compute the average of @Cd's three channels and store it in a new @brightness attribute." },
           hint: { zh:"三个通道相加后除以 3.0。", en:"Add the three channels together and divide by 3.0." },
-          solution:"@brightness = (@Cd.r + @Cd.g + @Cd.b) / 3.0;",
-          judge:"Set @brightness to the average of @Cd.r, @Cd.g, @Cd.b (i.e. divided by 3.0).",
-          attempts:3, records:[] },
+          solution:"@brightness = (@Cd.r + @Cd.g + @Cd.b) / 3.0;", judge:"Set @brightness to the average of @Cd.r, @Cd.g, @Cd.b (i.e. divided by 3.0).", attempts:3, records:[] },
 
         { qid:"q16", id:"16", difficulty:"easy", color:"var(--easy)",
           cat: { zh:"数学 / 位置", en:"Math / Position" },
           title: { zh:"中心排斥", en:"Center Repel" },
-          desc: {
-            zh:"中心点 {0,0,0} 处要放一个大型装置，请让周围所有的点沿水平方向向外扩散 2 个单位。",
-            en:"A large installation will occupy the centre {0,0,0}. Push all surrounding points outward horizontally by 2 units." 
-          },
+          desc: { zh:"中心点 {0,0,0} 处要放一个大型装置，请让周围所有的点沿水平方向向外扩散 2 个单位。", en:"A large installation will occupy the centre {0,0,0}. Push all surrounding points outward horizontally by 2 units." },
           hint: { zh:"normalize() 得到方向，乘以距离；注意只取 XZ 平面方向。", en:"Use normalize() to get direction, multiply by distance; keep movement on the XZ plane." },
-          solution:"@P += normalize(set(@P.x, 0, @P.z)) * 2.0;",
-          judge:"Push each point outward on the XZ plane by 2 units using normalize(set(@P.x,0,@P.z))*2.0.",
-          attempts:3, records:[] },
+          solution:"@P += normalize(set(@P.x, 0, @P.z)) * 2.0;", judge:"Push each point outward on the XZ plane by 2 units using normalize(set(@P.x,0,@P.z))*2.0.", attempts:3, records:[] },
 
         { qid:"q17", id:"17", difficulty:"easy", color:"var(--easy)",
           cat: { zh:"数学 / 属性", en:"Math / Attribute" },
           title: { zh:"点序渐变", en:"Point ID Gradient" },
-          desc: {
-            zh:"为了给流水线资产做标记，请将每个点的序号 (@ptnum) 除以总点数 (@numpt)，并将结果赋值给颜色，形成 0 到 1 的渐变。",
-            en:"Tag pipeline assets by coloring each point based on its index. Divide @ptnum by @numpt and assign the result to @Cd for a 0-to-1 gradient." 
-          },
+          desc: { zh:"为了给流水线资产做标记，请将每个点的序号 (@ptnum) 除以总点数 (@numpt)，并将结果赋值给颜色，形成 0 到 1 的渐变。", en:"Tag pipeline assets by coloring each point based on its index. Divide @ptnum by @numpt and assign the result to @Cd for a 0-to-1 gradient." },
           hint: { zh:"注意整数除法需要强制转换为 float，否则结果全是 0。", en:"Cast to float before dividing — integer division truncates to 0." },
-          solution:"@Cd = (float)@ptnum / (float)@numpt;",
-          judge:"Set @Cd to (float)@ptnum / (float)@numpt, producing a 0-1 gradient across all points.",
-          attempts:3, records:[] },
+          solution:"@Cd = (float)@ptnum / (float)@numpt;", judge:"Set @Cd to (float)@ptnum / (float)@numpt, producing a 0-1 gradient across all points.", attempts:3, records:[] },
 
         { qid:"q18", id:"18", difficulty:"easy", color:"var(--easy)",
           cat: { zh:"逻辑 / 法线", en:"Logic / Normal" },
           title: { zh:"积雪覆盖", en:"Snow Accumulation" },
-          desc: {
-            zh:"雪只会落在朝上的面上。如果法线的 Y 分量大于 0.9，将颜色设为纯白色，模拟积雪效果。",
-            en:"Snow only settles on upward-facing surfaces. If a point's normal Y component exceeds 0.9, paint it white to simulate snow."
-          },
+          desc: { zh:"雪只会落在朝上的面上。如果法线的 Y 分量大于 0.9，将颜色设为纯白色，模拟积雪效果。", en:"Snow only settles on upward-facing surfaces. If a point's normal Y component exceeds 0.9, paint it white to simulate snow." },
           hint: { zh:"判断 @N.y 是否大于 0.9，用 if 语句。", en:"Check if @N.y > 0.9 using an if statement." },
-          solution:"if(@N.y > 0.9) @Cd = 1;",
-          judge:"If @N.y > 0.9, set @Cd to 1 (white) to simulate snow on flat surfaces.",
-          attempts:3, records:[] },
+          solution:"if(@N.y > 0.9) @Cd = 1;", judge:"If @N.y > 0.9, set @Cd to 1 (white) to simulate snow on flat surfaces.", attempts:3, records:[] },
 
         { qid:"q19", id:"19", difficulty:"easy", color:"var(--easy)",
           cat: { zh:"随机 / 实例", en:"Random / Instance" },
           title: { zh:"水平随机旋转", en:"Random Y-Rotate" },
-          desc: {
-            zh:"为了让散布的石块看起来更自然，请给 @orient 属性（四元数）赋予一个围绕 Y 轴的随机旋转。",
-            en:"Scattered rocks look unnatural when they all face the same way. Assign a random Y-axis rotation to each point's @orient quaternion."
-          },
+          desc: { zh:"为了让散布的石块看起来更自然，请给 @orient 属性（四元数）赋予一个围绕 Y 轴的随机旋转。", en:"Scattered rocks look unnatural when they all face the same way. Assign a random Y-axis rotation to each point's @orient quaternion." },
           hint: { zh:"使用 rand(@ptnum) * PI * 2 生成随机角度，再用 quaternion() 构建四元数。", en:"Generate a random angle with rand(@ptnum)*PI*2, then build a quaternion with quaternion(angle, {0,1,0})." },
-          solution:"float angle = rand(@ptnum) * 6.2832; @orient = quaternion(angle, {0,1,0});",
-          judge:"Set @orient to a random Y-axis rotation using rand(@ptnum)*PI*2 and quaternion() or eulertoquaternion().",
-          attempts:3, records:[] },
+          solution:"float angle = rand(@ptnum) * 6.2832; @orient = quaternion(angle, {0,1,0});", judge:"Set @orient to a random Y-axis rotation using rand(@ptnum)*PI*2 and quaternion().", attempts:3, records:[] },
 
         { qid:"q20", id:"20", difficulty:"easy", color:"var(--easy)",
           cat: { zh:"位置 / 法线", en:"Position / Normal" },
           title: { zh:"阴影收缩", en:"Shadow Push" },
-          desc: {
-            zh:"为了让阴影看起来更深，请将属于 shadow_group 组的点沿法线反方向向内推入 0.1 单位。",
-            en:"To deepen the shadows, push points inside the shadow_group inward along their reversed normal by 0.1 units."
-          },
+          desc: { zh:"为了让阴影看起来更深，请将属于 shadow_group 组的点沿法线反方向向内推入 0.1 单位。", en:"To deepen the shadows, push points inside the shadow_group inward along their reversed normal by 0.1 units." },
           hint: { zh:"使用 ingroup() 检查点是否在组内，然后沿 -@N 方向移动。", en:"Use ingroup() to check group membership, then offset along -@N." },
-          solution:"if(ingroup(0, 'shadow_group', @ptnum)) @P -= @N * 0.1;",
-          judge:"If a point is in the shadow_group group, subtract @N*0.1 from @P. Use ingroup().",
-          attempts:3, records:[] }
+          solution:"if(ingroup(0, 'shadow_group', @ptnum)) @P -= @N * 0.1;", judge:"If a point is in the shadow_group group, subtract @N*0.1 from @P. Use ingroup().", attempts:3, records:[] }
 
       ]},
 
@@ -518,134 +609,133 @@
         { qid:"q21", id:"21", difficulty:"medium", color:"var(--medium)",
           cat: { zh:"噪波 / 位置", en:"Noise / Position" },
           title: { zh:"粗糙岩石", en:"Rough Rock Noise" },
-          desc: {
-            zh:"平滑的球体不像岩石。请使用 snoise() 根据点的位置对 @P 进行偏移，让表面产生凹凸不平的纹理。",
-            en:"A smooth sphere doesn't look like a rock. Use snoise() on the point position to displace @P and create a rough, irregular surface."
-          },
+          desc: { zh:"平滑的球体不像岩石。请使用 snoise() 根据点的位置对 @P 进行偏移，让表面产生凹凸不平的纹理。", en:"A smooth sphere doesn't look like a rock. Use snoise() on the point position to displace @P and create a rough, irregular surface." },
           hint: { zh:"用当前位置 @P 作为噪声种子，乘以缩放因子控制强度。", en:"Use the current position @P as the noise seed, multiply by a scale factor to control intensity." },
-          solution:"@P += snoise(@P) * 0.5;",
-          judge:"Displace @P by snoise(@P)*0.5 to create rocky surface irregularity.",
-          attempts:3, records:[] },
+          solution:"@P += snoise(@P) * 0.5;", judge:"Displace @P by snoise(@P)*0.5 to create rocky surface irregularity.", attempts:3, records:[] },
 
         { qid:"q22", id:"22", difficulty:"medium", color:"var(--medium)",
           cat: { zh:"数学 / 映射", en:"Math / Fit" },
           title: { zh:"植被重映射", en:"Sharp Growth Mask" },
-          desc: {
-            zh:"当前的噪声遮罩边缘太模糊了。请将 @mask 中 0.4 到 0.6 之间的值映射到 0 到 1，让植被的生长边界变得锐利。",
-            en:"The noise mask has a soft edge. Remap values between 0.4 and 0.6 to the full 0–1 range, sharpening the vegetation boundary."
-          },
+          desc: { zh:"当前的噪声遮罩边缘太模糊了。请将 @mask 中 0.4 到 0.6 之间的值映射到 0 到 1，让植被的生长边界变得锐利。", en:"The noise mask has a soft edge. Remap values between 0.4 and 0.6 to the full 0–1 range, sharpening the vegetation boundary." },
           hint: { zh:"使用 fit() 函数，指定输入范围和输出范围。", en:"Use fit() with the input range 0.4–0.6 and output range 0–1." },
-          solution:"@mask = fit(@mask, 0.4, 0.6, 0, 1);",
-          judge:"Remap @mask using fit(@mask, 0.4, 0.6, 0, 1) to sharpen the mask contrast.",
-          attempts:3, records:[] },
+          solution:"@mask = fit(@mask, 0.4, 0.6, 0, 1);", judge:"Remap @mask using fit(@mask, 0.4, 0.6, 0, 1) to sharpen the mask contrast.", attempts:3, records:[] },
 
         { qid:"q23", id:"23", difficulty:"medium", color:"var(--medium)",
           cat: { zh:"点云 / 逻辑", en:"PC Open / Logic" },
           title: { zh:"独居树检测", en:"Lone Tree Finder" },
-          desc: {
-            zh:"我们要移除那些落单的树。查询每个点半径 2.0 内的点数，如果点数小于 2（只有自己），将自己删除。",
-            en:"Isolated trees need to be removed. Query how many points exist within radius 2.0 of each point; if fewer than 2 are found (just itself), delete that point."
-          },
+          desc: { zh:"我们要移除那些落单的树。查询每个点半径 2.0 内的点数，如果点数小于 2（只有自己），将自己删除。", en:"Isolated trees need to be removed. Query how many points exist within radius 2.0 of each point; if fewer than 2 are found (just itself), delete that point." },
           hint: { zh:"使用 pcopen() 配合 pcnumfound() 查询邻近点数量。", en:"Use pcopen() together with pcnumfound() to count nearby points." },
-          solution:"int count = pcnumfound(pcopen(0, 'P', @P, 2.0, 10)); if(count < 2) removepoint(0, @ptnum);",
-          judge:"Use pcopen()/pcnumfound() to count points within radius 2.0. If count < 2, call removepoint(0, @ptnum).",
-          attempts:3, records:[] },
+          solution:"int count = pcnumfound(pcopen(0, 'P', @P, 2.0, 10)); if(count < 2) removepoint(0, @ptnum);", judge:"Use pcopen()/pcnumfound() to count points within radius 2.0. If count < 2, call removepoint(0, @ptnum).", attempts:3, records:[] },
 
         { qid:"q24", id:"24", difficulty:"medium", color:"var(--medium)",
           cat: { zh:"噪波 / 向量", en:"Noise / Vector" },
           title: { zh:"风吹草低", en:"Wind Force Field" },
-          desc: {
-            zh:"草地需要动态。请使用 curlnoise() 根据位置生成一个向量场，并将其赋值给速度属性 @v。",
-            en:"The grass needs to feel alive. Use curlnoise() to generate a vector field from position and assign it to the velocity attribute @v."
-          },
+          desc: { zh:"草地需要动态。请使用 curlnoise() 根据位置生成一个向量场，并将其赋值给速度属性 @v。", en:"The grass needs to feel alive. Use curlnoise() to generate a vector field from position and assign it to the velocity attribute @v." },
           hint: { zh:"curlnoise() 返回向量，直接赋值给 @v 即可；缩小输入坐标可降低频率。", en:"curlnoise() returns a vector — assign it directly to @v. Scale down @P to lower the frequency." },
-          solution:"@v = curlnoise(@P * 0.5);",
-          judge:"Set @v to curlnoise(@P * 0.5) to create a smooth vector flow field.",
-          attempts:3, records:[] },
+          solution:"@v = curlnoise(@P * 0.5);", judge:"Set @v to curlnoise(@P * 0.5) to create a smooth vector flow field.", attempts:3, records:[] },
 
         { qid:"q25", id:"25", difficulty:"medium", color:"var(--medium)",
           cat: { zh:"数学 / 位置", en:"Math / Position" },
           title: { zh:"藤蔓螺旋", en:"Vine Spiral" },
-          desc: {
-            zh:"我们要生成一根绕柱子上升的藤蔓。结合 Y 轴高度，让点的 X 和 Z 坐标随高度呈圆周运动。",
-            en:"Generate a vine winding up a pillar. Use the Y height to drive circular motion in X and Z, forming a helix."
-          },
+          desc: { zh:"我们要生成一根绕柱子上升的藤蔓。结合 Y 轴高度，让点的 X 和 Z 坐标随高度呈圆周运动。", en:"Generate a vine winding up a pillar. Use the Y height to drive circular motion in X and Z, forming a helix." },
           hint: { zh:"sin 和 cos 配合同一个输入频率可以产生圆周运动。", en:"sin and cos with the same input frequency produce circular motion." },
-          solution:"@P.x = cos(@P.y * 5); @P.z = sin(@P.y * 5);",
-          judge:"Set @P.x = cos(@P.y*5) and @P.z = sin(@P.y*5) to create a helical arrangement.",
-          attempts:3, records:[] },
+          solution:"@P.x = cos(@P.y * 5); @P.z = sin(@P.y * 5);", judge:"Set @P.x = cos(@P.y*5) and @P.z = sin(@P.y*5) to create a helical arrangement.", attempts:3, records:[] },
 
         { qid:"q26", id:"26", difficulty:"medium", color:"var(--medium)",
           cat: { zh:"数学 / 坡度", en:"Math / Slope" },
           title: { zh:"悬崖侵蚀", en:"Slope Sharpening" },
-          desc: {
-            zh:"我们已经有了坡度遮罩 @slope。请使用幂函数 pow() 提高对比度，让只有极陡峭的地方才有侵蚀效果。",
-            en:"You have a slope mask in @slope. Use pow() to increase contrast so only the steepest areas retain the erosion effect."
-          },
+          desc: { zh:"我们已经有了坡度遮罩 @slope。请使用幂函数 pow() 提高对比度，让只有极陡峭的地方才有侵蚀效果。", en:"You have a slope mask in @slope. Use pow() to increase contrast so only the steepest areas retain the erosion effect." },
           hint: { zh:"pow(val, n)，n 越大，暗部越黑，对比度越强。", en:"pow(val, n) — the larger n is, the darker the darks get and the higher the contrast." },
-          solution:"@slope = pow(@slope, 4.0);",
-          judge:"Set @slope = pow(@slope, 4.0) to sharpen the slope mask contrast.",
-          attempts:3, records:[] },
+          solution:"@slope = pow(@slope, 4.0);", judge:"Set @slope = pow(@slope, 4.0) to sharpen the slope mask contrast.", attempts:3, records:[] },
 
         { qid:"q27", id:"27", difficulty:"medium", color:"var(--medium)",
           cat: { zh:"噪波 / 法线", en:"Noise / Normal" },
           title: { zh:"程序化起伏", en:"Noise Displacement" },
-          desc: {
-            zh:"沿法线方向挤出模型，但挤出的量要受到频率为 2.0 的噪声控制。",
-            en:"Extrude the mesh along its normals, but modulate the displacement amount with noise at frequency 2.0."
-          },
+          desc: { zh:"沿法线方向挤出模型，但挤出的量要受到频率为 2.0 的噪声控制。", en:"Extrude the mesh along its normals, but modulate the displacement amount with noise at frequency 2.0." },
           hint: { zh:"位移公式：@P += @N * 缩放值。噪声作为缩放值输入。", en:"Displacement formula: @P += @N * scale. Use noise as the scale value." },
-          solution:"@P += @N * noise(@P * 2.0);",
-          judge:"Displace @P along @N by noise(@P*2.0): @P += @N * noise(@P * 2.0).",
-          attempts:3, records:[] },
+          solution:"@P += @N * noise(@P * 2.0);", judge:"Displace @P along @N by noise(@P*2.0): @P += @N * noise(@P * 2.0).", attempts:3, records:[] },
 
         { qid:"q28", id:"28", difficulty:"medium", color:"var(--medium)",
           cat: { zh:"随机 / 数学", en:"Random / Math" },
           title: { zh:"模块化旋转", en:"Discrete Tile Rotate" },
-          desc: {
-            zh:"地砖只能旋转 0、90、180、270 度。请生成一个随机旋转，并将其限制在这些角度内。",
-            en:"Floor tiles can only rotate 0, 90, 180 or 270 degrees. Generate a random rotation snapped to one of these four values."
-          },
+          desc: { zh:"地砖只能旋转 0、90、180、270 度。请生成一个随机旋转，并将其限制在这些角度内。", en:"Floor tiles can only rotate 0, 90, 180 or 270 degrees. Generate a random rotation snapped to one of these four values." },
           hint: { zh:"先用 rand() 生成 0~4 的随机数，floor() 取整后乘以 PI/2。", en:"Generate a 0–4 random with rand(), floor() it to an integer, then multiply by PI/2." },
-          solution:"float angle = floor(rand(@ptnum) * 4) * 1.5708; @orient = quaternion(angle, {0,1,0});",
-          judge:"Set @orient to a Y-axis rotation snapped to 0/90/180/270 degrees using floor(rand(@ptnum)*4)*PI/2.",
-          attempts:3, records:[] },
+          solution:"float angle = floor(rand(@ptnum) * 4) * 1.5708; @orient = quaternion(angle, {0,1,0});", judge:"Set @orient to a Y-axis rotation snapped to 0/90/180/270 degrees using floor(rand(@ptnum)*4)*PI/2.", attempts:3, records:[] },
 
         { qid:"q29", id:"29", difficulty:"medium", color:"var(--medium)",
           cat: { zh:"点云 / 数学", en:"PC Open / Math" },
           title: { zh:"伪环境光遮蔽", en:"Pseudo AO" },
-          desc: {
-            zh:"凹陷处应该更暗。查询周围 0.2 半径内的点数量，点数越多，颜色 @Cd 越黑，模拟环境光遮蔽。",
-            en:"Recessed areas should appear darker. Count nearby points within radius 0.2 — the more points found, the darker @Cd should be, simulating ambient occlusion."
-          },
+          desc: { zh:"凹陷处应该更暗。查询周围 0.2 半径内的点数量，点数越多，颜色 @Cd 越黑，模拟环境光遮蔽。", en:"Recessed areas should appear darker. Count nearby points within radius 0.2 — the more points found, the darker @Cd should be, simulating ambient occlusion." },
           hint: { zh:"将邻近点数映射到 0~1 范围，再用 1 减去它得到颜色反向。", en:"Map the point count to 0–1 and invert it to get darker colors in denser areas." },
-          solution:"int n = pcnumfound(pcopen(0, 'P', @P, 0.2, 50)); @Cd = 1.0 - (float)n/50.0;",
-          judge:"Use pcopen()/pcnumfound() within radius 0.2, then set @Cd = 1.0 - (float)n/50.0 for pseudo AO.",
-          attempts:3, records:[] },
+          solution:"int n = pcnumfound(pcopen(0, 'P', @P, 0.2, 50)); @Cd = 1.0 - (float)n/50.0;", judge:"Use pcopen()/pcnumfound() within radius 0.2, then set @Cd = 1.0 - (float)n/50.0 for pseudo AO.", attempts:3, records:[] },
 
         { qid:"q30", id:"30", difficulty:"medium", color:"var(--medium)",
           cat: { zh:"属性 / 随机", en:"Attribute / Random" },
           title: { zh:"叶片随机色偏移", en:"UV Leaf Shift" },
-          desc: {
-            zh:"为了让一棵树的叶子贴图不重复，请根据每个点的 @id 给 v@uv_offset 属性赋予随机的 XY 偏移。",
-            en:"Prevent leaf texture repetition on a tree. Assign a random XY UV offset to each leaf point based on @id."
-          },
+          desc: { zh:"为了让一棵树的叶子贴图不重复，请根据每个点的 @id 给 v@uv_offset 属性赋予随机的 XY 偏移。", en:"Prevent leaf texture repetition on a tree. Assign a random XY UV offset to each leaf point based on @id." },
           hint: { zh:"使用 set() 构造向量；给随机种子加偏移量防止 X 和 Y 产生相同的值。", en:"Use set() to build the vector; offset the random seed to prevent X and Y from matching." },
-          solution:"v@uv_offset = set(rand(@id), rand(@id + 7), 0);",
-          judge:"Set v@uv_offset to set(rand(@id), rand(@id+7), 0) for random per-leaf UV offsets.",
-          attempts:3, records:[] }
+          solution:"v@uv_offset = set(rand(@id), rand(@id + 7), 0);", judge:"Set v@uv_offset to set(rand(@id), rand(@id+7), 0) for random per-leaf UV offsets.", attempts:3, records:[] }
 
       ]}
     ];
 
+    /* ── State ── */
     let currentCat = 0, currentIdx = 0, lang = 'en', lastCorrect = false;
     const savedCodes = {};
+    const STORAGE_KEY = 'vexlab_records';
+
     const uiTexts = {
-      zh: { hint:"线索", submit:"提交判断", success:"炼金成功", fail:"分析失败", retry:"请再试一次", left:"剩余机会: ", solution:"参考方案:" },
-      en: { hint:"HINT", submit:"SUBMIT", success:"PASSED", fail:"FAILURE", retry:"Try Again", left:"Tries left: ", solution:"SOLUTION:" }
+      zh: { hint:"线索", submit:"提交判断", success:"炼金成功", fail:"分析失败", retry:"再试一次", left:"剩余机会：", solution:"参考方案：", next:"下一题", continue:"继续" },
+      en: { hint:"HINT", submit:"SUBMIT", success:"PASSED", fail:"FAILURE", retry:"Try Again", left:"Tries left: ", solution:"SOLUTION:", next:"NEXT →", continue:"CONTINUE" }
     };
 
-    /* ── 抽屉 ── */
+    /* ── localStorage persistence ── */
+    function saveRecords() {
+      const data = {};
+      questions.forEach(cat => cat.items.forEach(q => {
+        data[q.qid] = { records: q.records, attempts: q.attempts };
+      }));
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch(e) {}
+    }
+
+    function loadRecords() {
+      try {
+        const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+        questions.forEach(cat => cat.items.forEach(q => {
+          if (data[q.qid]) {
+            q.records = data[q.qid].records || [];
+            q.attempts = data[q.qid].attempts !== undefined ? data[q.qid].attempts : 3;
+          }
+        }));
+      } catch(e) {}
+    }
+
+    function isSolved(q) { return q.records.includes('green'); }
+
+    function countSolved() {
+      let n = 0;
+      questions.forEach(cat => cat.items.forEach(q => { if (isSolved(q)) n++; }));
+      return n;
+    }
+
+    function totalQuestions() {
+      let n = 0; questions.forEach(cat => { n += cat.items.length; }); return n;
+    }
+
+    /* ── Attempts dots ── */
+    function renderAttemptDots(q) {
+      const row = document.getElementById('attempts-row');
+      row.innerHTML = '';
+      const total = 3;
+      const used = total - q.attempts;
+      for (let i = 0; i < total; i++) {
+        const d = document.createElement('div');
+        d.className = 'attempt-dot' + (i < used ? ' used' : ' active');
+        row.appendChild(d);
+      }
+    }
+
+    /* ── Drawer ── */
     function toggleDrawer() {
       document.getElementById('mobile-drawer').classList.contains('open') ? closeDrawer() : openDrawer();
     }
@@ -659,8 +749,6 @@
       document.getElementById('drawer-overlay').classList.remove('open');
       document.getElementById('fab-menu').classList.remove('open');
     }
-
-    // Overlay: close only on tap, not after scroll
     (function() {
       const overlay = document.getElementById('drawer-overlay');
       let _moved = false;
@@ -670,7 +758,7 @@
       overlay.addEventListener('click', closeDrawer);
     })();
 
-    /* ── 切换题目 ── */
+    /* ── Switch question ── */
     function switchQuestion(c, i) {
       currentCat = c; currentIdx = i;
       document.getElementById('vex-editor').value = savedCodes[questions[c].items[i].qid] || "";
@@ -678,7 +766,18 @@
       render();
     }
 
-    /* ── 语言 ── */
+    /* ── Next question ── */
+    function goNext() {
+      const cat = questions[currentCat];
+      if (currentIdx + 1 < cat.items.length) {
+        switchQuestion(currentCat, currentIdx + 1);
+      } else if (currentCat + 1 < questions.length) {
+        switchQuestion(currentCat + 1, 0);
+      }
+      closeFeedback();
+    }
+
+    /* ── Lang ── */
     function setLang(l) {
       lang = l;
       document.querySelectorAll('.lang-link').forEach(el => el.classList.remove('active'));
@@ -686,18 +785,34 @@
       render();
     }
 
-    /* ── 渲染 ── */
+    /* ── Render ── */
     function render() {
       renderDesktopSidebar();
       renderMobileDrawer();
       const q = questions[currentCat].items[currentIdx];
+      const totalQ = totalQuestions();
+      let globalIdx = 0;
+      outer: for (let c = 0; c < questions.length; c++) {
+        for (let i = 0; i < questions[c].items.length; i++) {
+          globalIdx++;
+          if (c === currentCat && i === currentIdx) break outer;
+        }
+      }
+
       document.documentElement.style.setProperty('--active-color', q.color);
       document.getElementById('q-title').innerText = q.title[lang];
       document.getElementById('q-desc').innerText = q.desc[lang];
-      document.getElementById('q-diff-text').innerText = q.difficulty.toUpperCase();
+      document.getElementById('q-diff-badge').innerText = q.difficulty.toUpperCase();
+      document.getElementById('q-diff-badge').style.background = q.color;
       document.getElementById('q-cat-label').innerText = q.cat[lang].toUpperCase();
+      document.getElementById('q-num-label').innerText = globalIdx + ' / ' + totalQ;
       document.getElementById('btn-hint-txt').innerText = uiTexts[lang].hint;
-      document.getElementById('submit-btn').innerText = uiTexts[lang].submit;
+      document.getElementById('btn-label').innerText = uiTexts[lang].submit;
+      renderAttemptDots(q);
+    }
+
+    function checkmark() {
+      return `<svg viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
     }
 
     function renderDesktopSidebar() {
@@ -710,21 +825,25 @@
         nav.appendChild(h);
         cat.items.forEach((item, iIdx) => {
           const isActive = (cIdx === currentCat && iIdx === currentIdx);
+          const solved = isSolved(item);
           const el = document.createElement('div');
-          el.className = 'nav-item';
+          el.className = 'nav-item' + (isActive ? ' active-nav' : '');
           el.dataset.cat = cIdx; el.dataset.idx = iIdx;
-          const iconBg = isActive ? item.color : (item.color + '88');
+          const iconBg = isActive ? item.color : (solved ? item.color + 'bb' : item.color + '55');
           let dotsHtml = '<div class="record-dots">';
-          item.records.forEach(t => { dotsHtml += `<div class="mini-dot" style="background:${t==='green'?'var(--success-green)':'var(--fail-red)'}"></div>`; });
+          item.records.slice(-3).forEach(t => { dotsHtml += `<div class="mini-dot" style="background:${t==='green'?'var(--success-green)':'var(--fail-red)'}"></div>`; });
           dotsHtml += '</div>';
           el.innerHTML = `
             <div style="display:flex;flex-direction:column;align-items:center;pointer-events:none;">
-              <div class="nav-icon-circle" style="background:${iconBg}">${item.id}</div>
+              <div class="nav-icon-circle" style="background:${iconBg}">
+                ${item.id}
+                ${solved ? `<div class="check-badge">${checkmark()}</div>` : ''}
+              </div>
               ${dotsHtml}
             </div>
             <div class="nav-text-box" style="pointer-events:none;">
               <b style="font-size:12px;color:${isActive?'var(--text-main)':'var(--text-sub)'}">${item.title[lang]}</b>
-              <div style="font-size:10px;color:var(--text-sub);margin-top:2px;opacity:0.7;">${item.cat[lang]}</div>
+              <div style="font-size:10px;color:var(--text-sub);margin-top:2px;opacity:0.6;">${item.cat[lang]}</div>
             </div>`;
           nav.appendChild(el);
         });
@@ -744,7 +863,14 @@
 
     function renderMobileDrawer() {
       const drawer = document.getElementById('mobile-drawer');
-      drawer.innerHTML = `<div class="drawer-title">VEX LAB.</div>`;
+      const solved = countSolved();
+      const total = totalQuestions();
+      drawer.innerHTML = `
+        <div class="drawer-title">VEX LAB.</div>
+        <div class="drawer-progress">
+          <span>${solved}/${total}</span>
+          <div class="dp-bar"><div class="dp-fill" style="width:${solved/total*100}%"></div></div>
+        </div>`;
       questions.forEach((cat, cIdx) => {
         const h = document.createElement('div');
         h.className = 'drawer-category';
@@ -752,15 +878,19 @@
         drawer.appendChild(h);
         cat.items.forEach((item, iIdx) => {
           const isActive = (cIdx === currentCat && iIdx === currentIdx);
+          const solved = isSolved(item);
           const el = document.createElement('div');
           el.className = 'drawer-item' + (isActive ? ' active-item' : '');
           el.dataset.cat = cIdx; el.dataset.idx = iIdx;
-          const iconBg = isActive ? item.color : (item.color + '99');
+          const iconBg = isActive ? item.color : (solved ? item.color + 'bb' : item.color + '77');
           let dotsHtml = '<div class="drawer-dots">';
-          item.records.forEach(t => { dotsHtml += `<div class="mini-dot" style="background:${t==='green'?'var(--success-green)':'var(--fail-red)'}"></div>`; });
+          item.records.slice(-3).forEach(t => { dotsHtml += `<div class="mini-dot" style="background:${t==='green'?'var(--success-green)':'var(--fail-red)'}"></div>`; });
           dotsHtml += '</div>';
           el.innerHTML = `
-            <div class="drawer-icon" style="background:${iconBg}">${item.id}</div>
+            <div class="drawer-icon" style="background:${iconBg}">
+              ${item.id}
+              ${solved ? `<div class="check-sm">${checkmark()}</div>` : ''}
+            </div>
             <div class="drawer-label">
               <b style="color:${isActive?'var(--text-main)':'var(--text-sub)'}">${item.title[lang]}</b>
               <span>${item.cat[lang]}</span>
@@ -777,71 +907,102 @@
         });
         drawer.addEventListener('touchend', e => {
           const item = e.target.closest('.drawer-item');
-          if (item && !drawer._scrolled) {
-            switchQuestion(parseInt(item.dataset.cat), parseInt(item.dataset.idx));
-          }
+          if (item && !drawer._scrolled) switchQuestion(parseInt(item.dataset.cat), parseInt(item.dataset.idx));
         });
         drawer.addEventListener('touchstart', () => { drawer._scrolled = false; });
         drawer.addEventListener('touchmove', () => { drawer._scrolled = true; });
       }
     }
 
-    /* ── 提交 ── */
+    /* ── Submit ── */
     async function handleSubmit() {
       const q = questions[currentCat].items[currentIdx];
       const code = document.getElementById('vex-editor').value;
       if (!code.trim() || q.attempts <= 0) return;
-      document.getElementById('submit-btn').innerText = "...";
+
+      const btn = document.getElementById('submit-btn');
+      const spinner = document.getElementById('btn-spinner');
+      const label = document.getElementById('btn-label');
+      btn.disabled = true;
+      spinner.style.display = 'block';
+      label.textContent = '...';
+
       try {
         const res = await fetch('/api/judge', {
-          method: 'POST',
-          headers: {'Content-Type':'application/json'},
+          method: 'POST', headers: {'Content-Type':'application/json'},
           body: JSON.stringify({ code, questionContext: q.judge })
         });
         const data = await res.json();
         const modal = document.getElementById('result-modal');
+        const nextBtn = document.getElementById('btn-next');
+        const continueBtn = document.getElementById('btn-continue');
+
         if (data.result === 'correct') {
-          lastCorrect = true; q.records.push('green'); savedCodes[q.qid] = code;
+          lastCorrect = true;
+          if (!isSolved(q)) q.records.push('green');
+          savedCodes[q.qid] = code;
+          saveRecords();
           modal.className = "modal success";
+          document.getElementById('modal-icon').textContent = '✦';
           document.getElementById('modal-title').innerText = uiTexts[lang].success;
           document.getElementById('modal-body').innerText = data.explanation;
           document.getElementById('solution-area').style.display = 'none';
+          continueBtn.textContent = uiTexts[lang].continue;
+          // Show next button if there's a next question
+          const hasNext = (currentIdx + 1 < questions[currentCat].items.length) || (currentCat + 1 < questions.length);
+          nextBtn.style.display = hasNext ? 'flex' : 'none';
+          nextBtn.textContent = uiTexts[lang].next;
         } else {
           lastCorrect = false; q.attempts--; q.records.push('red');
+          saveRecords();
           modal.className = "modal failure";
+          nextBtn.style.display = 'none';
           if (q.attempts > 0) {
+            document.getElementById('modal-icon').textContent = '✕';
             document.getElementById('modal-title').innerText = uiTexts[lang].retry;
             document.getElementById('modal-body').innerText = uiTexts[lang].left + q.attempts;
             document.getElementById('solution-area').style.display = 'none';
           } else {
+            document.getElementById('modal-icon').textContent = '○';
             document.getElementById('modal-title').innerText = uiTexts[lang].fail;
             document.getElementById('modal-body').innerText = data.explanation;
             document.getElementById('correct-code-text').innerText = uiTexts[lang].solution + "\n" + q.solution;
             document.getElementById('solution-area').style.display = 'block';
           }
+          continueBtn.textContent = uiTexts[lang].continue;
         }
-        document.getElementById('modal-overlay').style.display = 'flex';
+        document.getElementById('modal-overlay').classList.add('visible');
       } catch(e) { alert("Error connecting to AI"); }
-      finally { document.getElementById('submit-btn').innerText = uiTexts[lang].submit; render(); }
+      finally {
+        btn.disabled = false;
+        spinner.style.display = 'none';
+        label.textContent = uiTexts[lang].submit;
+        render();
+      }
     }
 
     function closeFeedback() {
       if (!lastCorrect) document.getElementById('vex-editor').value = "";
-      document.getElementById('modal-overlay').style.display = 'none';
+      document.getElementById('modal-overlay').classList.remove('visible');
     }
 
     function showHint() {
       const q = questions[currentCat].items[currentIdx];
+      document.getElementById('result-modal').className = "modal hint-modal";
+      document.getElementById('modal-icon').textContent = '◈';
       document.getElementById('modal-title').innerText = uiTexts[lang].hint;
       document.getElementById('modal-body').innerText = q.hint[lang];
       document.getElementById('solution-area').style.display = 'none';
-      document.getElementById('modal-overlay').style.display = 'flex';
+      document.getElementById('btn-next').style.display = 'none';
+      document.getElementById('btn-continue').textContent = uiTexts[lang].continue;
+      document.getElementById('modal-overlay').classList.add('visible');
     }
 
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js'); });
     }
 
+    loadRecords();
     setLang('en');
   </script>
 </body>
