@@ -50,14 +50,14 @@
     .lang-link { cursor: pointer; font-size: 11px; font-weight: 700; color: var(--text-sub); text-transform: uppercase; }
     .lang-link.active { color: var(--text-main); text-decoration: underline; }
 
-    /* 📱 手机端专用菜单开关 - 提高层级 */
+    /* 📱 手机端专用菜单开关 - 置于绝对顶层 */
     #mobile-menu-toggle {
-      display: none; position: fixed; bottom: 25px; left: 25px;
-      width: 55px; height: 55px; border-radius: 50%;
+      display: none; position: fixed; bottom: 30px; left: 30px;
+      width: 60px; height: 60px; border-radius: 50%;
       background: var(--accent-orange); color: white;
-      box-shadow: 0 10px 25px rgba(249, 168, 125, 0.5);
-      z-index: 4000; align-items: center; justify-content: center;
-      font-size: 24px; cursor: pointer; border: none;
+      box-shadow: 0 10px 30px rgba(249, 168, 125, 0.6);
+      z-index: 9999; align-items: center; justify-content: center;
+      font-size: 28px; cursor: pointer; border: none;
     }
 
     .alchemy-container {
@@ -71,54 +71,62 @@
 
     /* 📜 侧边栏 */
     aside {
-      width: 70px; height: 100%;
-      background: rgba(255, 255, 255, 0.1);
+      width: 75px; height: 100%;
+      background: rgba(255, 255, 255, 0.15);
       border-right: 1px solid rgba(0,0,0,0.03);
       transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
       overflow-x: hidden; display: flex; flex-direction: column;
-      padding-top: 60px; z-index: 500;
+      padding-top: 70px; z-index: 500;
     }
 
     /* PC端：悬停展开 */
     @media (min-width: 769px) {
-      aside:hover { width: 280px; }
+      aside:hover { width: 300px; }
       aside:hover .category-header, aside:hover .nav-text-box { opacity: 0.8; }
     }
 
-    /* 📱 手机端修复：使用 fixed 定位和超高 z-index */
+    /* 📱 手机端：大幅提升明度与点击响应 */
     @media (max-width: 768px) {
       #mobile-menu-toggle { display: flex; }
       aside {
-        position: fixed; left: -280px; top: 0; width: 280px; height: 100vh;
-        background: #fcfaf7; /* 手机端使用实色背景，避免模糊叠加 bug */
-        box-shadow: 10px 0 30px rgba(0,0,0,0.15);
-        z-index: 3000; padding-top: 80px;
+        position: fixed; left: -300px; top: 0; width: 300px; height: 100vh;
+        /* 提升明度，透明度设为 80% */
+        background: rgba(255, 255, 248, 0.8); 
+        backdrop-filter: blur(10px);
+        box-shadow: 15px 0 40px rgba(0,0,0,0.15);
+        z-index: 9000; padding-top: 100px;
       }
       aside.open { left: 0; }
-      aside.open .category-header, aside.open .nav-text-box { opacity: 0.8; }
+      aside.open .category-header, aside.open .nav-text-box { opacity: 1; }
       
       #sidebar-overlay {
         display: none; position: fixed; inset: 0;
-        background: rgba(0,0,0,0.3); z-index: 2500;
+        background: rgba(0,0,0,0.15); z-index: 8500;
       }
       #sidebar-overlay.open { display: block; }
     }
 
     .category-header {
-      font-family: 'Special Elite', cursive; font-size: 11px; font-weight: 700;
-      padding: 20px 20px 5px; opacity: 0; transition: 0.3s; color: var(--text-main);
+      font-family: 'Special Elite', cursive; font-size: 13px; font-weight: 700;
+      padding: 25px 25px 10px; opacity: 0; transition: 0.3s; color: var(--text-main);
     }
 
-    .nav-item { display: flex; align-items: center; padding: 12px 20px; cursor: pointer; }
+    /* 确保点击区域足够大 */
+    .nav-item { 
+      display: flex; align-items: center; padding: 15px 25px; 
+      cursor: pointer; position: relative; z-index: 9001;
+    }
+    .nav-item:active { background: rgba(0,0,0,0.05); }
+
     .nav-icon-circle {
-      width: 40px; height: 40px; border-radius: 12px;
+      width: 42px; height: 42px; border-radius: 12px;
       display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0; font-size: 12px; font-weight: 700; color: white;
+      flex-shrink: 0; font-size: 13px; font-weight: 700; color: white;
     }
-    .nav-text-box { margin-left: 15px; opacity: 0; transition: 0.2s; white-space: nowrap; flex: 1; overflow: hidden; }
+    .nav-text-box { margin-left: 18px; opacity: 0; transition: 0.2s; white-space: nowrap; flex: 1; }
 
-    .record-dots { display: flex; gap: 4px; margin-top: 4px; }
-    .mini-dot { width: 6px; height: 6px; border-radius: 50%; }
+    .record-dots { display: flex; gap: 5px; margin-top: 6px; }
+    .mini-dot { width: 7px; height: 7px; border-radius: 50%; }
 
     main { flex: 1; padding: 25px; overflow: hidden; display: flex; flex-direction: column; }
     .unified-card {
@@ -129,12 +137,12 @@
 
     .question-overlay { padding: 30px 30px 0 30px; z-index: 5; }
     .question-overlay h2 { font-family: 'Special Elite', cursive; font-size: 26px; color: var(--active-color); }
-    .question-overlay p { font-size: 14px; color: var(--text-sub); margin-top: 8px; line-height: 1.5; }
+    .question-overlay p { font-size: 15px; color: var(--text-sub); margin-top: 8px; line-height: 1.5; }
 
     .editor-area { flex: 1; padding: 20px 30px 100px 30px; }
     #vex-editor {
       width: 100%; height: 100%; border: none; outline: none;
-      font-family: 'JetBrains Mono', monospace; font-size: 14px;
+      font-family: 'JetBrains Mono', monospace; font-size: 15px;
       background: transparent; color: #444; resize: none; line-height: 1.8;
     }
 
@@ -142,11 +150,11 @@
       position: absolute; bottom: 25px; right: 30px;
       display: flex; gap: 12px;
     }
-    .btn { padding: 12px 25px; border-radius: 18px; font-weight: 700; font-size: 11px; border: none; cursor: pointer; font-family: 'Syne'; }
+    .btn { padding: 14px 28px; border-radius: 20px; font-weight: 700; font-size: 12px; border: none; cursor: pointer; font-family: 'Syne'; }
     .btn-hint { background: rgba(0,0,0,0.05); color: var(--text-sub); }
     .btn-submit { background: var(--accent-orange); color: white; }
 
-    #modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.2); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 5000; padding: 20px; }
+    #modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.2); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 99999; padding: 20px; }
     .modal { width: 100%; max-width: 450px; padding: 35px; border-radius: 30px; background: white; text-align: center; }
   </style>
 </head>
@@ -168,7 +176,7 @@
         <div class="question-overlay">
           <div style="display:flex; align-items:center; gap:6px; margin-bottom:5px;">
             <div style="width:8px; height:8px; border-radius:50%; background:var(--active-color)"></div>
-            <span id="q-diff-text" style="font-size:9px; font-weight:700; color:var(--text-sub)">EASY</span>
+            <span id="q-diff-text" style="font-size:10px; font-weight:700; color:var(--text-sub)">EASY</span>
           </div>
           <h2 id="q-title">...</h2>
           <p id="q-desc"></p>
@@ -187,7 +195,7 @@
   <div id="modal-overlay">
     <div class="modal" id="result-modal" onclick="event.stopPropagation()">
       <h3 id="modal-title" style="font-family:'Special Elite', cursive; margin-bottom:15px;">Result</h3>
-      <div id="modal-body" style="font-size:14px; color:#666; line-height:1.6;"></div>
+      <div id="modal-body" style="font-size:15px; color:#666; line-height:1.6;"></div>
       <div id="solution-area" style="display:none; margin-top:15px;">
          <div id="correct-code-text" style="background:#f8f8f8; padding:15px; border-radius:12px; font-family:'JetBrains Mono'; font-size:12px; text-align:left; color:#C53030;"></div>
       </div>
@@ -254,25 +262,27 @@
           const isActive = (cIdx===currentCat && iIdx===currentIdx);
           const el = document.createElement('div');
           el.className = `nav-item`;
-          el.onclick = (e) => { 
-            e.stopPropagation();
+          // 彻底修复：使用普通 click 事件，并确保事件冒泡正确处理
+          el.onclick = function(e) {
+            e.preventDefault();
             currentCat=cIdx; currentIdx=iIdx; 
             document.getElementById('vex-editor').value = savedCodes[questions[currentCat].items[currentIdx].qid] || ""; 
             render();
             if (window.innerWidth <= 768) toggleSidebar();
           };
+          
           const iconBg = isActive ? item.color : (item.color + '88');
           let dotsHtml = '<div class="record-dots">';
           item.records.forEach(type => { dotsHtml += `<div class="mini-dot" style="background:${type==='green'?'var(--success-green)':'var(--fail-red)'}"></div>`; });
           dotsHtml += '</div>';
 
           el.innerHTML = `
-            <div style="display:flex; flex-direction:column; align-items:center; pointer-events:none;">
+            <div style="display:flex; flex-direction:column; align-items:center;">
               <div class="nav-icon-circle" style="background: ${iconBg}">${item.id}</div>
               ${dotsHtml}
             </div>
-            <div class="nav-text-box" style="pointer-events:none;">
-              <b style="font-size:12px; color:${isActive?'var(--text-main)':'var(--text-sub)'}">${item.title[lang]}</b>
+            <div class="nav-text-box">
+              <b style="font-size:14px; color:${isActive?'var(--text-main)':'var(--text-sub)'}">${item.title[lang]}</b>
             </div>
           `;
           nav.appendChild(el);
