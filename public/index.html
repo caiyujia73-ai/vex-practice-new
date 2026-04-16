@@ -75,8 +75,33 @@
       border-right: 1px solid var(--border);
       transition: width 0.4s cubic-bezier(0.4,0,0.2,1);
       overflow-x: hidden; display: flex; flex-direction: column;
-      padding-top: 64px; flex-shrink: 0;
+      flex-shrink: 0;
     }
+    .sidebar-footer {
+      padding: 20px 16px 14px; opacity: 0; transition: opacity 0.3s;
+      border-bottom: 1px solid var(--border); flex-shrink: 0;
+      min-width: 268px; margin-top: 64px;
+    }
+    aside:hover .sidebar-footer { opacity: 1; }
+    .sidebar-progress-label {
+      font-size: 10px; font-weight: 700; color: var(--text-sub);
+      letter-spacing: 0.08em; margin-bottom: 8px; white-space: nowrap;
+      font-family: 'Courier Prime', monospace;
+    }
+    .sidebar-progress-bar {
+      height: 4px; background: rgba(0,0,0,0.08);
+      border-radius: 2px; overflow: hidden; margin-bottom: 6px;
+      width: 100%;
+    }
+    .sidebar-progress-fill {
+      height: 100%; background: var(--accent-orange);
+      border-radius: 2px; transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+    }
+    .sidebar-progress-count {
+      font-size: 11px; font-family: 'Courier Prime', monospace;
+      color: var(--text-sub); white-space: nowrap;
+    }
+    .sidebar-progress-count span { color: var(--text-main); font-weight: 700; }
     @media (min-width: 769px) {
       aside:hover { width: 286px; }
       aside:hover .category-header { opacity: 0.5; }
@@ -85,12 +110,12 @@
 
     .category-header {
       font-family: 'Special Elite', cursive; font-size: 10px; font-weight: 700;
-      padding: 20px 16px 6px; opacity: 0; transition: 0.3s; white-space: nowrap;
+      padding: 16px 16px 6px; opacity: 0; transition: 0.3s; white-space: nowrap;
       color: var(--text-sub); letter-spacing: 0.1em; text-transform: uppercase;
     }
     .nav-item {
       display: flex; align-items: center; padding: 10px 16px; cursor: pointer;
-      transition: background 0.15s; position: relative;
+      transition: background 0.15s; position: relative; white-space: nowrap;
     }
     .nav-item:hover { background: rgba(255,255,255,0.25); }
     .nav-item.active-nav { background: rgba(255,255,255,0.3); }
@@ -412,7 +437,8 @@
   <div id="mobile-drawer"><div class="drawer-title">VEX LAB.</div></div>
 
   <div class="alchemy-container">
-    <aside id="sidebar-nav"></aside>
+    <aside id="sidebar-nav">
+    </aside>
     <main>
       <div class="unified-card">
         <div class="card-accent" id="card-accent"></div>
@@ -809,6 +835,7 @@
       document.getElementById('btn-hint-txt').innerText = uiTexts[lang].hint;
       document.getElementById('btn-label').innerText = uiTexts[lang].submit;
       renderAttemptDots(q);
+
     }
 
     function checkmark() {
@@ -817,7 +844,18 @@
 
     function renderDesktopSidebar() {
       const nav = document.getElementById('sidebar-nav');
-      nav.innerHTML = '';
+      const solved = countSolved();
+      const total = totalQuestions();
+      nav.innerHTML = `
+        <div class="sidebar-footer" id="sidebar-footer">
+          <div class="sidebar-progress-label">PROGRESS</div>
+          <div class="sidebar-progress-bar">
+            <div class="sidebar-progress-fill" id="sidebar-progress-fill" style="width:${(solved/total*100).toFixed(1)}%"></div>
+          </div>
+          <div class="sidebar-progress-count">
+            <span id="sidebar-solved">${solved}</span> / <span id="sidebar-total">${total}</span> solved
+          </div>
+        </div>`;
       questions.forEach((cat, cIdx) => {
         const h = document.createElement('div');
         h.className = 'category-header';
@@ -842,7 +880,7 @@
               ${dotsHtml}
             </div>
             <div class="nav-text-box" style="pointer-events:none;">
-              <b style="font-size:12px;color:${isActive?'var(--text-main)':'var(--text-sub)'}">${item.title[lang]}</b>
+              <b style="font-size:13px;color:${isActive?'var(--text-main)':'var(--text-sub)'};font-family:'Special Elite',cursive;font-weight:400;">${item.title[lang]}</b>
               <div style="font-size:10px;color:var(--text-sub);margin-top:2px;opacity:0.6;">${item.cat[lang]}</div>
             </div>`;
           nav.appendChild(el);
