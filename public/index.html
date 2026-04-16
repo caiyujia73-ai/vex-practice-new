@@ -61,7 +61,7 @@
       overflow: hidden;
     }
 
-    /* ── 桌面侧边栏（不变） ── */
+    /* ── 桌面侧边栏 ── */
     aside {
       width: 70px; height: 100%;
       background: rgba(255,255,255,0.05);
@@ -108,7 +108,12 @@
     }
     .question-overlay { padding: 30px 30px 0 30px; z-index: 5; }
     .question-overlay h2 { font-family: 'Special Elite', cursive; font-size: 26px; color: var(--active-color); letter-spacing: 1px; }
-    .question-overlay p { font-size: 14px; color: var(--text-sub); margin-top: 8px; line-height: 1.5; max-width: 600px; }
+    .question-overlay p { font-size: 14px; color: var(--text-sub); margin-top: 8px; line-height: 1.6; max-width: 640px; }
+    .question-overlay p code {
+      font-family: 'JetBrains Mono', monospace; font-size: 12px;
+      background: rgba(0,0,0,0.06); padding: 1px 6px; border-radius: 4px;
+      color: var(--text-main);
+    }
 
     .editor-area { flex: 1; padding: 20px 30px 100px 30px; }
     #vex-editor {
@@ -136,9 +141,7 @@
     .modal.success { background: #F2F9F5; border: 1px solid #D4EDDA; }
     .modal.failure { background: #FFF5F5; border: 1px solid #FEB2B2; }
 
-    /* ══════════════════════════════════
-       移动端专用
-       ══════════════════════════════════ */
+    /* ── 移动端 ── */
     @media (max-width: 768px) {
       .alchemy-container { height: 92vh; border-radius: 20px; }
       aside { display: none; }
@@ -147,29 +150,19 @@
       .embedded-controls { width: calc(100% - 40px); left: 20px; bottom: 20px; }
       .btn { flex: 1; }
 
-      /* 左下角浮动菜单按钮 */
       #fab-menu {
-        position: fixed;
-        bottom: 32px; left: 32px;
-        width: 56px; height: 56px;
-        border-radius: 50%;
+        position: fixed; bottom: 32px; left: 32px;
+        width: 56px; height: 56px; border-radius: 50%;
         background: var(--accent-orange);
         box-shadow: 0 8px 24px rgba(249,168,125,0.55);
         display: flex; align-items: center; justify-content: center;
-        z-index: 800;
-        cursor: pointer;
-        border: none;
+        z-index: 800; cursor: pointer; border: none;
         transition: transform 0.25s, box-shadow 0.25s;
         -webkit-tap-highlight-color: transparent;
       }
-      #fab-menu.open {
-        transform: rotate(45deg);
-        box-shadow: 0 8px 28px rgba(249,168,125,0.7);
-      }
-      /* 汉堡图标用三条线 */
+      #fab-menu.open { transform: rotate(45deg); box-shadow: 0 8px 28px rgba(249,168,125,0.7); }
       #fab-menu svg { pointer-events: none; }
 
-      /* 遮罩 */
       #drawer-overlay {
         display: none; position: fixed; inset: 0;
         background: rgba(0,0,0,0.18); z-index: 700;
@@ -177,45 +170,31 @@
       }
       #drawer-overlay.open { display: block; }
 
-      /* 抽屉从左侧滑入 */
       #mobile-drawer {
         position: fixed; left: -290px; top: 0; bottom: 0;
-        width: 270px;
-        background: rgba(250,248,243,0.98);
+        width: 270px; background: rgba(250,248,243,0.98);
         box-shadow: 12px 0 40px rgba(0,0,0,0.1);
-        z-index: 750;
-        padding-top: 64px;
+        z-index: 750; padding-top: 64px;
         transition: left 0.32s cubic-bezier(0.4,0,0.2,1);
-        display: flex; flex-direction: column;
-        overflow-y: auto;
+        display: flex; flex-direction: column; overflow-y: auto;
       }
       #mobile-drawer.open { left: 0; }
 
-      /* 抽屉顶部标题 */
       .drawer-title {
-        font-family: 'Special Elite', cursive;
-        font-size: 18px; color: var(--text-main);
-        padding: 0 22px 18px;
-        border-bottom: 1px solid rgba(0,0,0,0.06);
-        margin-bottom: 8px;
+        font-family: 'Special Elite', cursive; font-size: 18px; color: var(--text-main);
+        padding: 0 22px 18px; border-bottom: 1px solid rgba(0,0,0,0.06); margin-bottom: 8px;
       }
-
       .drawer-category {
         font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
-        text-transform: uppercase; color: var(--text-sub);
-        padding: 16px 22px 6px;
+        text-transform: uppercase; color: var(--text-sub); padding: 16px 22px 6px;
       }
       .drawer-item {
-        display: flex; align-items: center; gap: 14px;
-        padding: 12px 22px;
-        cursor: pointer;
-        -webkit-tap-highlight-color: rgba(0,0,0,0.04);
-        user-select: none;
-        transition: background 0.12s;
+        display: flex; align-items: center; gap: 14px; padding: 12px 22px;
+        cursor: pointer; -webkit-tap-highlight-color: rgba(0,0,0,0.04);
+        user-select: none; transition: background 0.12s;
       }
       .drawer-item:active { background: rgba(0,0,0,0.04); }
       .drawer-item.active-item { background: rgba(0,0,0,0.03); }
-
       .drawer-icon {
         width: 38px; height: 38px; border-radius: 10px;
         display: flex; align-items: center; justify-content: center;
@@ -228,7 +207,6 @@
       .drawer-dots { display: flex; gap: 4px; margin-top: 4px; pointer-events: none; }
     }
 
-    /* 桌面端隐藏移动端元素 */
     @media (min-width: 769px) {
       #fab-menu, #mobile-drawer, #drawer-overlay { display: none !important; }
     }
@@ -242,7 +220,6 @@
     <span class="lang-link" onclick="setLang('en')" id="ln-en">EN</span>
   </div>
 
-  <!-- 移动端浮动按钮 -->
   <button id="fab-menu" onclick="toggleDrawer()">
     <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
       <rect y="4"  width="22" height="2.2" rx="1.1" fill="white"/>
@@ -251,22 +228,19 @@
     </svg>
   </button>
 
-  <!-- 移动端遮罩 -->
   <div id="drawer-overlay" onclick="closeDrawer()"></div>
-
-  <!-- 移动端抽屉 -->
-  <div id="mobile-drawer">
-    <div class="drawer-title">VEX LAB.</div>
-  </div>
+  <div id="mobile-drawer"><div class="drawer-title">VEX LAB.</div></div>
 
   <div class="alchemy-container">
     <aside id="sidebar-nav"></aside>
     <main>
       <div class="unified-card">
         <div class="question-overlay">
-          <div style="display:flex;align-items:center;gap:6px;margin-bottom:5px;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
             <div style="width:8px;height:8px;border-radius:50%;background:var(--active-color)"></div>
-            <span id="q-diff-text" style="font-size:9px;font-weight:700;color:var(--text-sub)">EASY</span>
+            <span id="q-diff-text" style="font-size:9px;font-weight:700;color:var(--text-sub);letter-spacing:0.08em;">EASY</span>
+            <span id="q-cat-text" style="font-size:9px;color:var(--text-sub);opacity:0.6;">·</span>
+            <span id="q-cat-label" style="font-size:9px;color:var(--text-sub);opacity:0.6;letter-spacing:0.05em;"></span>
           </div>
           <h2 id="q-title">...</h2>
           <p id="q-desc"></p>
@@ -295,24 +269,128 @@
 
   <script>
     const questions = [
-      { category: "BEGINNER", items: [
-        { qid:"b1", id:"01", difficulty:"easy", color:"var(--easy)",
-          title:{zh:"点染红色",en:"Crimson Hue"},
-          desc:{zh:"将所有点颜色 (@Cd) 设为红色 {1,0,0}。",en:"Set color (@Cd) to red {1,0,0} for all points."},
-          hint:{zh:"@Cd = {1,0,0};",en:"@Cd = {1,0,0};"},
-          solution:"@Cd = {1,0,0};", attempts:3, records:[] },
-        { qid:"b2", id:"02", difficulty:"easy", color:"var(--easy)",
-          title:{zh:"坐标映射",en:"Position Map"},
-          desc:{zh:"将 X 坐标映射给红色通道。",en:"Map X-coordinate to Red channel."},
-          hint:{zh:"@Cd.r = @P.x;",en:"@Cd.r = @P.x;"},
-          solution:"@Cd.r = @P.x;", attempts:3, records:[] }
-      ]},
-      { category: "INTERMEDIATE", items: [
-        { qid:"i1", id:"01", difficulty:"medium", color:"var(--medium)",
-          title:{zh:"随机缩放",en:"Random Scale"},
-          desc:{zh:"生成随机 @pscale。",en:"Generate random @pscale based on @ptnum."},
-          hint:{zh:"rand()",en:"Use rand()"},
-          solution:"@pscale = rand(@ptnum);", attempts:3, records:[] }
+      { category: "BEGINNER", cat_zh: "初级", items: [
+
+        { qid:"q01", id:"01", difficulty:"easy", color:"var(--easy)",
+          cat: { zh:"属性", en:"Attribute" },
+          title: { zh:"草原清理", en:"Meadow Clean-up" },
+          desc: {
+            zh:"场景里的点染上了乱七八糟的颜色，请将所有点的颜色属性 (@Cd) 初始化为纯白色，为重新种草做准备。",
+            en:"The points have been painted all sorts of messy colors. Reset every point's color (@Cd) to pure white to prepare for replanting."
+          },
+          hint: { zh:"直接给向量属性赋值一个字面量 {1,1,1}。", en:"Assign a vector literal {1,1,1} directly to @Cd." },
+          solution:"@Cd = {1,1,1};",
+          judge:"Set @Cd to pure white {1,1,1} for every point.",
+          attempts:3, records:[] },
+
+        { qid:"q02", id:"02", difficulty:"easy", color:"var(--easy)",
+          cat: { zh:"属性 / 数学", en:"Attribute / Math" },
+          title: { zh:"海拔监控", en:"Altitude Marker" },
+          desc: {
+            zh:"为了观察地形起伏，请根据点的高度 (@P.y) 给模型上色。山脚 (y=0) 应该是黑色，高度增加颜色变亮。",
+            en:"To visualize terrain elevation, color each point based on its height (@P.y). The base (y=0) should be black; higher points should be brighter."
+          },
+          hint: { zh:"将 @P.y 直接赋值给 @Cd，float 会自动广播到 RGB 三个通道。", en:"Assign @P.y directly to @Cd — a float broadcasts to all three RGB channels." },
+          solution:"@Cd = @P.y;",
+          judge:"Set @Cd equal to @P.y so color brightness increases with height.",
+          attempts:3, records:[] },
+
+        { qid:"q03", id:"03", difficulty:"easy", color:"var(--easy)",
+          cat: { zh:"属性 / 随机", en:"Attribute / Random" },
+          title: { zh:"森林疏密", en:"Tree Randomizer" },
+          desc: {
+            zh:"这些树整齐得像假的一样。请给每个点生成一个随机的 @pscale 属性，范围在 0.5 到 1.5 之间。",
+            en:"These trees look unnaturally uniform. Give each point a random @pscale between 0.5 and 1.5."
+          },
+          hint: { zh:"先用 rand(@ptnum) 生成 0~1 随机数，再用 fit01() 映射到目标范围。", en:"Use rand(@ptnum) to get a 0–1 random value, then fit01() to remap it to 0.5–1.5." },
+          solution:"@pscale = fit01(rand(@ptnum), 0.5, 1.5);",
+          judge:"Set @pscale to a random value between 0.5 and 1.5 per point, using rand(@ptnum) and fit01().",
+          attempts:3, records:[] },
+
+        { qid:"q04", id:"04", difficulty:"easy", color:"var(--easy)",
+          cat: { zh:"数学 / 位置", en:"Math / Position" },
+          title: { zh:"镜像废墟", en:"The Ruin Mirror" },
+          desc: {
+            zh:"建筑废墟只需要做一半。请将所有点的 X 轴坐标翻转到对面，实现简单的镜像效果。",
+            en:"Only half the ruin needs to be built. Flip all points across the YZ plane by negating their X coordinate."
+          },
+          hint: { zh:"将 @P.x 乘以 -1。", en:"Multiply @P.x by -1." },
+          solution:"@P.x *= -1;",
+          judge:"Negate @P.x to mirror all points across the YZ plane.",
+          attempts:3, records:[] },
+
+        { qid:"q05", id:"05", difficulty:"easy", color:"var(--easy)",
+          cat: { zh:"逻辑 / 属性", en:"Logic / Attribute" },
+          title: { zh:"洪水淹没", en:"The Flood Line" },
+          desc: {
+            zh:"河水要涨了！如果点的高度 (@P.y) 低于 0.2，请将它们的颜色改为蓝色 {0,0,1}，其余保持原样。",
+            en:"The river is rising! If a point's height (@P.y) is below 0.2, paint it blue {0,0,1}. Leave all other points untouched."
+          },
+          hint: { zh:"使用 if 语句判断 @P.y 是否小于 0.2。", en:"Use an if statement to check whether @P.y is less than 0.2." },
+          solution:"if(@P.y < 0.2) @Cd = {0,0,1};",
+          judge:"If @P.y < 0.2, set @Cd to {0,0,1}. All other points unchanged.",
+          attempts:3, records:[] },
+
+        { qid:"q06", id:"06", difficulty:"easy", color:"var(--easy)",
+          cat: { zh:"数学 / 法线", en:"Math / Normal" },
+          title: { zh:"崖边禁区", en:"Cliff Danger Zone" },
+          desc: {
+            zh:"太陡峭的地方不能种树。检测法线 (@N)，如果它的 Y 分量小于 0.7（说明坡度很陡），就变红提示。",
+            en:"Slopes too steep to plant on must be flagged. If a point's normal (@N) has a Y component below 0.7, mark it red to indicate danger."
+          },
+          hint: { zh:"访问法向量的 Y 分量 @N.y，与 0.7 比较。", en:"Access @N.y and compare it to 0.7." },
+          solution:"if(@N.y < 0.7) @Cd = {1,0,0};",
+          judge:"If @N.y < 0.7, set @Cd to {1,0,0} to flag steep slopes.",
+          attempts:3, records:[] },
+
+        { qid:"q07", id:"07", difficulty:"easy", color:"var(--easy)",
+          cat: { zh:"位置", en:"Position" },
+          title: { zh:"地基找平", en:"Foundation Leveling" },
+          desc: {
+            zh:"准备放房子了！请将所有点的 Y 轴坐标强制设为 0，压出一块绝对平坦的地基。",
+            en:"Time to lay the foundation. Force every point's Y coordinate to 0, creating a perfectly flat base."
+          },
+          hint: { zh:"直接给 @P.y 赋值 0。", en:"Directly assign 0 to @P.y." },
+          solution:"@P.y = 0;",
+          judge:"Set @P.y to 0 for all points to flatten the geometry.",
+          attempts:3, records:[] },
+
+        { qid:"q08", id:"08", difficulty:"easy", color:"var(--easy)",
+          cat: { zh:"数学 / 法线", en:"Math / Normal" },
+          title: { zh:"阳光普照", en:"Sunlight Mask" },
+          desc: {
+            zh:"假设阳光从上方 {0,1,0} 直射。计算法线与阳光方向的点积，并存入颜色，模拟顶光效果。",
+            en:"Sunlight shines straight down from {0,1,0}. Compute the dot product of each point's normal and the light direction, and store it as the color."
+          },
+          hint: { zh:"使用 dot() 函数计算两个向量的相似度（夹角余弦）。", en:"Use dot() to compute the cosine similarity between two vectors." },
+          solution:"@Cd = dot(@N, {0,1,0});",
+          judge:"Set @Cd to dot(@N, {0,1,0}), simulating top-down lighting.",
+          attempts:3, records:[] },
+
+        { qid:"q09", id:"09", difficulty:"easy", color:"var(--easy)",
+          cat: { zh:"随机 / 位置", en:"Random / Position" },
+          title: { zh:"石块乱序", en:"Rock Scatter" },
+          desc: {
+            zh:"摆放的石头太死板。请给每个点的 @P 增加一个微小的随机垂直位移，Y轴上下偏移 0.1 左右。",
+            en:"The rocks look too orderly. Add a small random vertical offset to each point's @P — shifting Y by roughly ±0.1."
+          },
+          hint: { zh:"rand(@ptnum) 是 0~1，减去 0.5 变成 -0.5~0.5，再乘以 0.2 缩小到目标范围。", en:"rand(@ptnum) gives 0–1; subtract 0.5 to center it, then multiply by 0.2 to scale the range." },
+          solution:"@P.y += (rand(@ptnum) - 0.5) * 0.2;",
+          judge:"Add a random Y offset of roughly ±0.1 to each point using rand(@ptnum).",
+          attempts:3, records:[] },
+
+        { qid:"q10", id:"10", difficulty:"easy", color:"var(--easy)",
+          cat: { zh:"数学 / 属性", en:"Math / Attribute" },
+          title: { zh:"深度迷雾", en:"Fog Falloff" },
+          desc: {
+            zh:"距离中心点 {0,0,0} 越远，物体应该越透明。计算点到原点的距离，并将其取反（1/距离）赋值给 @Alpha。",
+            en:"Objects further from the origin {0,0,0} should appear more transparent. Compute each point's distance from the origin and assign its inverse (1/distance) to @Alpha."
+          },
+          hint: { zh:"使用 length(@P) 计算位置向量的长度，即到原点的距离。", en:"Use length(@P) to get each point's distance from the origin." },
+          solution:"@Alpha = 1.0 / length(@P);",
+          judge:"Set @Alpha to 1.0 / length(@P) so opacity falls off with distance from origin.",
+          attempts:3, records:[] }
+
       ]}
     ];
 
@@ -323,10 +401,9 @@
       en: { hint:"HINT", submit:"SUBMIT", success:"PASSED", fail:"FAILURE", retry:"Try Again", left:"Tries left: ", solution:"SOLUTION:" }
     };
 
-    /* ── 抽屉控制 ── */
+    /* ── 抽屉 ── */
     function toggleDrawer() {
-      const isOpen = document.getElementById('mobile-drawer').classList.contains('open');
-      isOpen ? closeDrawer() : openDrawer();
+      document.getElementById('mobile-drawer').classList.contains('open') ? closeDrawer() : openDrawer();
     }
     function openDrawer() {
       document.getElementById('mobile-drawer').classList.add('open');
@@ -355,7 +432,7 @@
       render();
     }
 
-    /* ── 渲染主函数 ── */
+    /* ── 渲染 ── */
     function render() {
       renderDesktopSidebar();
       renderMobileDrawer();
@@ -364,25 +441,24 @@
       document.getElementById('q-title').innerText = q.title[lang];
       document.getElementById('q-desc').innerText = q.desc[lang];
       document.getElementById('q-diff-text').innerText = q.difficulty.toUpperCase();
+      document.getElementById('q-cat-label').innerText = q.cat[lang].toUpperCase();
       document.getElementById('btn-hint-txt').innerText = uiTexts[lang].hint;
       document.getElementById('submit-btn').innerText = uiTexts[lang].submit;
     }
 
-    /* ── 桌面端侧边栏 ── */
     function renderDesktopSidebar() {
       const nav = document.getElementById('sidebar-nav');
       nav.innerHTML = '';
       questions.forEach((cat, cIdx) => {
         const h = document.createElement('div');
         h.className = 'category-header';
-        h.innerText = cat.category;
+        h.innerText = lang === 'zh' ? cat.cat_zh : cat.category;
         nav.appendChild(h);
         cat.items.forEach((item, iIdx) => {
           const isActive = (cIdx === currentCat && iIdx === currentIdx);
           const el = document.createElement('div');
           el.className = 'nav-item';
-          el.dataset.cat = cIdx;
-          el.dataset.idx = iIdx;
+          el.dataset.cat = cIdx; el.dataset.idx = iIdx;
           const iconBg = isActive ? item.color : (item.color + '88');
           let dotsHtml = '<div class="record-dots">';
           item.records.forEach(t => { dotsHtml += `<div class="mini-dot" style="background:${t==='green'?'var(--success-green)':'var(--fail-red)'}"></div>`; });
@@ -394,11 +470,11 @@
             </div>
             <div class="nav-text-box" style="pointer-events:none;">
               <b style="font-size:12px;color:${isActive?'var(--text-main)':'var(--text-sub)'}">${item.title[lang]}</b>
+              <div style="font-size:10px;color:var(--text-sub);margin-top:2px;opacity:0.7;">${item.cat[lang]}</div>
             </div>`;
           nav.appendChild(el);
         });
       });
-      // 事件委托，只绑一次
       if (!nav._delegated) {
         nav._delegated = true;
         nav.addEventListener('click', e => {
@@ -412,42 +488,33 @@
       }
     }
 
-    /* ── 移动端抽屉内容 ── */
     function renderMobileDrawer() {
       const drawer = document.getElementById('mobile-drawer');
-      // 保留顶部标题，重新生成列表部分
       drawer.innerHTML = `<div class="drawer-title">VEX LAB.</div>`;
-
       questions.forEach((cat, cIdx) => {
         const h = document.createElement('div');
         h.className = 'drawer-category';
-        h.textContent = cat.category;
+        h.textContent = lang === 'zh' ? cat.cat_zh : cat.category;
         drawer.appendChild(h);
-
         cat.items.forEach((item, iIdx) => {
           const isActive = (cIdx === currentCat && iIdx === currentIdx);
           const el = document.createElement('div');
           el.className = 'drawer-item' + (isActive ? ' active-item' : '');
-          el.dataset.cat = cIdx;
-          el.dataset.idx = iIdx;
-
+          el.dataset.cat = cIdx; el.dataset.idx = iIdx;
           const iconBg = isActive ? item.color : (item.color + '99');
           let dotsHtml = '<div class="drawer-dots">';
           item.records.forEach(t => { dotsHtml += `<div class="mini-dot" style="background:${t==='green'?'var(--success-green)':'var(--fail-red)'}"></div>`; });
           dotsHtml += '</div>';
-
           el.innerHTML = `
             <div class="drawer-icon" style="background:${iconBg}">${item.id}</div>
             <div class="drawer-label">
               <b style="color:${isActive?'var(--text-main)':'var(--text-sub)'}">${item.title[lang]}</b>
-              <span>${item.difficulty}</span>
+              <span>${item.cat[lang]}</span>
               ${dotsHtml}
             </div>`;
           drawer.appendChild(el);
         });
       });
-
-      // 事件委托，只绑一次
       if (!drawer._delegated) {
         drawer._delegated = true;
         drawer.addEventListener('click', e => {
@@ -471,7 +538,7 @@
         const res = await fetch('/api/judge', {
           method: 'POST',
           headers: {'Content-Type':'application/json'},
-          body: JSON.stringify({ code, questionContext: q.title.en })
+          body: JSON.stringify({ code, questionContext: q.judge })
         });
         const data = await res.json();
         const modal = document.getElementById('result-modal');
@@ -496,7 +563,7 @@
           }
         }
         document.getElementById('modal-overlay').style.display = 'flex';
-      } catch(e) { alert("Error"); }
+      } catch(e) { alert("Error connecting to AI"); }
       finally { document.getElementById('submit-btn').innerText = uiTexts[lang].submit; render(); }
     }
 
