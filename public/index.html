@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>VEX LAB</title>
-  <link rel="manifest" href="manifest.json">
+  <link rel="manifest" href="/manifest.json">
   <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=JetBrains+Mono:wght@400;600&family=Syne:wght@400;600&display=swap" rel="stylesheet" />
   
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -22,7 +22,6 @@
       --easy: #A3B18A;
       --medium: #E9C46A;
       --hard: #E07A5F;
-      --active-color: var(--easy);
       --success-green: #28a745;
       --fail-red: #e74c3c;
     }
@@ -32,59 +31,84 @@
     body {
       font-family: 'Syne', sans-serif;
       background-color: var(--bg-base);
-      /* 📜 核心：草纸纹理 */
       background-image: url('https://www.transparenttextures.com/patterns/handmade-paper.png');
       background-attachment: fixed;
-      height: 100vh;
-      display: flex; align-items: center; justify-content: center;
-      overflow: hidden;
-      position: relative;
+      height: 100vh; display: flex; align-items: center; justify-content: center;
+      overflow: hidden; position: relative;
     }
 
-    /* 标题：左上角 */
     .page-logo {
       position: absolute; top: 15px; left: 20px;
-      font-family: 'Special Elite', cursive;
-      font-size: 20px; color: var(--text-main);
-      z-index: 200; opacity: 0.8;
+      font-family: 'Special Elite', cursive; font-size: 20px; 
+      color: var(--text-main); z-index: 200; opacity: 0.8;
     }
 
-    /* 语言：右上角 */
     .top-right-lang {
       position: absolute; top: 15px; right: 20px;
       display: flex; gap: 12px; z-index: 200;
     }
-    .lang-link { cursor: pointer; font-size: 11px; font-weight: 700; color: var(--text-sub); text-transform: uppercase; transition: 0.3s; }
+    .lang-link { cursor: pointer; font-size: 11px; font-weight: 700; color: var(--text-sub); text-transform: uppercase; }
     .lang-link.active { color: var(--text-main); text-decoration: underline; }
 
-    /* 容器 */
+    /* 📱 手机端专用菜单开关 */
+    #mobile-menu-toggle {
+      display: none; position: fixed; bottom: 25px; left: 25px;
+      width: 50px; height: 50px; border-radius: 50%;
+      background: var(--accent-orange); color: white;
+      box-shadow: 0 10px 20px rgba(249, 168, 125, 0.4);
+      z-index: 1001; align-items: center; justify-content: center;
+      font-size: 20px; cursor: pointer; border: none;
+    }
+
     .alchemy-container {
       width: 95vw; height: 85vh; max-width: 1200px;
-      background: var(--glass);
-      backdrop-filter: blur(12px);
-      border-radius: 30px;
-      display: flex;
+      background: var(--glass); backdrop-filter: blur(12px);
+      border-radius: 30px; display: flex;
       box-shadow: 0 30px 60px rgba(0,0,0,0.05);
       border: 1px solid rgba(255,255,255,0.5);
       overflow: hidden;
     }
 
-    /* 伸缩侧边栏 */
+    /* 📜 侧边栏逻辑：PC与手机分离 */
     aside {
       width: 70px; height: 100%;
       background: rgba(255, 255, 255, 0.05);
       border-right: 1px solid rgba(0,0,0,0.03);
-      transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
       overflow-x: hidden; display: flex; flex-direction: column;
-      padding-top: 60px;
+      padding-top: 60px; z-index: 1000;
     }
-    @media (min-width: 769px) { aside:hover { width: 280px; } }
+
+    /* PC端：悬停展开 */
+    @media (min-width: 769px) {
+      aside:hover { width: 280px; }
+      aside:hover .category-header, aside:hover .nav-text-box { opacity: 0.8; }
+    }
+
+    /* 📱 手机端：变为侧滑抽屉 */
+    @media (max-width: 768px) {
+      #mobile-menu-toggle { display: flex; }
+      aside {
+        position: fixed; left: -280px; width: 280px;
+        background: rgba(252, 248, 243, 0.98); /* 手机端背景深一点 */
+        box-shadow: 20px 0 50px rgba(0,0,0,0.1);
+      }
+      aside.open { left: 0; }
+      aside.open .category-header, aside.open .nav-text-box { opacity: 0.8; }
+      
+      /* 遮罩层 */
+      #sidebar-overlay {
+        display: none; position: fixed; inset: 0;
+        background: rgba(0,0,0,0.2); backdrop-filter: blur(4px);
+        z-index: 999;
+      }
+      #sidebar-overlay.open { display: block; }
+    }
 
     .category-header {
       font-family: 'Special Elite', cursive; font-size: 11px; font-weight: 700;
-      padding: 20px 15px 5px; opacity: 0; transition: 0.3s; white-space: nowrap;
+      padding: 20px 15px 5px; opacity: 0; transition: 0.3s;
     }
-    aside:hover .category-header { opacity: 0.7; }
 
     .nav-item { display: flex; align-items: center; padding: 12px 15px; cursor: pointer; }
     .nav-icon-circle {
@@ -93,23 +117,20 @@
       flex-shrink: 0; font-size: 12px; font-weight: 700; color: white;
     }
     .nav-text-box { margin-left: 15px; opacity: 0; transition: 0.2s; white-space: nowrap; flex: 1; }
-    aside:hover .nav-text-box { opacity: 1; }
 
-    /* 小圆点战绩 */
     .record-dots { display: flex; gap: 4px; margin-top: 4px; }
     .mini-dot { width: 6px; height: 6px; border-radius: 50%; }
 
-    /* 主内容 */
     main { flex: 1; padding: 25px; overflow: hidden; display: flex; flex-direction: column; }
     .unified-card {
       background: var(--card-white); flex: 1;
-      border-radius: 25px; box-shadow: 0 15px 40px rgba(0,0,0,0.02);
-      display: flex; flex-direction: column; position: relative; overflow: hidden;
+      border-radius: 25px; display: flex; flex-direction: column;
+      position: relative; overflow: hidden;
     }
 
     .question-overlay { padding: 30px 30px 0 30px; z-index: 5; }
-    .question-overlay h2 { font-family: 'Special Elite', cursive; font-size: 26px; color: var(--active-color); letter-spacing: 1px; }
-    .question-overlay p { font-size: 14px; color: var(--text-sub); margin-top: 8px; line-height: 1.5; max-width: 600px; }
+    .question-overlay h2 { font-family: 'Special Elite', cursive; font-size: 26px; color: var(--active-color); }
+    .question-overlay p { font-size: 14px; color: var(--text-sub); margin-top: 8px; line-height: 1.5; }
 
     .editor-area { flex: 1; padding: 20px 30px 100px 30px; }
     #vex-editor {
@@ -117,36 +138,23 @@
       font-family: 'JetBrains Mono', monospace; font-size: 14px;
       background: transparent; color: #444; resize: none; line-height: 1.8;
     }
-    #vex-editor::placeholder { color: #000; opacity: 0.1; }
 
     .embedded-controls {
       position: absolute; bottom: 25px; right: 30px;
-      display: flex; gap: 12px; z-index: 10;
+      display: flex; gap: 12px;
     }
-    .btn { padding: 12px 25px; border-radius: 18px; font-weight: 700; font-size: 11px; border: none; cursor: pointer; transition: 0.3s; font-family: 'Syne'; }
+    .btn { padding: 12px 25px; border-radius: 18px; font-weight: 700; font-size: 11px; border: none; cursor: pointer; font-family: 'Syne'; }
     .btn-hint { background: rgba(0,0,0,0.03); color: var(--text-sub); }
-    .btn-submit { background: var(--accent-orange); color: white; box-shadow: 0 4px 12px rgba(249, 168, 125, 0.3); }
+    .btn-submit { background: var(--accent-orange); color: white; }
 
-    /* 移动端适配 */
-    @media (max-width: 768px) {
-      .alchemy-container { height: 92vh; border-radius: 20px; }
-      aside { width: 65px; padding-top: 50px; }
-      .nav-text-box { display: none; }
-      aside:hover { width: 65px; }
-      .question-overlay { padding: 20px 20px 0 20px; }
-      .question-overlay h2 { font-size: 20px; }
-      .embedded-controls { width: calc(100% - 40px); left: 20px; }
-      .btn { flex: 1; }
-    }
-
-    /* 弹窗 */
-    #modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.05); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
-    .modal { width: 100%; max-width: 450px; padding: 35px; border-radius: 30px; background: white; text-align: center; box-shadow: 0 30px 60px rgba(0,0,0,0.1); }
-    .modal.success { background: #F2F9F5; border: 1px solid #D4EDDA; }
-    .modal.failure { background: #FFF5F5; border: 1px solid #FEB2B2; }
+    #modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.05); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 2000; padding: 20px; }
+    .modal { width: 100%; max-width: 450px; padding: 35px; border-radius: 30px; background: white; text-align: center; }
   </style>
 </head>
 <body>
+
+  <button id="mobile-menu-toggle" onclick="toggleSidebar()">☰</button>
+  <div id="sidebar-overlay" onclick="toggleSidebar()"></div>
 
   <div class="page-logo">VEX LAB.</div>
   <div class="top-right-lang">
@@ -179,16 +187,27 @@
 
   <div id="modal-overlay">
     <div class="modal" id="result-modal" onclick="event.stopPropagation()">
-      <h3 id="modal-title" style="font-family:'Special Elite', cursive; margin-bottom:15px; font-size:22px;">Result</h3>
+      <h3 id="modal-title" style="font-family:'Special Elite', cursive; margin-bottom:15px;">Result</h3>
       <div id="modal-body" style="font-size:14px; color:#666; line-height:1.6;"></div>
       <div id="solution-area" style="display:none; margin-top:15px;">
-         <div id="correct-code-text" style="background:#fff; padding:15px; border-radius:12px; font-family:'JetBrains Mono'; font-size:12px; text-align:left; color:#C53030; border:1px solid #eee;"></div>
+         <div id="correct-code-text" style="background:#f8f8f8; padding:15px; border-radius:12px; font-family:'JetBrains Mono'; font-size:12px; text-align:left; color:#C53030;"></div>
       </div>
       <button class="btn btn-submit" style="width:100%; margin-top:25px;" onclick="closeFeedback()">CONTINUE</button>
     </div>
   </div>
 
   <script>
+    // 📱 侧边栏开关逻辑
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar-nav');
+      const overlay = document.getElementById('sidebar-overlay');
+      const toggleBtn = document.getElementById('mobile-menu-toggle');
+      sidebar.classList.toggle('open');
+      overlay.classList.toggle('open');
+      toggleBtn.innerText = sidebar.classList.contains('open') ? '✕' : '☰';
+    }
+
+    // [原来的逻辑代码继续保持...]
     const questions = [
       { category: "BEGINNER", items: [
         { qid: "b1", id: "01", difficulty: "easy", color: "var(--easy)", 
@@ -214,7 +233,7 @@
     let currentCat = 0, currentIdx = 0, lang = 'en', lastCorrect = false;
     const savedCodes = {};
     const uiTexts = {
-      zh: { hint: "线索", submit: "提交判断", success: "炼金成功", fail: "分析失败", retry: "请再试一次", left: "剩余机会: ", solution: "参考方案:" },
+      zh: { hint: "HINT", submit: "SUBMIT", success: "PASSED", fail: "FAILURE", retry: "Try Again", left: "Tries left: ", solution: "SOLUTION:" },
       en: { hint: "HINT", submit: "SUBMIT", success: "PASSED", fail: "FAILURE", retry: "Try Again", left: "Tries left: ", solution: "SOLUTION:" }
     };
 
@@ -240,7 +259,9 @@
           el.onclick = () => { 
             currentCat=cIdx; currentIdx=iIdx; 
             document.getElementById('vex-editor').value = savedCodes[questions[currentCat].items[currentIdx].qid] || ""; 
-            render(); 
+            render();
+            // 手机端点击题目后自动收起
+            if (window.innerWidth <= 768) toggleSidebar();
           };
           const iconBg = isActive ? item.color : (item.color + '88');
           let dotsHtml = '<div class="record-dots">';
@@ -302,7 +323,7 @@
           }
         }
         document.getElementById('modal-overlay').style.display = 'flex';
-      } catch (e) { alert("Error"); }
+      } catch (e) { alert("Error connecting to AI"); }
       finally { document.getElementById('submit-btn').innerText = uiTexts[lang].submit; render(); }
     }
 
@@ -319,9 +340,6 @@
       document.getElementById('modal-overlay').style.display = 'flex';
     }
 
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js'); });
-    }
     setLang('en');
   </script>
 </body>
