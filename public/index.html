@@ -50,7 +50,6 @@
     .lang-link { cursor: pointer; font-size: 11px; font-weight: 700; color: var(--text-sub); text-transform: uppercase; }
     .lang-link.active { color: var(--text-main); text-decoration: underline; }
 
-    /* 📱 手机端专用菜单开关 - 绝对顶层 */
     #mobile-menu-toggle {
       display: none; position: fixed; bottom: 30px; left: 30px;
       width: 60px; height: 60px; border-radius: 50%;
@@ -69,7 +68,6 @@
       overflow: hidden; position: relative;
     }
 
-    /* 📜 侧边栏 */
     aside {
       width: 75px; height: 100%;
       background: rgba(255, 255, 255, 0.15);
@@ -84,17 +82,21 @@
       aside:hover .category-header, aside:hover .nav-text-box { opacity: 0.8; }
     }
 
-    /* 📱 手机端适配：高明度 + 修复点击 */
     @media (max-width: 768px) {
       #mobile-menu-toggle { display: flex; }
       aside {
         position: fixed; left: -310px; top: 0; width: 300px; height: 100vh;
-        background: rgba(255, 255, 252, 0.95); /* 提升明度到 95% */
+        background: rgba(255, 255, 252, 0.97);
         backdrop-filter: blur(15px);
         box-shadow: 15px 0 40px rgba(0,0,0,0.1);
+        /* FIX: 确保手机端侧边栏内容可点击 */
         z-index: 9999; padding-top: 100px;
+        pointer-events: none; /* 关闭时不拦截点击 */
       }
-      aside.open { left: 0; }
+      aside.open {
+        left: 0;
+        pointer-events: all; /* 开启时恢复点击 */
+      }
       aside.open .category-header, aside.open .nav-text-box { opacity: 1; }
       
       #sidebar-overlay {
@@ -107,12 +109,16 @@
     .category-header {
       font-family: 'Special Elite', cursive; font-size: 13px; font-weight: 700;
       padding: 25px 25px 10px; opacity: 0; transition: 0.3s; color: var(--text-main);
+      /* FIX: 分类标题不参与点击 */
+      pointer-events: none;
     }
 
-    /* 核心修复：确保 item 容器有高度且可点击 */
     .nav-item { 
       display: flex; align-items: center; padding: 15px 25px; 
       cursor: pointer; width: 100%; position: relative;
+      /* FIX: 确保整行可点击，不被子元素干扰 */
+      -webkit-tap-highlight-color: rgba(0,0,0,0.05);
+      user-select: none;
     }
     .nav-item:active { background: rgba(0,0,0,0.05); }
 
@@ -120,11 +126,14 @@
       width: 42px; height: 42px; border-radius: 12px;
       display: flex; align-items: center; justify-content: center;
       flex-shrink: 0; font-size: 13px; font-weight: 700; color: white;
-      pointer-events: none; /* 防止圆圈拦截点击 */
+      /* FIX: 子元素不拦截点击，让事件冒泡到 nav-item */
+      pointer-events: none;
     }
     .nav-text-box { 
       margin-left: 18px; opacity: 0; transition: 0.2s; 
-      white-space: nowrap; flex: 1; pointer-events: none;
+      white-space: nowrap; flex: 1;
+      /* FIX: 同上 */
+      pointer-events: none;
     }
 
     .record-dots { display: flex; gap: 5px; margin-top: 6px; }
@@ -252,14 +261,29 @@
       render();
     }
 
-    // 核心切换逻辑：显式函数
     function switchQuestion(c, i) {
       currentCat = c;
       currentIdx = i;
       const q = questions[c].items[i];
       document.getElementById('vex-editor').value = savedCodes[q.qid] || "";
       render();
+      // 手机端：切换题目后关闭侧边栏
       if (window.innerWidth <= 768) toggleSidebar();
+    }
+
+    // 事件委托：监听绑定在 aside 上，不随 innerHTML 刷新而丢失
+    function initSidebarDelegate() {
+      const nav = document.getElementById('sidebar-nav');
+      const handler = (e) => {
+        const item = e.target.closest('.nav-item');
+        if (!item) return;
+        e.preventDefault();
+        const c = parseInt(item.dataset.cat);
+        const i = parseInt(item.dataset.idx);
+        switchQuestion(c, i);
+      };
+      nav.addEventListener('click', handler);
+      nav.addEventListener('touchend', handler);
     }
 
     function render() {
@@ -270,30 +294,34 @@
         h.className = 'category-header';
         h.innerText = cat.category;
         nav.appendChild(h);
+
         cat.items.forEach((item, iIdx) => {
-          const isActive = (cIdx===currentCat && iIdx===currentIdx);
+          const isActive = (cIdx === currentCat && iIdx === currentIdx);
           const el = document.createElement('div');
-          el.className = `nav-item`;
-          // 手机端使用原生事件属性确保捕捉
-          el.setAttribute('onclick', `switchQuestion(${cIdx}, ${iIdx})`);
-          
+          el.className = 'nav-item';
+          el.dataset.cat = cIdx;
+          el.dataset.idx = iIdx;
+
           const iconBg = isActive ? item.color : (item.color + '88');
-          let dotsHtml = '<div class="record-dots">';
-          item.records.forEach(type => { dotsHtml += `<div class="mini-dot" style="background:${type==='green'?'var(--success-green)':'var(--fail-red)'}"></div>`; });
+          let dotsHtml = '<div class="record-dots" style="pointer-events:none;">';
+          item.records.forEach(type => {
+            dotsHtml += `<div class="mini-dot" style="background:${type==='green'?'var(--success-green)':'var(--fail-red)'}"></div>`;
+          });
           dotsHtml += '</div>';
 
           el.innerHTML = `
-            <div style="display:flex; flex-direction:column; align-items:center;">
-              <div class="nav-icon-circle" style="background: ${iconBg}">${item.id}</div>
+            <div style="display:flex;flex-direction:column;align-items:center;pointer-events:none;">
+              <div class="nav-icon-circle" style="background:${iconBg};pointer-events:none;">${item.id}</div>
               ${dotsHtml}
             </div>
-            <div class="nav-text-box">
-              <b style="font-size:14px; color:${isActive?'var(--text-main)':'var(--text-sub)'}">${item.title[lang]}</b>
+            <div class="nav-text-box" style="pointer-events:none;">
+              <b style="font-size:14px;color:${isActive?'var(--text-main)':'var(--text-sub)'};pointer-events:none;">${item.title[lang]}</b>
             </div>
           `;
           nav.appendChild(el);
         });
       });
+
       const q = questions[currentCat].items[currentIdx];
       document.documentElement.style.setProperty('--active-color', q.color);
       document.getElementById('q-title').innerText = q.title[lang];
@@ -354,6 +382,7 @@
       document.getElementById('modal-overlay').style.display = 'flex';
     }
 
+    initSidebarDelegate();
     setLang('en');
   </script>
 </body>
