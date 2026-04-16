@@ -389,11 +389,7 @@
           hint: { zh:"使用 length(@P) 计算位置向量的长度，即到原点的距离。", en:"Use length(@P) to get each point's distance from the origin." },
           solution:"@Alpha = 1.0 / length(@P);",
           judge:"Set @Alpha to 1.0 / length(@P) so opacity falls off with distance from origin.",
-          attempts:3, records:[] }
-
-      ]},
-
-      { category: "BEGINNER II", cat_zh: "初级 II", items: [
+          attempts:3, records:[] },
 
         { qid:"q11", id:"11", difficulty:"easy", color:"var(--easy)",
           cat: { zh:"数学 / 属性", en:"Math / Attribute" },
@@ -499,8 +495,7 @@
             en:"Scattered rocks look unnatural when they all face the same way. Assign a random Y-axis rotation to each point's @orient quaternion."
           },
           hint: { zh:"使用 rand(@ptnum) * PI * 2 生成随机角度，再用 quaternion() 构建四元数。", en:"Generate a random angle with rand(@ptnum)*PI*2, then build a quaternion with quaternion(angle, {0,1,0})." },
-          solution:"float angle = rand(@ptnum) * $PI * 2;
-@orient = quaternion(angle, {0,1,0});",
+          solution:"float angle = rand(@ptnum) * 6.2832; @orient = quaternion(angle, {0,1,0});",
           judge:"Set @orient to a random Y-axis rotation using rand(@ptnum)*PI*2 and quaternion() or eulertoquaternion().",
           attempts:3, records:[] },
 
@@ -512,8 +507,8 @@
             en:"To deepen the shadows, push points inside the shadow_group inward along their reversed normal by 0.1 units."
           },
           hint: { zh:"使用 ingroup() 检查点是否在组内，然后沿 -@N 方向移动。", en:"Use ingroup() to check group membership, then offset along -@N." },
-          solution:'if(ingroup(0, "shadow_group", @ptnum)) @P -= @N * 0.1;',
-          judge:'If a point is in the "shadow_group" group, subtract @N*0.1 from @P. Use ingroup().',
+          solution:"if(ingroup(0, 'shadow_group', @ptnum)) @P -= @N * 0.1;",
+          judge:"If a point is in the shadow_group group, subtract @N*0.1 from @P. Use ingroup().",
           attempts:3, records:[] }
 
       ]},
@@ -552,8 +547,7 @@
             en:"Isolated trees need to be removed. Query how many points exist within radius 2.0 of each point; if fewer than 2 are found (just itself), delete that point."
           },
           hint: { zh:"使用 pcopen() 配合 pcnumfound() 查询邻近点数量。", en:"Use pcopen() together with pcnumfound() to count nearby points." },
-          solution:"int count = pcnumfound(pcopen(0, "P", @P, 2.0, 10));
-if(count < 2) removepoint(0, @ptnum);",
+          solution:"int count = pcnumfound(pcopen(0, 'P', @P, 2.0, 10)); if(count < 2) removepoint(0, @ptnum);",
           judge:"Use pcopen()/pcnumfound() to count points within radius 2.0. If count < 2, call removepoint(0, @ptnum).",
           attempts:3, records:[] },
 
@@ -577,8 +571,7 @@ if(count < 2) removepoint(0, @ptnum);",
             en:"Generate a vine winding up a pillar. Use the Y height to drive circular motion in X and Z, forming a helix."
           },
           hint: { zh:"sin 和 cos 配合同一个输入频率可以产生圆周运动。", en:"sin and cos with the same input frequency produce circular motion." },
-          solution:"@P.x = cos(@P.y * 5);
-@P.z = sin(@P.y * 5);",
+          solution:"@P.x = cos(@P.y * 5); @P.z = sin(@P.y * 5);",
           judge:"Set @P.x = cos(@P.y*5) and @P.z = sin(@P.y*5) to create a helical arrangement.",
           attempts:3, records:[] },
 
@@ -614,8 +607,7 @@ if(count < 2) removepoint(0, @ptnum);",
             en:"Floor tiles can only rotate 0, 90, 180 or 270 degrees. Generate a random rotation snapped to one of these four values."
           },
           hint: { zh:"先用 rand() 生成 0~4 的随机数，floor() 取整后乘以 PI/2。", en:"Generate a 0–4 random with rand(), floor() it to an integer, then multiply by PI/2." },
-          solution:"float angle = floor(rand(@ptnum) * 4) * $PI/2;
-@orient = quaternion(angle, {0,1,0});",
+          solution:"float angle = floor(rand(@ptnum) * 4) * 1.5708; @orient = quaternion(angle, {0,1,0});",
           judge:"Set @orient to a Y-axis rotation snapped to 0/90/180/270 degrees using floor(rand(@ptnum)*4)*PI/2.",
           attempts:3, records:[] },
 
@@ -627,8 +619,7 @@ if(count < 2) removepoint(0, @ptnum);",
             en:"Recessed areas should appear darker. Count nearby points within radius 0.2 — the more points found, the darker @Cd should be, simulating ambient occlusion."
           },
           hint: { zh:"将邻近点数映射到 0~1 范围，再用 1 减去它得到颜色反向。", en:"Map the point count to 0–1 and invert it to get darker colors in denser areas." },
-          solution:"int n = pcnumfound(pcopen(0, "P", @P, 0.2, 50));
-@Cd = 1.0 - (float)n/50.0;",
+          solution:"int n = pcnumfound(pcopen(0, 'P', @P, 0.2, 50)); @Cd = 1.0 - (float)n/50.0;",
           judge:"Use pcopen()/pcnumfound() within radius 0.2, then set @Cd = 1.0 - (float)n/50.0 for pseudo AO.",
           attempts:3, records:[] },
 
