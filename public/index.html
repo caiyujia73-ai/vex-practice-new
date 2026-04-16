@@ -228,7 +228,7 @@
     </svg>
   </button>
 
-  <div id="drawer-overlay" onclick="closeDrawer()"></div>
+  <div id="drawer-overlay"></div>
   <div id="mobile-drawer"><div class="drawer-title">VEX LAB.</div></div>
 
   <div class="alchemy-container">
@@ -660,6 +660,16 @@
       document.getElementById('fab-menu').classList.remove('open');
     }
 
+    // Overlay: close only on tap, not after scroll
+    (function() {
+      const overlay = document.getElementById('drawer-overlay');
+      let _moved = false;
+      overlay.addEventListener('touchstart', () => { _moved = false; });
+      overlay.addEventListener('touchmove', () => { _moved = true; });
+      overlay.addEventListener('touchend', () => { if (!_moved) closeDrawer(); });
+      overlay.addEventListener('click', closeDrawer);
+    })();
+
     /* ── 切换题目 ── */
     function switchQuestion(c, i) {
       currentCat = c; currentIdx = i;
@@ -767,8 +777,12 @@
         });
         drawer.addEventListener('touchend', e => {
           const item = e.target.closest('.drawer-item');
-          if (item) { e.preventDefault(); switchQuestion(parseInt(item.dataset.cat), parseInt(item.dataset.idx)); }
+          if (item && !drawer._scrolled) {
+            switchQuestion(parseInt(item.dataset.cat), parseInt(item.dataset.idx));
+          }
         });
+        drawer.addEventListener('touchstart', () => { drawer._scrolled = false; });
+        drawer.addEventListener('touchmove', () => { drawer._scrolled = true; });
       }
     }
 
