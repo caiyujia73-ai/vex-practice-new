@@ -330,8 +330,8 @@
 
     /* ── Mobile ── */
     @media (max-width: 768px) {
-      .top-nav { top: auto; bottom: auto; position: absolute; top: 52px; transform: translateX(-50%); }
-      .alchemy-container { height: 92vh; border-radius: 22px; }
+      .top-nav { position: fixed; top: 35px; left: 50%; transform: translateX(-50%); z-index: 300; }
+      .alchemy-container { height: 82vh; border-radius: 22px; margin-top: 56px; }
       aside { display: none; }
       .question-overlay { padding: 18px 18px 0 18px; }
       .question-overlay h2 { font-size: 19px; }
@@ -591,7 +591,7 @@
     #field-editor::placeholder { color: rgba(0,0,0,0.1); }
     .field-controls { position: absolute; bottom: 22px; right: 24px; display: flex; gap: 10px; z-index: 10; }
     @media (max-width: 768px) {
-      #field-page.active { flex-direction: column; height: 86vh; }
+      #field-page.active { flex-direction: column; height: 82vh; margin-top: 56px; }
       .field-list { display: none; }
       .field-main { flex: 1; min-height: 0; }
       .field-scenario { max-height: 45%; }
@@ -696,7 +696,7 @@
   </button>
 
   <div id="drawer-overlay"></div>
-  <div id="mobile-drawer"><div class="drawer-title">VEX LAB.</div></div>
+  <div id="mobile-drawer"><div class="drawer-title" id="drawer-title-text">Practice</div></div>
 
   <!-- Field Work mobile drawer -->
   <div id="field-drawer-overlay" onclick="closeFieldDrawer()"></div>
@@ -1242,7 +1242,7 @@
       const solved = countSolved();
       const total = totalQuestions();
       drawer.innerHTML = `
-        <div class="drawer-title">VEX LAB.</div>
+        <div class="drawer-title">${lang === 'zh' ? '练习题' : 'Practice'}</div>
         <div class="drawer-progress">
           <span>${solved}/${total}</span>
           <div class="dp-bar"><div class="dp-fill" style="width:${solved/total*100}%"></div></div>
