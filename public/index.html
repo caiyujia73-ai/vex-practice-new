@@ -161,6 +161,7 @@
       display: flex; align-items: center; justify-content: center;
       flex-shrink: 0; font-size: 11px; font-weight: 800; color: white;
       pointer-events: none; position: relative; transition: transform 0.15s;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.18);
     }
     .nav-item:hover .nav-icon-circle { transform: scale(1.05); }
     /* checkmark for solved */
@@ -343,7 +344,7 @@
 
     /* ── Mobile ── */
     @media (max-width: 768px) {
-      .top-nav { position: fixed; top: 40px; left: 50%; transform: translateX(-50%); z-index: 300; }
+      .top-nav { position: fixed; top: 45px; left: 50%; transform: translateX(-50%); z-index: 300; }
       .alchemy-container { height: 82vh; border-radius: 22px; margin-top: 56px; }
       aside { display: none; }
       .question-overlay { padding: 18px 18px 0 18px; }
@@ -421,6 +422,7 @@
         display: flex; align-items: center; justify-content: center;
         font-size: 11px; font-weight: 800; color: white;
         flex-shrink: 0; pointer-events: none; position: relative;
+        box-shadow: 0 3px 8px rgba(0,0,0,0.18);
       }
       .drawer-icon .check-sm {
         position: absolute; bottom: -2px; right: -2px;
@@ -1216,14 +1218,15 @@
           const el = document.createElement('div');
           el.className = 'nav-item' + (isActive ? ' active-nav' : '');
           el.dataset.cat = cIdx; el.dataset.idx = iIdx;
-          const iconBg = isActive ? item.color : (solved ? item.color + 'bb' : item.color + '55');
+          const iconBg = isActive ? item.color : (solved ? item.color + 'cc' : item.color + 'aa');
+          const catNum = String(iIdx + 1).padStart(2, '0');
           let dotsHtml = '<div class="record-dots">';
           item.records.slice(-3).forEach(t => { dotsHtml += `<div class="mini-dot" style="background:${t==='green'?'var(--success-green)':'var(--fail-red)'}"></div>`; });
           dotsHtml += '</div>';
           el.innerHTML = `
             <div style="display:flex;flex-direction:column;align-items:center;pointer-events:none;">
               <div class="nav-icon-circle" style="background:${iconBg}">
-                ${item.id}
+                ${catNum}
                 ${solved ? `<div class="check-badge">${checkmark()}</div>` : ''}
               </div>
               ${dotsHtml}
@@ -1269,13 +1272,14 @@
           const el = document.createElement('div');
           el.className = 'drawer-item' + (isActive ? ' active-item' : '');
           el.dataset.cat = cIdx; el.dataset.idx = iIdx;
-          const iconBg = isActive ? item.color : (solved ? item.color + 'bb' : item.color + '77');
+          const iconBg = isActive ? item.color : (solved ? item.color + 'cc' : item.color + 'aa');
           let dotsHtml = '<div class="drawer-dots">';
           item.records.slice(-3).forEach(t => { dotsHtml += `<div class="mini-dot" style="background:${t==='green'?'var(--success-green)':'var(--fail-red)'}"></div>`; });
           dotsHtml += '</div>';
+          const dCatNum = String(iIdx + 1).padStart(2, '0');
           el.innerHTML = `
             <div class="drawer-icon" style="background:${iconBg}">
-              ${item.id}
+              ${dCatNum}
               ${solved ? `<div class="check-sm">${checkmark()}</div>` : ''}
             </div>
             <div class="drawer-label">
