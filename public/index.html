@@ -52,19 +52,32 @@
     .top-nav {
       position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
       display: flex; z-index: 200; gap: 0;
-      background: rgba(255,255,255,0.6);
-      border: 2px solid #2D2D2D; border-radius: 100px; padding: 3px;
+      background: rgba(235,232,225,0.9);
+      border: none; border-radius: 100px; padding: 3px;
     }
     .top-nav-tab {
       padding: 7px 22px; border-radius: 100px; cursor: pointer;
       font-family: 'Courier Prime', monospace; font-size: 10px; font-weight: 700;
       letter-spacing: 0.08em; text-transform: uppercase;
-      color: #999; background: transparent;
-      transition: background 0.22s, color 0.22s;
+      color: #aaa; background: transparent;
+      transition: color 0.25s;
       user-select: none; white-space: nowrap; border: none;
+      position: relative; z-index: 1;
     }
-    .top-nav-tab.active { background: #2D2D2D !important; color: #fff !important; }
-    .top-nav-tab:not(.active):hover { color: #2D2D2D; }
+    .top-nav-tab.active { color: #fff; }
+    .top-nav-tab:not(.active):hover { color: #666; }
+    /* sliding pill */
+    .top-nav::before {
+      content: ''; position: absolute;
+      top: 3px; bottom: 3px;
+      border-radius: 100px;
+      background: var(--accent-orange);
+      box-shadow: 0 4px 16px rgba(249,168,125,0.5);
+      transition: left 0.28s cubic-bezier(0.4,0,0.2,1), width 0.28s cubic-bezier(0.4,0,0.2,1);
+      z-index: 0;
+    }
+    .top-nav[data-active="practice"]::before { left: 3px; width: var(--tab-w, 90px); }
+    .top-nav[data-active="field"]::before { left: calc(var(--tab-w, 90px) + 3px); width: var(--tab-w2, 100px); }
 
 
     .top-right-lang {
@@ -674,11 +687,7 @@
     <div class="top-nav-tab" id="tab-field" onclick="switchTab('field')">Field Work</div>
   </div>
 
-  <!-- Top nav -->
-  <div class="top-nav">
-    <div class="top-nav-tab active" id="tab-practice" onclick="switchTab('practice')">Practice</div>
-    <div class="top-nav-tab" id="tab-field" onclick="switchTab('field')">Field Work</div>
-  </div>
+
 
   <div class="top-right-lang">
     <span class="lang-link" onclick="setLang('zh')" id="ln-zh">ZH</span>
@@ -1186,6 +1195,7 @@
       const total = totalQuestions();
       nav.innerHTML = `
         <div class="sidebar-footer" id="sidebar-footer">
+          <div style="font-family:'Special Elite',cursive;font-size:20px;color:var(--text-main);margin-bottom:10px;margin-top:-20px;white-space:nowrap;opacity:0.85;">${lang === 'zh' ? '练习题' : 'Practice'}</div>
           <div class="sidebar-progress-label">PROGRESS</div>
           <div class="sidebar-progress-bar">
             <div class="sidebar-progress-fill" id="sidebar-progress-fill" style="width:${(solved/total*100).toFixed(1)}%"></div>
@@ -1559,6 +1569,12 @@
       currentTab = tab;
       document.getElementById('tab-practice').classList.toggle('active', tab === 'practice');
       document.getElementById('tab-field').classList.toggle('active', tab === 'field');
+      const nav = document.querySelector('.top-nav');
+      const t1 = document.getElementById('tab-practice');
+      const t2 = document.getElementById('tab-field');
+      nav.style.setProperty('--tab-w', t1.offsetWidth + 'px');
+      nav.style.setProperty('--tab-w2', t2.offsetWidth + 'px');
+      nav.dataset.active = tab;
       const practiceEl = document.querySelector('.alchemy-container');
       const fieldEl = document.getElementById('field-page');
       const fabEl = document.getElementById('fab-menu');
@@ -1723,6 +1739,17 @@ Reply ONLY with JSON, no other text:
     loadRecords();
     loadFieldRecords();
     setLang('en');
+    // Init sliding pill
+    requestAnimationFrame(() => {
+      const nav = document.querySelector('.top-nav');
+      const t1 = document.getElementById('tab-practice');
+      const t2 = document.getElementById('tab-field');
+      if (nav && t1 && t2) {
+        nav.style.setProperty('--tab-w', t1.offsetWidth + 'px');
+        nav.style.setProperty('--tab-w2', t2.offsetWidth + 'px');
+        nav.dataset.active = 'practice';
+      }
+    });
   </script>
 </body>
 </html>
