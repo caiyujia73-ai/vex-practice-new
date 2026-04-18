@@ -176,6 +176,10 @@
       margin-left: 14px; opacity: 0; transition: opacity 0.2s;
       white-space: nowrap; flex: 1; pointer-events: none;
     }
+    .nav-title-text {
+      font-family: 'Special Elite', cursive !important;
+      font-weight: 400 !important;
+    }
     .record-dots { display: flex; gap: 4px; margin-top: 3px; pointer-events: none; }
     .mini-dot { width: 5px; height: 5px; border-radius: 50%; }
 
@@ -1486,7 +1490,9 @@
       currentDailyIdx = idx;
       const d = dailyQuestions[idx];
       currentCat = d.cIdx; currentIdx = d.iIdx;
-      document.getElementById('vex-editor').value = savedCodes[questions[d.cIdx].items[d.iIdx].qid] || "";
+      const edSwitch = document.getElementById('vex-editor');
+      edSwitch.value = savedCodes[questions[d.cIdx].items[d.iIdx].qid] || "";
+      edSwitch.style.boxShadow = ''; edSwitch.style.background = '';
       closeDrawer();
       render();
     }
@@ -1572,7 +1578,7 @@
           '<div class="nav-icon-circle" style="background:' + iconBg + ';box-shadow:0 3px 8px rgba(0,0,0,0.18);">' + catNum + checkHtml + '</div>' +
           dotsHtml + '</div>' +
           '<div class="nav-text-box" style="pointer-events:none;">' +
-          '<b class="nav-title-text" style="font-size:12px;color:' + (isActive?'var(--text-main)':'var(--text-sub)') + ';">' + item.title[lang] + '</b>' +
+          '<span class="nav-title-text" style="font-size:13px;display:block;color:' + (isActive?'var(--text-main)':'var(--text-sub)') + ';">' + item.title[lang] + '</span>' +
           '<div style="font-size:10px;color:var(--text-sub);margin-top:2px;opacity:0.6;">' + item.cat[lang] + '</div>' +
           '</div>';
         nav.appendChild(el);
@@ -1672,7 +1678,7 @@
           savedCodes[q.qid] = code;
           saveRecords();
           modal.className = "modal success";
-          document.getElementById('modal-icon').textContent = '✦';
+          document.getElementById('modal-icon').textContent = '✓';
           document.getElementById('modal-title').innerText = uiTexts[lang].success;
           document.getElementById('modal-body').innerText = data.explanation;
           document.getElementById('solution-area').style.display = 'none';
@@ -1692,7 +1698,7 @@
             document.getElementById('modal-body').innerText = uiTexts[lang].left + q.attempts;
             document.getElementById('solution-area').style.display = 'none';
           } else {
-            document.getElementById('modal-icon').textContent = '○';
+            document.getElementById('modal-icon').textContent = '×';
             document.getElementById('modal-title').innerText = uiTexts[lang].fail;
             document.getElementById('modal-body').innerText = data.explanation;
             document.getElementById('correct-code-text').innerText = uiTexts[lang].solution + "\n" + q.solution;
@@ -1711,14 +1717,14 @@
     }
 
     function closeFeedback() {
-      if (!lastCorrect) document.getElementById('vex-editor').value = "";
+      // Keep code on wrong answer for editing
       document.getElementById('modal-overlay').classList.remove('visible');
     }
 
     function showHint() {
       const q = questions[currentCat].items[currentIdx];
       document.getElementById('result-modal').className = "modal hint-modal";
-      document.getElementById('modal-icon').textContent = '◈';
+      document.getElementById('modal-icon').textContent = '—';
       document.getElementById('modal-title').innerText = uiTexts[lang].hint;
       document.getElementById('modal-body').innerText = q.hint[lang];
       document.getElementById('solution-area').style.display = 'none';
@@ -2262,8 +2268,10 @@ Reply ONLY with JSON, no other text:
         if (data.result === 'correct') {
           m.solved = true; m.records.push('green'); fieldSavedCodes[m.fid] = code;
           saveFieldRecords();
+          const fcEl = document.getElementById('field-editor');
+          if (fcEl) { fcEl.style.boxShadow = ''; fcEl.style.background = ''; }
           modal.className = 'modal success';
-          document.getElementById('modal-icon').textContent = '✦';
+          document.getElementById('modal-icon').textContent = '✓';
           document.getElementById('modal-title').innerText = uiTexts[lang].success;
           document.getElementById('modal-body').innerText = data.explanation;
           document.getElementById('solution-area').style.display = 'none';
@@ -2271,14 +2279,24 @@ Reply ONLY with JSON, no other text:
         } else {
           m.attempts--; m.records.push('red');
           saveFieldRecords();
+          // Red border on field editor
+          const fedEl = document.getElementById('field-editor');
+          if (fedEl) { fedEl.style.boxShadow = 'inset 0 0 0 2px rgba(200,60,60,0.25)'; fedEl.style.background = 'rgba(220,80,80,0.04)'; }
           modal.className = 'modal failure';
           if (m.attempts > 0) {
             document.getElementById('modal-icon').textContent = '✕';
             document.getElementById('modal-title').innerText = uiTexts[lang].retry;
-            document.getElementById('modal-body').innerText = data.explanation || (uiTexts[lang].left + m.attempts);
+            let fbHtml = data.explanation || (uiTexts[lang].left + m.attempts);
+            if (data.errors && data.errors.length > 0) {
+              fbHtml += '<div style="margin-top:14px;padding:12px 14px;background:rgba(220,80,80,0.07);border:1px solid rgba(220,80,80,0.2);border-radius:10px;">';
+              fbHtml += '<div style="font-size:10px;font-weight:700;letter-spacing:0.08em;color:#c0392b;font-family:Courier Prime,monospace;margin-bottom:8px;">// ERROR ANALYSIS</div>';
+              data.errors.forEach(e => { fbHtml += '<div style="font-size:12px;color:#c0392b;padding:3px 0;display:flex;gap:8px;align-items:flex-start;"><span style="flex-shrink:0;">—</span><span>' + e + '</span></div>'; });
+              fbHtml += '</div>';
+            }
+            document.getElementById('modal-body').innerHTML = fbHtml;
             document.getElementById('solution-area').style.display = 'none';
           } else {
-            document.getElementById('modal-icon').textContent = '○';
+            document.getElementById('modal-icon').textContent = '×';
             document.getElementById('modal-title').innerText = uiTexts[lang].fail;
             document.getElementById('modal-body').innerText = data.explanation;
             document.getElementById('correct-code-text').innerText = uiTexts[lang].solution + '\n' + m.solution;
@@ -2298,7 +2316,7 @@ Reply ONLY with JSON, no other text:
     function showFieldHint() {
       const m = fieldMissions[currentField];
       document.getElementById('result-modal').className = 'modal hint-modal';
-      document.getElementById('modal-icon').textContent = '◈';
+      document.getElementById('modal-icon').textContent = '—';
       document.getElementById('modal-title').innerText = uiTexts[lang].hint;
       document.getElementById('modal-body').innerText = m.hint[lang];
       document.getElementById('solution-area').style.display = 'none';
