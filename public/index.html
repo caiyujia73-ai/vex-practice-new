@@ -2343,122 +2343,90 @@ Reply ONLY with JSON, no other text:
        ══════════════════════════════════ */
     (function() {
       const COLORS = [
-        '#A3B18A', '#b5c99a', // greens
-        '#E9C46A', '#f4d58d', // yellows
-        '#F9A87D', '#e8895a', // oranges
-        '#E07A5F', '#c96a50', // coral
-        '#f4f1ea', '#e8e4d8', // cream/paper
-        '#8B7355', '#a08060', // browns
+        '#A3B18A','#b5c99a',
+        '#E9C46A','#f4d58d',
+        '#F9A87D','#e8895a',
+        '#E07A5F','#c96a50',
+        '#8B7355','#a08060',
       ];
+      let particles = [], animId = null, canvas, ctx;
 
-      const SHAPES = ['rect', 'circle', 'strip'];
-
-      let particles = [];
-      let animId = null;
-      let canvas, ctx;
-
-      function initCanvas() {
+      function init() {
         canvas = document.getElementById('confetti-canvas');
         ctx = canvas.getContext('2d');
-        resize();
-        window.addEventListener('resize', resize);
-      }
-
-      function resize() {
-        if (!canvas) return;
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
       }
 
-      function createParticle(x, y) {
-        const angle = Math.random() * Math.PI * 2;
-        const speed = 4 + Math.random() * 8;
-        const shape = SHAPES[Math.floor(Math.random() * SHAPES.length)];
-        const size = shape === 'strip'
-          ? { w: 3 + Math.random() * 3, h: 10 + Math.random() * 10 }
-          : { w: 6 + Math.random() * 8, h: 6 + Math.random() * 8 };
+      function make(cx, cy) {
+        const type = Math.random() < 0.5 ? 'rect' : 'circle';
+        const w = 5 + Math.random() * 8;
+        const h = type === 'rect' ? (Math.random() < 0.4 ? w * 2.5 : w) : w;
         return {
-          x, y,
-          vx: Math.cos(angle) * speed * (0.4 + Math.random() * 0.6),
-          vy: -(5 + Math.random() * 12),
-          gravity: 0.35 + Math.random() * 0.2,
-          drag: 0.97,
+          x: cx + (Math.random() - 0.5) * 160,
+          y: cy + (Math.random() - 0.5) * 80,
+          vx: (Math.random() - 0.5) * 14,
+          vy: -(6 + Math.random() * 14),
+          g: 0.4 + Math.random() * 0.2,
+          drag: 0.98,
           color: COLORS[Math.floor(Math.random() * COLORS.length)],
-          shape,
-          w: size.w, h: size.h,
-          rotation: Math.random() * Math.PI * 2,
-          rotSpeed: (Math.random() - 0.5) * 0.3,
+          type, w, h,
+          rot: Math.random() * Math.PI * 2,
+          rspd: (Math.random() - 0.5) * 0.25,
           alpha: 1,
-          fade: 0.012 + Math.random() * 0.008,
-          wobble: Math.random() * Math.PI * 2,
-          wobbleSpeed: 0.06 + Math.random() * 0.06,
+          fade: 0.013 + Math.random() * 0.007,
+          wob: Math.random() * 6,
+          wspd: 0.05 + Math.random() * 0.05,
         };
       }
 
-      function burst(count) {
-        if (!canvas) initCanvas();
-        resize();
-        // Launch from center-top of viewport
-        const cx = window.innerWidth / 2;
-        const cy = window.innerHeight * 0.35;
-        for (let i = 0; i < count; i++) {
-          particles.push(createParticle(
-            cx + (Math.random() - 0.5) * 120,
-            cy + (Math.random() - 0.5) * 60
-          ));
-        }
-        canvas.classList.add('active');
-        if (!animId) animate();
+      function burst(n, cx, cy) {
+        for (let i = 0; i < n; i++) particles.push(make(cx, cy));
+        canvas.style.opacity = '1';
+        if (!animId) loop();
       }
 
-      function animate() {
+      function loop() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        particles = particles.filter(p => p.alpha > 0.01);
-
+        particles = particles.filter(p => p.alpha > 0.02 && p.y < canvas.height + 40);
         particles.forEach(p => {
-          p.wobble += p.wobbleSpeed;
-          p.x += p.vx + Math.sin(p.wobble) * 0.8;
+          p.wob += p.wspd;
+          p.x += p.vx + Math.sin(p.wob) * 1.2;
           p.y += p.vy;
-          p.vy += p.gravity;
+          p.vy += p.g;
           p.vx *= p.drag;
-          p.rotation += p.rotSpeed;
+          p.rot += p.rspd;
           p.alpha -= p.fade;
-
           ctx.save();
           ctx.globalAlpha = Math.max(0, p.alpha);
           ctx.translate(p.x, p.y);
-          ctx.rotate(p.rotation);
+          ctx.rotate(p.rot);
           ctx.fillStyle = p.color;
-
-          if (p.shape === 'circle') {
-            ctx.beginPath();
+          ctx.beginPath();
+          if (p.type === 'circle') {
             ctx.ellipse(0, 0, p.w / 2, p.h / 2, 0, 0, Math.PI * 2);
-            ctx.fill();
-          } else if (p.shape === 'strip') {
-            ctx.beginPath();
-            ctx.roundRect(-p.w/2, -p.h/2, p.w, p.h, 2);
-            ctx.fill();
           } else {
-            ctx.beginPath();
-            ctx.roundRect(-p.w/2, -p.h/2, p.w, p.h, 1.5);
-            ctx.fill();
+            ctx.rect(-p.w / 2, -p.h / 2, p.w, p.h);
           }
+          ctx.fill();
           ctx.restore();
         });
-
         if (particles.length > 0) {
-          animId = requestAnimationFrame(animate);
+          animId = requestAnimationFrame(loop);
         } else {
           animId = null;
-          canvas.classList.remove('active');
+          canvas.style.opacity = '0';
           ctx.clearRect(0, 0, canvas.width, canvas.height);
         }
       }
 
       window.launchConfetti = function() {
-        // Two waves for a richer burst
-        burst(60);
-        setTimeout(() => burst(40), 120);
+        init();
+        const cx = window.innerWidth / 2;
+        const cy = window.innerHeight * 0.38;
+        burst(65, cx, cy);
+        setTimeout(() => burst(45, cx, cy), 150);
+        setTimeout(() => burst(30, cx, cy), 320);
       };
     })();
 
